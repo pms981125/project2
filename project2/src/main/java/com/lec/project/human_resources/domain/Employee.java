@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,23 +17,28 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Employee {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	/*@Column(nullable = false)*/
 	private String id;
 	
 	@Column(nullable = false)
 	private String password;
 	
+	/*	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int employeeNumber;
+	*/
 	@Column(nullable = false)
-	private int empno;
+	private int employeeNumber;
 	
 	@Column(nullable = false)
 	private String name;
 	
 	@Column(nullable = false)
-	private int salary;
+	private int annualSalary;
 	
 	@Column(nullable = false)
-	private String departmentName;
+	private DepartmentName departmentName;
 	
 	@Column(nullable = false)
 	private Position position;
@@ -54,11 +57,11 @@ public class Employee {
 		this.name = name;
 	}
 	
-	public void changeSalary(int salary) {
-		this.salary = salary;
+	public void changeSalary(int annualSalary) {
+		this.annualSalary = annualSalary;
 	}
 	
-	public void changeDepartmentName(String departmentName) {
+	public void changeDepartmentName(DepartmentName departmentName) {
 		this.departmentName = departmentName;
 	}
 	
