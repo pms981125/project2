@@ -69,7 +69,4 @@ public class Employee {
 	public void changeAddress(String address) {
 		this.address = address;
 	}
-	
-	// slack Test
-	// commit Test
 }
