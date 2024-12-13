@@ -23,17 +23,15 @@ public class WebSecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		log.info("filter1 =-=-=-==-=");
 
-		http.authorizeHttpRequests(auth -> auth.requestMatchers("/", "/login").permitAll()
+		/*http.authorizeHttpRequests(auth -> auth.requestMatchers("/", "/login").permitAll()
 												.requestMatchers("/hr_main").hasAnyRole("admin")
 												.requestMatchers("/index").hasAnyRole("test")
-												.anyRequest().authenticated());
-		/*
+												.anyRequest().authenticated());*/
 		http.authorizeHttpRequests((authorizeRequests) -> authorizeRequests.anyRequest().permitAll())
 																						.formLogin((formLogin) -> formLogin.usernameParameter("username")
 																						.passwordParameter("password")
 																						.successHandler(successHandler()));
 																						// .defaultSuccessUrl("/", true));
-		 */
 		http.csrf(csrf -> csrf.disable());
         
 		return http.build();
