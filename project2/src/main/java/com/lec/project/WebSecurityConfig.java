@@ -22,7 +22,7 @@ public class WebSecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		log.info("filter1 =-=-=-==-=");
-		// pullawd
+
 		http.authorizeHttpRequests(auth -> auth.requestMatchers("/", "/login").permitAll()
 												.requestMatchers("/hr_main").hasAnyRole("admin")
 												.requestMatchers("/index").hasAnyRole("test")
