@@ -29,7 +29,8 @@ public class UserDetailsServiceCustom implements UserDetailsService {
 		}
 		
 		Member member = result.get();
-		Collection<GrantedAuthority> collection = Collections.singleton(new SimpleGrantedAuthority("test"));
+		// Collection<GrantedAuthority> collection = Collections.singleton(new SimpleGrantedAuthority("test"));
+		Collection<GrantedAuthority> collection = Collections.singleton(new SimpleGrantedAuthority(member.getId()));
 		MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(), "{noop}" + member.getPassword(), collection); 
 		
 		return memberSecurityDTO;

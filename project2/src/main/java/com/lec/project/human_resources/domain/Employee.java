@@ -1,6 +1,6 @@
 package com.lec.project.human_resources.domain;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -47,7 +47,7 @@ public class Employee {
 	private String address;
 	
 	@Column(nullable = false)
-	private LocalDateTime hiredate;
+	private Date hiredate;
 	
 	public void changePassword(String password) {
 		this.password = password;

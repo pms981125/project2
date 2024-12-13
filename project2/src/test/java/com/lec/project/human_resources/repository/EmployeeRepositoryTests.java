@@ -1,13 +1,10 @@
 package com.lec.project.human_resources.repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 
 import com.lec.project.human_resources.domain.DepartmentName;
 import com.lec.project.human_resources.domain.Employee;
@@ -42,7 +39,7 @@ public class EmployeeRepositoryTests {
 											  .departmentName(DepartmentName.HUMAN_RESOURCES)
 											  .position(Position.STAFF)
 											  .address("서울시 테슽구")
-											  .hiredate(LocalDateTime.now())
+											  .hiredate(new Date())
 											  .build();
 		
 		employeeRepository.save(employee);
