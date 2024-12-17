@@ -5,9 +5,9 @@ import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import com.lec.project.human_resources.domain.Employee;
-import com.lec.project.human_resources.dto.EmployeeDTO;
-import com.lec.project.human_resources.repository.EmployeeRepository;
+import com.lec.project.human_resources.domain.Admin;
+import com.lec.project.human_resources.dto.AdminDTO;
+import com.lec.project.human_resources.repository.AdminRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +18,15 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 @Transactional
 public class HRServiceImpl implements HRService {
-	private final EmployeeRepository employeeRepository;
+	private final AdminRepository adminRepository;
 	private final ModelMapper modelMapper;
 	
 	@Override
-	public EmployeeDTO getInfoEmployee(String id) {
-		Optional<Employee> result = employeeRepository.findById(id);
-		Employee employee = result.orElseThrow();
-		EmployeeDTO employeeDTO = modelMapper.map(employee, EmployeeDTO.class);
+	public AdminDTO getAdmin(String id) {
+		Optional<Admin> result = adminRepository.findById(id);
+		Admin admin = result.orElseThrow();
+		AdminDTO adminDTO = modelMapper.map(admin, AdminDTO.class);
 		
-		return employeeDTO;
+		return adminDTO;
 	}
 }

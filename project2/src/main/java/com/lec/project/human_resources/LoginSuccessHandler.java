@@ -1,18 +1,10 @@
 package com.lec.project.human_resources;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.web.DefaultRedirectStrategy;
-import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-
-import com.lec.project.MemberSecurityDTO;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,14 +18,10 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 		log.info(authentication.getAuthorities() + "-=-=-=-=-=-=-=-=-=");	
 	
 		if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-			// response.sendRedirect("/files/admin/admin.html");
+			// MemberSecurityDTO memberSecurityDTO = (MemberSecurityDTO) authentication.getPrincipal();
 			
-			 // response.sendRedirect("/hr_main.html");
-			MemberSecurityDTO memberSecurityDTO = (MemberSecurityDTO) authentication.getPrincipal();
-			
-			log.info(authentication);
-			// response.sendRedirect("/hr/info?id=" + memberSecurityDTO.getId()); // templates 폴더에 있는 html 파일에 접근 시 controller를 이용
-			response.sendRedirect("/hr/info");
+			// response.sendRedirect("/hr/info?id=" + memberSecurityDTO.getId());
+			response.sendRedirect("/hr/info"); // templates 폴더에 있는 html 파일에 접근 시, controller 이용
 		} else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER"))) {
 			response.sendRedirect("/index.html"); // static 폴더에 있는 html 파일로 접근 시
 		} else {

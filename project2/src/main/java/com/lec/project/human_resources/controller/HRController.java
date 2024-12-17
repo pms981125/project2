@@ -1,13 +1,9 @@
 package com.lec.project.human_resources.controller;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
-import com.lec.project.human_resources.dto.EmployeeDTO;
 import com.lec.project.human_resources.service.HRService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,10 +24,9 @@ public class HRController {
 			return "/admin/admin";
 		}*/
 	
-	@PreAuthorize("hasRole('ADMIN')")
+	// @PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/info")
 	public String getInfo() {
-		
 		
 		return "/admin/admin";
 	}

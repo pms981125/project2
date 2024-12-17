@@ -2,12 +2,10 @@ package com.lec.project;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.lec.project.human_resources.LoginSuccessHandler;
 
@@ -31,10 +29,10 @@ public class WebSecurityConfig {
         									   .anyRequest().authenticated())
         	.formLogin(form -> form//.loginPage("/login")
         						   .permitAll()
-        						   .successHandler(successHandler())
-/*        	.logout(out -> out.logoutUrl("/logout")
-							  .logoutSuccessHandler(custom)
-							  .permitAll())*/
+        						   .successHandler(successHandler()))
+        	.logout(out -> out.logoutUrl("/logout")
+							  // .logoutSuccessHandler(custom)
+							  .permitAll()
         );
         
 		return http.build();
