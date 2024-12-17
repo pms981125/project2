@@ -1,14 +1,9 @@
 package com.lec.project.human_resources;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.web.DefaultRedirectStrategy;
-import org.springframework.security.web.RedirectStrategy;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import jakarta.servlet.ServletException;
@@ -18,43 +13,19 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
-	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-	private String urlString = "";
-	
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-		handle(request, response, authentication);
-	}
+		log.info(authentication.getAuthorities() + "-=-=-=-=-=-=-=-=-=");	
 	
-	private void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-		String url = getUrlFromRole(authentication);
-		
-		
-		if (response.isCommitted()) {
-			log.info("-==-=-=- commit");
-			return;
+		if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+			// MemberSecurityDTO memberSecurityDTO = (MemberSecurityDTO) authentication.getPrincipal();
+			
+			// response.sendRedirect("/hr/info?id=" + memberSecurityDTO.getId());
+			response.sendRedirect("/hr/info"); // templates 폴더에 있는 html 파일에 접근 시, controller 이용
+		} else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER"))) {
+			response.sendRedirect("/index.html"); // static 폴더에 있는 html 파일로 접근 시
+		} else {
+			response.sendRedirect("/contact");
 		}
-		log.info("-==-=-=- commit XXX");
-		
-		redirectStrategy.sendRedirect(request, response, url);
-	}
-
-	private String getUrlFromRole(Authentication authentication) {
-		Map<String, String> urlMap = new HashMap<>();
-		
-		urlMap.put("test", "/");
-		urlMap.put("testId", "/");
-		urlMap.put("t", "/");
-		urlMap.put("admin", "/hr_main.html");
-		
-		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-	
-		authorities.forEach(auth -> {
-			urlString = auth.getAuthority();
-		});
-		
-		log.info("urls-=-=-=-=-=" + urlString);
-		
-		return urlMap.get(urlString);
 	}
 }

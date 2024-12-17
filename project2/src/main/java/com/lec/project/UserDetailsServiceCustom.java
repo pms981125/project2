@@ -1,10 +1,8 @@
 package com.lec.project;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,7 +20,7 @@ public class UserDetailsServiceCustom implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<Member> result = memberRepository.findById(username);
+		Optional<Member> result = memberRepository.findByIdWithRoles(username);
 		
 		if (result.isEmpty()) {
 			throw new UsernameNotFoundException("해당되는 ID의 유저가 없습니다.");
@@ -30,8 +28,13 @@ public class UserDetailsServiceCustom implements UserDetailsService {
 		
 		Member member = result.get();
 		// Collection<GrantedAuthority> collection = Collections.singleton(new SimpleGrantedAuthority("test"));
-		Collection<GrantedAuthority> collection = Collections.singleton(new SimpleGrantedAuthority(member.getId()));
-		MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(), "{noop}" + member.getPassword(), collection); 
+		// Collection<GrantedAuthority> collection = Collections.singleton(new SimpleGrantedAuthority("ROLE_" + member.getId().toUpperCase()));
+		// MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(), "{noop}" + member.getPassword(), collection);
+		MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(),
+																	"{noop}" + member.getPassword(),
+																	member.getRoleSet()
+																		  .stream()
+																		  .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).collect(Collectors.toList()));
 		
 		return memberSecurityDTO;
 	}
