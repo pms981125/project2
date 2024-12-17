@@ -40,6 +40,19 @@ public class HRServiceImpl implements HRService {
 		
 		return adminDTO;
 	}
+	
+	@Override
+	public MemberSecurityDTO getUser(String id) {
+		Optional<Member> result = memberRepository.findById(id);
+		Member member = result.orElseThrow();
+		MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(),
+																	member.getPassword(),
+																	member.getRoleSet()
+																		  .stream()
+																		  .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).collect(Collectors.toList()));
+		
+		return memberSecurityDTO;
+	}
 
 	@Override
 	public List<MemberSecurityDTO> getUserList() {
@@ -50,9 +63,6 @@ public class HRServiceImpl implements HRService {
 		for (Member member : memberList) {
 			roleSet = member.getRoleSet();
 			
-			log.info(member);
-			log.info(1);
-			
 			if (!roleSet.contains(MemberRole.ADMIN)) {
 				MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(),
 																			member.getPassword(),
@@ -62,20 +72,6 @@ public class HRServiceImpl implements HRService {
 				memberSecurityDTOList.add(memberSecurityDTO);
 			}
 		}
-		
-		/*for (int i = 0; i < memberList.size(); i++) {
-			roleSet.clear();
-			roleSet = memberList.get(i).getRoleSet();
-			
-			if (roleSet.contains(MemberRole.ADMIN)) {
-				memberList.remove(memberList.g);
-			} else {
-				MemberSecurityDTO memberSecurityDTO = modelMapper.map(member, MemberSecurityDTO.class);
-				
-				memberSecurityDTOList.add(memberSecurityDTO);
-			}
-		}
-		*/
 		
 		return memberSecurityDTOList;
 	}
