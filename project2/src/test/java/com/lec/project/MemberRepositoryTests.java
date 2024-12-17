@@ -13,16 +13,6 @@ public class MemberRepositoryTests {
 	private MemberRepository memberRepository;
 	
 	@Test
-	public void addAdmin() {
-		Member member = Member.builder().id("admin")
-										.password("a")
-										.build();
-		member.addRole(MemberRole.ADMIN);
-		
-		memberRepository.save(member);
-	}
-	
-	@Test
 	public void addUser() {
 		Member member = Member.builder().id("user")
 				.password("u")
