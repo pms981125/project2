@@ -20,7 +20,7 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 @Transactional
 public class ShopServiceImpl implements ShopService{
-	
+	//test
 	private final ModelMapper modelMapper;
 	private final ShopRepository shopRepository;
 
