@@ -21,7 +21,7 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class HRController {
 	private final HRService hrService;
-	
+
 	@GetMapping("/userInfo")
 	public String getInfo(@RequestParam("id") String id, Model model) {
 		MemberSecurityDTO memberSecurityDTO = hrService.getUser(id);
@@ -34,6 +34,15 @@ public class HRController {
 	@GetMapping("/userList")
 	public String getUserList(Model model) {
 		List<MemberSecurityDTO> memberSecurityDTOList = hrService.getUserList();
+		
+		model.addAttribute("memberList",  memberSecurityDTOList);
+		
+		return "admin/userList";
+	}
+	
+	@GetMapping("/allUserList")
+	public String getAllUserList(Model model) {
+		List<MemberSecurityDTO> memberSecurityDTOList = hrService.getAllUserList();
 		
 		model.addAttribute("memberList",  memberSecurityDTOList);
 		

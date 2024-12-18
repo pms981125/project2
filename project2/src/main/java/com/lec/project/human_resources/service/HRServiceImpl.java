@@ -75,6 +75,25 @@ public class HRServiceImpl implements HRService {
 		
 		return memberSecurityDTOList;
 	}
+	
+	@Override
+	public List<MemberSecurityDTO> getAllUserList() {
+		List<Member> memberList = memberRepository.findAll();
+		List<MemberSecurityDTO> memberSecurityDTOList = new ArrayList<>();
+		
+		for (Member member : memberList) {
+			MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(),
+																		member.getPassword(),
+																		member.getRoleSet()
+																			  .stream()
+																			  .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).collect(Collectors.toList()));
+			memberSecurityDTOList.add(memberSecurityDTO);
+		}
+
+		log.info(memberSecurityDTOList);
+		
+		return memberSecurityDTOList;
+	}
 
 	@Override
 	public void update(String id, String password) {

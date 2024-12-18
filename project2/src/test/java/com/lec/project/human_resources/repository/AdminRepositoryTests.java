@@ -53,4 +53,31 @@ public class AdminRepositoryTests {
 		
 		memberRepository.save(member);
 	}
+	
+	// member_role_set 테이블 수정
+	@Test
+	public void addSuperAdmin() {
+		String id = "s.admin";
+		String password = "a";
+		int no = 1;
+		
+		Admin admin = Admin.builder().id(id)
+				.password(password)
+				.no(no)
+				.name("superAdmin")
+				.ssn("777777-7777777")
+				.email("superAdmin@gmail.com")
+				.build();
+		
+		adminRepository.save(admin);
+		
+		Member member = Member.builder().id(id)
+				.password(password)
+				.build();
+		
+		member.addRole(MemberRole.SUPER_ADMIN);
+		member.addRole(MemberRole.ADMIN);
+		
+		memberRepository.save(member);
+	}
 }
