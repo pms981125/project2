@@ -14,7 +14,7 @@ public class MemberRepositoryTests {
 	
 	@Test
 	public void addUser() {
-		Member member = Member.builder().id("user")
+		Member member = Member.builder().id("user1")
 				.password("u")
 				.build();
 		member.addRole(MemberRole.USER);

@@ -5,6 +5,8 @@ import java.util.Set;
 
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -20,8 +22,10 @@ import lombok.NoArgsConstructor;
 public class Member {
 	@Id
 	private String id;
+	
 	private String password;
 	
+	@Enumerated(EnumType.STRING)
 	@ElementCollection(fetch = FetchType.LAZY)
 	@Builder.Default
 	private Set<MemberRole> roleSet = new HashSet<>();

@@ -2,4 +2,38 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
-[[${member}]]
+<!-- [[${member}]] -->
+<div layout:fragment="content">
+
+	<form th:action="@{/hr/update}" method="post" id="form">
+		<!-- [[${member.getId()}]] -->
+		<input type="text" name="id" class="form-control" th:value="${member.id}" readonly>
+		<!-- [[${member.getPassword()}]] -->
+		<input type="text" name="password" class="form-control" th:value="${member.password}" >
+		<button class="btn btn-primary memUpdateBtn">정보 수정</button>
+		<button class="btn btn-danger memRemoveBtn">회원 삭제</button>
+	</form>
+</div>
+
+
+<script layout:fragment="script" th:inline="javascript">
+	const formObj = document.querySelector("#form")
+
+	document.querySelector(".memUpdateBtn").addEventListener("click", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	    
+	    form.action = `/hr/update`
+	    form.method = 'post'
+	    form.submit()
+	}, false)
+	
+	document.querySelector(".memRemoveBtn").addEventListener("click", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	    
+	    form.action = `/hr/remove`
+	    form.method = 'post'
+	    form.submit()
+	}, false)
+</script>

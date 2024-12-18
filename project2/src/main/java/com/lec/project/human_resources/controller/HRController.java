@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -37,5 +38,21 @@ public class HRController {
 		model.addAttribute("memberList",  memberSecurityDTOList);
 		
 		return "admin/userList";
+	}
+	
+	@PostMapping("/update")
+	public String update(@RequestParam(name = "id") String id, MemberSecurityDTO member) {
+		log.info("-=- update" + id);
+		log.info("-=-=-" + member);
+		
+		return "redirect:/hr/userInfo?id=" + id;
+	}
+	
+	@PostMapping("/remove")
+	public String remove(@RequestParam(name = "id") String id) {
+		log.info("-=- remove");
+		
+		
+		return "redirect:/hr/userList";
 	}
 }

@@ -4,7 +4,8 @@
 
 <table>
 	<tr th:each="member:${memberList}">
-		<td th:text="${member}">member</td>
+		<!-- <td th:text="${member}">member</td> -->
+		<td><a th:href="|@{/hr/userInfo(id=${member.getId()})}|">[[${member.getId()}]]</a></td> <!-- 이름으로 변경 필요 -->
 	</tr>
 </table>
 
