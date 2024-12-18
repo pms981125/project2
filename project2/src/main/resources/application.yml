@@ -61,8 +61,8 @@ server:
 
 # file upload/download
 path:
-  upload: d:/pms/98.temp/upload/
-  download: d:/pms/98.temp/download/
+  upload: D:/sungil/98.temp/upload/
+  download: D:/sungil/98.temp/download/
 
 com:
   lec: 
