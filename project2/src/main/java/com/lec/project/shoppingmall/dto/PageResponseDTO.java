@@ -2,6 +2,7 @@ package com.lec.project.shoppingmall.dto;
 
 import java.util.List;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +22,7 @@ public class PageResponseDTO<E> {
 
 	private List<E> dtoList;
 
+	@Builder(builderMethodName = "withAll")
 	public PageResponseDTO(PageRequestDTO pageRequestDTO, List<E> dtoList, int total) {
 		if (total <= 0) {
 			return;

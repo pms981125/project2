@@ -37,4 +37,8 @@ public class Shop {
 	
 	@Column(nullable = false)
 	private int gStock;
+	
+	public void changePrice(int gPrice) {
+		this.gPrice = gPrice;
+	}
 }
