@@ -41,9 +41,10 @@ public class HRController {
 	}
 	
 	@PostMapping("/update")
-	public String update(@RequestParam(name = "id") String id, MemberSecurityDTO member) {
-		log.info("-=- update" + id);
-		log.info("-=-=-" + member);
+	public String update(@RequestParam(name = "id") String id, @RequestParam(name = "password") String password) {
+		log.info("-=- update " + id + " " + password);
+
+		hrService.update(id, password);
 		
 		return "redirect:/hr/userInfo?id=" + id;
 	}
@@ -52,6 +53,7 @@ public class HRController {
 	public String remove(@RequestParam(name = "id") String id) {
 		log.info("-=- remove");
 		
+		hrService.remove(id);
 		
 		return "redirect:/hr/userList";
 	}

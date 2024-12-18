@@ -75,4 +75,18 @@ public class HRServiceImpl implements HRService {
 		
 		return memberSecurityDTOList;
 	}
+
+	@Override
+	public void update(String id, String password) {
+		Optional<Member> result = memberRepository.findById(id);
+		Member member = result.orElseThrow();
+		
+		member.setPassword(password); // password 수정
+		memberRepository.save(member);
+	}
+
+	@Override
+	public void remove(String id) {
+		memberRepository.deleteById(id);
+	}
 }
