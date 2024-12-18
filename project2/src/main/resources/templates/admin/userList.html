@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<table>
+	<tr th:each="member:${memberList}">
+		<!-- <td th:text="${member}">member</td> -->
+		<td><a th:href="|@{/hr/userInfo(id=${member.getId()})}|">[[${member.getId()}]]</a></td> <!-- 이름으로 변경 필요 -->
+	</tr>
+</table>
+
+<!-- <span th:text="${memberList.get(0)}">321</span>
+
+[[${memberList}]] -->
+
+<!-- <div th:text="${#authentication.name}">Username</div> -->

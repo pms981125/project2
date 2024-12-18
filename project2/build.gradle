@@ -40,6 +40,8 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	// 타임리프 활용
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.3.0'
 	
 	// DTO와 Entity간의 변환처리를 간단히 처리하기 위한 라이브러리
 	implementation 'org.modelmapper:modelmapper:3.2.1'

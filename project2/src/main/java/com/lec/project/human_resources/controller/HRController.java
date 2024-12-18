@@ -1,9 +1,15 @@
 package com.lec.project.human_resources.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import java.util.List;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.lec.project.MemberSecurityDTO;
 import com.lec.project.human_resources.service.HRService;
 
 import lombok.RequiredArgsConstructor;
@@ -15,19 +21,38 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class HRController {
 	private final HRService hrService;
-	/*	
-		@GetMapping("/info")
-		public String getInfo(@RequestParam("id") String id) {
-			EmployeeDTO employeeDTO = hrService.getInfoEmployee(id);
-			log.info(employeeDTO);
-			
-			return "/admin/admin";
-		}*/
 	
-	// @PreAuthorize("hasRole('ADMIN')")
-	@GetMapping("/info")
-	public String getInfo() {
+	@GetMapping("/userInfo")
+	public String getInfo(@RequestParam("id") String id, Model model) {
+		MemberSecurityDTO memberSecurityDTO = hrService.getUser(id);
 		
-		return "/admin/admin";
+		model.addAttribute("member",  memberSecurityDTO);
+		
+		return "admin/userInfo";
+	}
+	
+	@GetMapping("/userList")
+	public String getUserList(Model model) {
+		List<MemberSecurityDTO> memberSecurityDTOList = hrService.getUserList();
+		
+		model.addAttribute("memberList",  memberSecurityDTOList);
+		
+		return "admin/userList";
+	}
+	
+	@PostMapping("/update")
+	public String update(@RequestParam(name = "id") String id, MemberSecurityDTO member) {
+		log.info("-=- update" + id);
+		log.info("-=-=-" + member);
+		
+		return "redirect:/hr/userInfo?id=" + id;
+	}
+	
+	@PostMapping("/remove")
+	public String remove(@RequestParam(name = "id") String id) {
+		log.info("-=- remove");
+		
+		
+		return "redirect:/hr/userList";
 	}
 }
