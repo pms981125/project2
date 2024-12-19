@@ -18,7 +18,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 		log.info(authentication.getAuthorities() + "-=-=-=-=-=-=-=-=-=");	
 	
 		if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER_ADMIN"))) {
-			response.sendRedirect("/hr/allUserList");
+			response.sendRedirect("/sudo/allUserList");
 		} else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
 			// MemberSecurityDTO memberSecurityDTO = (MemberSecurityDTO) authentication.getPrincipal();
 			

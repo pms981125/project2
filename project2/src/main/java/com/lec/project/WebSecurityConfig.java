@@ -23,8 +23,9 @@ public class WebSecurityConfig {
 		log.info("filter1 =-=-=-==-=");
 
         http.csrf(csrf -> csrf.disable())
-        	.authorizeHttpRequests(auth -> auth.requestMatchers("/admin/**").hasRole("ADMIN")
+        	.authorizeHttpRequests(auth -> auth.requestMatchers("/admin/**").hasRole("ADMIN") // 효과 X
         									   .requestMatchers("/hr/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+        									   .requestMatchers("/sudo/**").hasRole("SUPER_ADMIN")
         									   .requestMatchers("/user/**").hasRole("USER") // 없애도 될듯?
         									   .anyRequest().authenticated())
         	.formLogin(form -> form//.loginPage("/login")

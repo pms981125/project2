@@ -35,4 +35,8 @@ public class Member {
 	public void addRole(MemberRole memberRole) {
 		this.roleSet.add(memberRole);
 	}
+	
+	public void removeRole(MemberRole memberRole) {
+		this.roleSet.remove(memberRole);
+	}
 }

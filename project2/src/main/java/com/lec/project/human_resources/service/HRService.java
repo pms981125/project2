@@ -12,4 +12,5 @@ public interface HRService {
 	List<MemberSecurityDTO> getAllUserList();
 	void update(String id, String password);
 	void remove(String id);
+	void addAdmin(String id, String password, String name, String ssnFront, String ssnEnd, String email);
 }

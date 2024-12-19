@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<!-- [[${member}]] -->
+<div layout:fragment="content">
+	<form th:action="@{/sudo/addAdmin}" method="post" id="form">
+		아이디 <input type="text" name="id" class="form-control">	<br />
+		비밀번호 <input type="text" name="password" class="form-control">	<br />
+		이름 <input type="text" name="name" class="form-control">	<br />
+		주민등록번호 <input type="text" name="ssnFront" class="form-control">
+		- <input type="text" name="ssnEnd" class="form-control">	<br />
+		이메일 <input type="text" name="email" class="form-control">	<br />
+		<button class="btn btn-primary addAdminBtn">관리자 추가</button>
+	</form>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+	const form = document.querySelector("#form")
+
+	document.querySelector(".addAdminBtn").addEventListener("click", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	    
+	    form.action = `/sudo/addAdmin`
+	    form.method = 'post'
+	    form.submit()
+	}, false)
+</script>

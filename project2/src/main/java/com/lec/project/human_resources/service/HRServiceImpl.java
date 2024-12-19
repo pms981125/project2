@@ -108,4 +108,37 @@ public class HRServiceImpl implements HRService {
 	public void remove(String id) {
 		memberRepository.deleteById(id);
 	}
+
+	@Override
+	public void addAdmin(String id, String password, String name, String ssnFront, String ssnEnd, String email) {
+		String[] nums = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
+		String numberString = "";
+		
+		numberString += nums[(int) (Math.random() * 9)];
+		
+		for (int i = 1; i < 9; i++) {
+			numberString += nums[(int) (Math.random() * 10)];
+		}
+
+		int no = Integer.parseInt(numberString);
+		
+		String ssn = ssnFront + "-" + ssnEnd; 
+
+		Admin admin = Admin.builder().id(id)
+									 .password(password)
+									 .name(name)
+									 .no(no)
+									 .ssn(ssn)
+									 .email(email)
+									 .build();
+		
+		adminRepository.save(admin);
+		
+		Member member = Member.builder().id(id)
+										.password(password)
+										.build();
+		
+		member.addRole(MemberRole.ADMIN);
+		memberRepository.save(member);
+	}
 }

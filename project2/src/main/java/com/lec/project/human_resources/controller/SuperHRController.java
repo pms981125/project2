@@ -17,10 +17,19 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Controller
-@RequestMapping("/hr")
+@RequestMapping("/sudo")
 @RequiredArgsConstructor
-public class HRController {
+public class SuperHRController {
 	private final HRService hrService;
+	
+	@GetMapping("/allUserList") // 모든 유저 목록
+	public String getAllUserList(Model model) {
+		List<MemberSecurityDTO> memberSecurityDTOList = hrService.getAllUserList();
+		
+		model.addAttribute("memberList",  memberSecurityDTOList);
+		
+		return "admin/allUserList";
+	}
 
 	@GetMapping("/userInfo") // 유저 상세정보
 	public String getInfo(@RequestParam("id") String id, Model model) {
@@ -28,16 +37,7 @@ public class HRController {
 		
 		model.addAttribute("member",  memberSecurityDTO);
 		
-		return "admin/userInfo";
-	}
-	
-	@GetMapping("/userList") // 일반 유저 목록
-	public String getUserList(Model model) {
-		List<MemberSecurityDTO> memberSecurityDTOList = hrService.getUserList();
-		
-		model.addAttribute("memberList",  memberSecurityDTOList);
-		
-		return "admin/userList";
+		return "admin/allUserInfo";
 	}
 	
 	@PostMapping("/update") // 유저 정보 수정 - 현재는 비밀번호만 가능
@@ -46,7 +46,7 @@ public class HRController {
 
 		hrService.update(id, password);
 		
-		return "redirect:/hr/userInfo?id=" + id;
+		return "redirect:/sudo/userInfo?id=" + id;
 	}
 	
 	@PostMapping("/remove") // 유저 삭제
@@ -55,6 +55,19 @@ public class HRController {
 		
 		hrService.remove(id);
 		
-		return "redirect:/hr/userList";
+		return "redirect:/sudo/allUserList";
+	}
+	
+	@GetMapping("/addAdmin") // 관리자 추가 페이지 이동
+	public String addAdmin() {
+		return "admin/addAdminForm";
+	}
+	
+	@PostMapping("/addAdmin") // 관리자 추가
+	public String addAdmin(@RequestParam("id") String id, @RequestParam("password") String password, @RequestParam("name") String name,
+						   @RequestParam("ssnFront") String ssnFront, @RequestParam("ssnEnd") String ssnEnd, @RequestParam("email") String email) {
+		hrService.addAdmin(id, password, name, ssnFront, ssnEnd, email);
+		
+		return "redirect:/sudo/allUserList";
 	}
 }
