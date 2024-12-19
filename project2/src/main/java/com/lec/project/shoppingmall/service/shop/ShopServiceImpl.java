@@ -1,4 +1,4 @@
-package com.lec.project.shoppingmall.service;
+package com.lec.project.shoppingmall.service.shop;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,10 +9,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.lec.project.shoppingmall.domain.Shop;
+import com.lec.project.shoppingmall.domain.shop.Shop;
 import com.lec.project.shoppingmall.dto.PageRequestDTO;
 import com.lec.project.shoppingmall.dto.PageResponseDTO;
-import com.lec.project.shoppingmall.dto.ShopDTO;
+import com.lec.project.shoppingmall.dto.shop.ShopDTO;
 import com.lec.project.shoppingmall.repository.ShopRepository;
 
 import jakarta.transaction.Transactional;
@@ -32,7 +32,7 @@ public class ShopServiceImpl implements ShopService{
 	public PageResponseDTO<ShopDTO> list(PageRequestDTO pageRequestDTO) {
 		
 		String keyword = pageRequestDTO.getKeyword();
-		Pageable pageable = pageRequestDTO.getPageable("sno");
+		Pageable pageable = pageRequestDTO.getPageable("bno");
 		
 		Page<Shop> result = shopRepository.searchAllImpl(keyword, pageable);
 		List<ShopDTO> dtoList = result.getContent()
@@ -50,30 +50,30 @@ public class ShopServiceImpl implements ShopService{
 	@Override
 	public Long register(ShopDTO shopDTO) {
 		Shop shop = modelMapper.map(shopDTO, Shop.class);
-		Long sno = shopRepository.save(shop).getSno();
-		return sno;
+		Long bno = shopRepository.save(shop).getBno();
+		return bno;
 	}
+	
 
 	@Override
-	public ShopDTO readOne(Long sno) {
-		Optional<Shop> result = shopRepository.findById(sno);
+	public ShopDTO readOne(Long bno) {
+		Optional<Shop> result = shopRepository.findById(bno);
 		Shop shop = result.orElseThrow();
 		ShopDTO shopDTO = modelMapper.map(shop, ShopDTO.class);
 		return shopDTO;
 	}
 
 	@Override
-	public void modify(ShopDTO shopDTO) {
+	public void modify(ShopDTO shopDTO) { // 상품코드만 수정하게
 
-		Optional<Shop> result = shopRepository.findById(shopDTO.getSno());
+		Optional<Shop> result = shopRepository.findById(shopDTO.getBno());
 		Shop shop = result.orElseThrow();
-		shop.changePrice(shopDTO.getGPrice());
-		
+		shop.changeCode(shopDTO.getBoard_code());
 	}
 
 	@Override
-	public void remove(Long sno) {
-		shopRepository.deleteById(sno);
+	public void remove(Long bno) {
+		shopRepository.deleteById(bno);
 		
 	}
 

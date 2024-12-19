@@ -1,14 +1,14 @@
-package com.lec.project.shoppingmall.service;
+package com.lec.project.shoppingmall.service.shop;
 
 import com.lec.project.shoppingmall.dto.PageRequestDTO;
 import com.lec.project.shoppingmall.dto.PageResponseDTO;
-import com.lec.project.shoppingmall.dto.ShopDTO;
+import com.lec.project.shoppingmall.dto.shop.ShopDTO;
 
 public interface ShopService {
 
 	Long register(ShopDTO shopDTO);
-	ShopDTO readOne(Long sno);
+	ShopDTO readOne(Long bno);
 	void modify(ShopDTO shopDTO);
-	void remove(Long sno);
+	void remove(Long bno);
 	PageResponseDTO<ShopDTO> list(PageRequestDTO pageRequestDTO);
 }

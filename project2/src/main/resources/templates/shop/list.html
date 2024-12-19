@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<!-- Basic -->
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- Site Metas -->
+<link rel="icon" href="images/fevicon.png" type="image/gif" />
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+
+<title>Edgecut</title>
+
+<!-- bootstrap core css -->
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+
+<!-- fonts style -->
+<link
+	href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap"
+	rel="stylesheet" />
+
+<!-- font awesome style -->
+<link href="/css/font-awesome.min.css" rel="stylesheet" />
+
+<!-- Custom styles for this template -->
+<link href="/css/style.css" rel="stylesheet" />
+
+<!-- responsive style -->
+<link href="/css/responsive.css" rel="stylesheet" />
+
+</head>
+
+<body class="sub_page">
+	<div class="hero_area">
+		<!-- header section strats -->
+		<header class="header_section long_section px-0">
+			<nav class="navbar navbar-expand-lg custom_nav-container ">
+				<a class="navbar-brand" href="index.html"> <span> Edgecut
+				</span>
+				</a> </a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse"
+					data-target="#navbarSupportedContent"
+					aria-controls="navbarSupportedContent" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class=""> </span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<div
+						class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+						<ul class="navbar-nav  ">
+							<li class="nav-item "><a class="nav-link" href="index.html">Home<span
+									class="sr-only">(current)</span></a></li>
+							<li class="nav-item"><a class="nav-link" href="about.html">About</a>
+							</li>
+							<li class="nav-item active"><a class="nav-link"
+								href="/shop/list">Shopping Mall</a></li>
+							<li class="nav-item"><a class="nav-link" href="hr_main.html">Human-Resources</a>
+							</li>
+							<li class="nav-item"><a class="nav-link" href="blog.html">Blog</a>
+							</li>
+							<li class="nav-item"><a class="nav-link" href="contact.html">Contact
+									Us</a></li>
+						</ul>
+					</div>
+					<div class="quote_btn-container">
+						<a href=""> <span> Login </span> <i class="fa fa-user"
+							aria-hidden="true"></i>
+						</a> <a href="/shop/register" class="btn btn-outline-light ml-2">
+							<i class="fa fa-plus" aria-hidden="true"></i> <span>상품등록</span>
+						</a>
+					</div>
+				</div>
+			</nav>
+		</header>
+		<!-- end header section -->
+	</div>
+
+	<!-- shop_content section -->
+
+	<section class="shop_section layout_padding px-5">
+		<div class="container-fluid px-5">
+			<div class="heading_container">
+				<h2>2rd Project</h2>
+				<p>쇼핑몰 메인 페이지입니다.</p>
+
+				<!-- 검색 폼 추가 -->
+				<div class="search_container mt-5 mb-5 pr-5">
+					<div class="input-group">
+						<select class="form-control" name="type" style="width: 150px;">
+							<option value="t">제품명</option>
+							<option value="c">카테고리</option>
+							<option value="w">판매자</option>
+						</select> <input type="text" class="form-control" name="keyword"
+							style="width: 600px" placeholder="검색어를 입력하세요">
+						<div class="input-group-append">
+							<button class="btn btn-outline-secondary" type="submit">
+								<i class="fa fa-search"></i>
+							</button>
+						</div>
+					</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			        <div class="flex-container">
+            <!-- 동적으로 상품 추가/제거될 영역 -->
+            <!-- 상품이 없을 경우 빈 박스 표시 -->
+            <div class="box empty-box">
+                <div class="img-box">
+                    <p class="text-center text-muted">상품 준비 중입니다</p>
+                </div>
+                <div class="detail-box text-center">
+                    <h5>-</h5>
+                    <div class="price_box">
+                        <h6 class="price_heading">
+                            <span>$</span> 0.00
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="box empty-box">
+                <div class="img-box">
+                    <p class="text-center text-muted">상품 준비 중입니다</p>
+                </div>
+                <div class="detail-box text-center">
+                    <h5>-</h5>
+                    <div class="price_box">
+                        <h6 class="price_heading">
+                            <span>$</span> 0.00
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="box empty-box">
+                <div class="img-box">
+                    <p class="text-center text-muted">상품 준비 중입니다</p>
+                </div>
+                <div class="detail-box text-center">
+                    <h5>-</h5>
+                    <div class="price_box">
+                        <h6 class="price_heading">
+                            <span>$</span> 0.00
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="box empty-box">
+                <div class="img-box">
+                    <p class="text-center text-muted">상품 준비 중입니다</p>
+                </div>
+                <div class="detail-box text-center">
+                    <h5>-</h5>
+                    <div class="price_box">
+                        <h6 class="price_heading">
+                            <span>$</span> 0.00
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="box empty-box">
+                <div class="img-box">
+                    <p class="text-center text-muted">상품 준비 중입니다</p>
+                </div>
+                <div class="detail-box text-center">
+                    <h5>-</h5>
+                    <div class="price_box">
+                        <h6 class="price_heading">
+                            <span>$</span> 0.00
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="box empty-box">
+                <div class="img-box">
+                    <p class="text-center text-muted">상품 준비 중입니다</p>
+                </div>
+                <div class="detail-box text-center">
+                    <h5>-</h5>
+                    <div class="price_box">
+                        <h6 class="price_heading">
+                            <span>$</span> 0.00
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="box empty-box">
+                <div class="img-box">
+                    <p class="text-center text-muted">상품 준비 중입니다</p>
+                </div>
+                <div class="detail-box text-center">
+                    <h5>-</h5>
+                    <div class="price_box">
+                        <h6 class="price_heading">
+                            <span>$</span> 0.00
+                        </h6>
+                    </div>
+                </div>
+            </div>
+            <div class="box empty-box">
+                <div class="img-box">
+                    <p class="text-center text-muted">상품 준비 중입니다</p>
+                </div>
+                <div class="detail-box text-center">
+                    <h5>-</h5>
+                    <div class="price_box">
+                        <h6 class="price_heading">
+                            <span>$</span> 0.00
+                        </h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+	<!-- end shop_content section -->
+
+	<!-- end info_section -->
+
+
+	<!-- footer section -->
+	<footer class="footer_section">
+		<div class="container">
+			<p>
+				&copy; <span id="displayYear"></span> All Rights Reserved By <a
+					href="https://html.design/">Free Html Templates</a>
+			</p>
+		</div>
+	</footer>
+	<!-- footer section -->
+
+
+	<!-- jQery -->
+	<script src="js/jquery-3.4.1.min.js"></script>
+	<!-- bootstrap js -->
+	<script src="js/bootstrap.js"></script>
+	<!-- custom js -->
+	<script src="js/custom.js"></script>
+	<!-- Google Map -->
+	<script
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap"></script>
+	<!-- End Google Map -->
+
+</body>
+
+</html>

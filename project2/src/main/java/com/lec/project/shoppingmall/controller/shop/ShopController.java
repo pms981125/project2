@@ -1,4 +1,4 @@
-package com.lec.project.shoppingmall.controller;
+package com.lec.project.shoppingmall.controller.shop;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,8 +11,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.lec.project.shoppingmall.dto.PageRequestDTO;
 import com.lec.project.shoppingmall.dto.PageResponseDTO;
-import com.lec.project.shoppingmall.dto.ShopDTO;
-import com.lec.project.shoppingmall.service.ShopService;
+import com.lec.project.shoppingmall.dto.shop.ShopDTO;
+import com.lec.project.shoppingmall.service.shop.ShopService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,10 +37,10 @@ public class ShopController {
 	}
 	
 	@GetMapping({"/read", "/modify"})
-	public void read(@RequestParam("sno") Long sno
+	public void read(@RequestParam("bno") Long bno
 			, PageRequestDTO pageRequestDTO, Model model) {
 			log.info("read or modify..........");
-			ShopDTO shopDTO = shopService.readOne(sno);
+			ShopDTO shopDTO = shopService.readOne(bno);
 			model.addAttribute("dto", shopDTO);
 			}
 	
@@ -62,8 +62,8 @@ public class ShopController {
 		}
 		log.info("register.........." + shopDTO);
 		
-		Long sno = shopService.register(shopDTO);
-		redirectAttributes.addFlashAttribute("result", sno);
+		Long bno = shopService.register(shopDTO);
+		redirectAttributes.addFlashAttribute("result", bno);
 		
 		return "redirect:/shop/list";
 	}
@@ -80,24 +80,24 @@ public class ShopController {
 			
 			String link = pageRequestDTO.getLink();
 			redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
-			redirectAttributes.addFlashAttribute("sno", shopDTO.getSno());
+			redirectAttributes.addFlashAttribute("bno", shopDTO.getBno());
 			
 			return "redirect:/shop/modify?" + link;
 		}
 		
 		shopService.modify(shopDTO);
 		redirectAttributes.addFlashAttribute("result", "게시글수정성공..........");
-		redirectAttributes.addFlashAttribute("sno", shopDTO.getSno());
+		redirectAttributes.addFlashAttribute("bno", shopDTO.getBno());
 		
 		return "redirect:/shop/read";
 	}
 	
 	
 	@PostMapping("pathove")
-	public String remove(@RequestParam("sno") Long sno, RedirectAttributes redirectAttributes) {
+	public String remove(@RequestParam("bno") Long bno, RedirectAttributes redirectAttributes) {
 		log.info("remove.Post..........");
 		
-		shopService.remove(sno);
+		shopService.remove(bno);
 		redirectAttributes.addFlashAttribute("result", "게시글삭제성공..........");
 		return "redirect:/shop/list";
 	}

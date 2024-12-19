@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import com.lec.project.shoppingmall.domain.QShop;
-import com.lec.project.shoppingmall.domain.Shop;
+import com.lec.project.shoppingmall.domain.shop.Shop;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
 
