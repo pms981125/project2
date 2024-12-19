@@ -48,7 +48,7 @@ public class HRServiceImpl implements HRService {
 		Optional<Member> result = memberRepository.findById(id);
 		Member member = result.orElseThrow();
 		
-		// 패스워드 복호화?
+		// 패스워드 복호화? 
 		
 		MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(),
 																	member.getPassword(),
