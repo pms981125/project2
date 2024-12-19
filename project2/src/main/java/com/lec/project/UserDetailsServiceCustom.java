@@ -26,12 +26,12 @@ public class UserDetailsServiceCustom implements UserDetailsService {
 			throw new UsernameNotFoundException("해당되는 ID의 유저가 없습니다.");
 		}
 		
-		Member member = result.get();
+		Member member = result.orElseThrow();
 		// Collection<GrantedAuthority> collection = Collections.singleton(new SimpleGrantedAuthority("test"));
 		// Collection<GrantedAuthority> collection = Collections.singleton(new SimpleGrantedAuthority("ROLE_" + member.getId().toUpperCase()));
 		// MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(), "{noop}" + member.getPassword(), collection);
 		MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(),
-																	"{noop}" + member.getPassword(),
+																	member.getPassword(),
 																	member.getRoleSet()
 																		  .stream()
 																		  .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).collect(Collectors.toList()));

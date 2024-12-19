@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.lec.project.Member;
@@ -31,6 +32,7 @@ public class HRServiceImpl implements HRService {
 	private final MemberRepository memberRepository;
 	private final AdminRepository adminRepository;
 	private final ModelMapper modelMapper;
+	private final PasswordEncoder passwordEncoder;
 	
 	@Override
 	public AdminDTO getAdmin(String id) {
@@ -121,8 +123,9 @@ public class HRServiceImpl implements HRService {
 		}
 
 		int no = Integer.parseInt(numberString);
-		
 		String ssn = ssnFront + "-" + ssnEnd; 
+		
+		password = passwordEncoder.encode(password);
 
 		Admin admin = Admin.builder().id(id)
 									 .password(password)
