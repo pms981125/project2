@@ -34,24 +34,29 @@ public class HRServiceImpl implements HRService {
 	private final ModelMapper modelMapper;
 	private final PasswordEncoder passwordEncoder;
 	
-	@Override
-	public AdminDTO getAdmin(String id) {
-		Optional<Admin> result = adminRepository.findById(id);
-		Admin admin = result.orElseThrow();
-		AdminDTO adminDTO = modelMapper.map(admin, AdminDTO.class);
-		
-		return adminDTO;
-	}
+	/*	@Override
+		public AdminDTO getAdmin(String id) {
+			Optional<Admin> result = adminRepository.findById(id);
+			Admin admin = result.orElseThrow();
+			AdminDTO adminDTO = modelMapper.map(admin, AdminDTO.class);
+			
+			return adminDTO;
+		}*/
 	
 	@Override
 	public MemberSecurityDTO getUser(String id) {
 		Optional<Member> result = memberRepository.findById(id);
 		Member member = result.orElseThrow();
+		
+		// 패스워드 복호화?
+		
 		MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(),
 																	member.getPassword(),
 																	member.getRoleSet()
 																		  .stream()
 																		  .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).collect(Collectors.toList()));
+		
+		log.info(memberSecurityDTO);
 		
 		return memberSecurityDTO;
 	}

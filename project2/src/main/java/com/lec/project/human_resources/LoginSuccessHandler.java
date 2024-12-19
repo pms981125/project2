@@ -25,7 +25,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 			// response.sendRedirect("/hr/info?id=" + memberSecurityDTO.getId());
 			response.sendRedirect("/hr/userList"); // templates 폴더에 있는 html 파일에 접근 시, controller 이용
 		} else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER"))) {
-			response.sendRedirect("/index.html"); // static 폴더에 있는 html 파일로 접근 시
+			// response.sendRedirect("/index.html"); // static 폴더에 있는 html 파일로 접근 시
+			response.sendRedirect("/user/home");
 		} else {
 			response.sendRedirect("/contact");
 		}
