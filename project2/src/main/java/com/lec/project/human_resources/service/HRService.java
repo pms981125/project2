@@ -13,4 +13,5 @@ public interface HRService {
 	void update(String id, String password);
 	void remove(String id);
 	void addAdmin(String id, String password, String name, String ssnFront, String ssnEnd, String email);
+	void delagateAuthority(String superAdminId, String adminId);
 }

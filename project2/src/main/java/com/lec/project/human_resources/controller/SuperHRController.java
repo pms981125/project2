@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.support.SessionStatus;
 
 import com.lec.project.MemberSecurityDTO;
 import com.lec.project.human_resources.service.HRService;
@@ -69,5 +70,19 @@ public class SuperHRController {
 		hrService.addAdmin(id, password, name, ssnFront, ssnEnd, email);
 		
 		return "redirect:/sudo/allUserList";
+	}
+	
+	@PostMapping("/delegate") // SuperAdmin 위임
+	public String delegateAuthority(@RequestParam("superAdminId") String superAdminId, @RequestParam("adminId") String adminId){
+		// log.info(superAdminId + "234124-013" + adminId);
+		hrService.delagateAuthority(superAdminId, adminId); 
+		
+		// return "redirect:/sudo/userInfo?id=" + adminId;
+		return "redirect:/sudo/logout";
+	}
+	
+	@GetMapping("/logout")
+	public String logout() {
+		return "redirect:/logout";
 	}
 }

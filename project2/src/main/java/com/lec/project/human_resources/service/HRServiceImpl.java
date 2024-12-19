@@ -141,4 +141,19 @@ public class HRServiceImpl implements HRService {
 		member.addRole(MemberRole.ADMIN);
 		memberRepository.save(member);
 	}
+
+	@Override
+	public void delagateAuthority(String superAdminId, String adminId) {
+		Optional<Member> result = memberRepository.findById(superAdminId);
+		Member member = result.orElseThrow();
+		
+		member.removeRole(MemberRole.SUPER_ADMIN);
+		memberRepository.save(member);
+		
+		result = memberRepository.findById(adminId);
+		member = result.orElseThrow();
+		
+		member.addRole(MemberRole.SUPER_ADMIN);
+		memberRepository.save(member);
+	}
 }

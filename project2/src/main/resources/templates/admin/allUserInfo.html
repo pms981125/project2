@@ -13,6 +13,9 @@
 		<button class="btn btn-primary memUpdateBtn">정보 수정</button>
 		<button class="btn btn-danger memRemoveBtn">회원 삭제</button>
 		<!-- super admin 권한 승계 버튼 추가 -->
+		<th:block th:if="${member.isAdmin()}"> <br />
+			<button class="btn btn-warning delegateAuthorityBtn">권한 위임</button>
+		<th:block>
 	</form>
 </div>
 
@@ -35,5 +38,30 @@
 	    form.action = `/sudo/remove`
 	    form.method = 'post'
 	    form.submit()
+	}, false)
+	
+	document.querySelector(".delegateAuthorityBtn").addEventListener("click", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	    
+	    const auth = /*[[${#authentication.name}]]*/""
+	    const mem = /*[[${member.id}]]*/""
+	    
+	    let input1 = document.createElement('input')
+	    let input2 = document.createElement('input')
+
+	    input1.type = 'hidden'
+	    input1.name = 'superAdminId'
+	    input1.value = auth
+	    input2.type = 'hidden'
+	    input2.name = 'adminId'
+	    input2.value = mem
+	    
+	    form.appendChild(input1)
+	    form.appendChild(input2)
+	    
+		form.action = `/sudo/delegate`
+		form.method = 'post'
+		form.submit()
 	}, false)
 </script>
