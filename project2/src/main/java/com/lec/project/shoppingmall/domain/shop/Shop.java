@@ -1,4 +1,4 @@
-package com.lec.project.shoppingmall.domain;
+package com.lec.project.shoppingmall.domain.shop;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,24 +21,30 @@ public class Shop {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long sno;
+	private Long bno;
+	
+	@Column
+	private String board_code;
 	
 	@Column(nullable = false)
-	private String gCode;
+	private String board_title;
 	
 	@Column(nullable = false)
-	private String gName;
+	private int board_price;
+	
+	@Column
+	private String board_category;
 	
 	@Column(nullable = false)
-	private int gPrice;
+	private int board_stock;
 	
-	@Column(nullable = false)
-	private String gCategory;
+	@Column
+	private String board_content1;
 	
-	@Column(nullable = false)
-	private int gStock;
+	@Column
+	private String board_content2;
 	
-	public void changePrice(int gPrice) {
-		this.gPrice = gPrice;
+	public void changeCode(String board_code) {
+		this.board_code = board_code;
 	}
 }
