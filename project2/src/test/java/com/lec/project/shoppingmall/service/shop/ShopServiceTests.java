@@ -31,7 +31,7 @@ public class ShopServiceTests {
 		log.info("......" + shopService.getClass().getName());
 		
 		ShopDTO shopDTO = ShopDTO.builder()
-								.board_code("board_code Test.....")
+								.boardCode("board_code Test.....")
 								.board_title("product_name Test.....")
 								.build();
 		
@@ -47,8 +47,8 @@ public class ShopServiceTests {
 		IntStream.rangeClosed(1, 100).forEach(i -> {
 			
 			Shop shop = Shop.builder()
-							.board_code(String.format("board_code_%d", i))
-							.board_title(String.format("product_name_%d", i))
+							.boardCode(String.format("boardCode_%3d", i))
+							.board_title(String.format("product_name_%3d", i))
 							.build();
 			
 			Shop result = shopRepository.save(shop);

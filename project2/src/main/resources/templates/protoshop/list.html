@@ -5,35 +5,58 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<h1>Proto Shop/list</h1>
-	
-	<a th:href="@{/protoshop/register}" type = button>Register</a>
+<h1>Proto Shop/list</h1>
 
-	<table border="1">
-		<thead>
-			<tr>
-				<th>번호(bno)</th>
-				<th>제목(board_title)</th>
-				<th>코드(board_code)</th>
-				<th>가격(product_price)</th>
-				<th>카테고리(product_category)</th>
-				<th>재고(product_stock)</th>
-				<th>내용1(board_content1)</th>
-				<th>내용2(board_content2)</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>1</td>
-				<td>제목</td>
-				<td>001</td>
-				<td>10000</td>
-				<td>의류</td>
-				<td>100</td>
-				<td>내용1</td>
-				<td>내용2</td>
-			</tr>
-		</tbody>
-	</table>
+<a th:href="@{/protoshop/register}" type="button">Register</a>
+
+<table border="1">
+   <thead>
+       <tr>
+           <th>번호</th>
+           <th>제목</th>
+           <th>상품코드</th>
+           <th>가격</th>
+           <th>카테고리</th>
+           <th>재고</th>
+           <th>내용1</th>
+           <th>내용2</th>
+       </tr>
+   </thead>
+   <tbody>
+       <tr th:each="shop : ${responseDTO.dtoList}">
+           <td>[[${shop.bno}]]</td>
+           <td>
+               <a th:href="@{/protoshop/read(bno=${shop.bno})}">[[${shop.board_title}]]</a>
+           </td>
+           <td>[[${shop.boardCode}]]</td>
+           <td>[[${shop.product_price}]]</td>
+           <td>[[${shop.product_category}]]</td>
+           <td>[[${shop.product_stock}]]</td>
+           <td>[[${shop.board_content1}]]</td>
+           <td>[[${shop.board_content2}]]</td>
+       </tr>
+   </tbody>
+</table>
+
+<!-- 페이징 추가 -->
+<div th:if="${!responseDTO.dtoList.isEmpty()}">
+   <ul>
+       <li th:if="${responseDTO.prev}">
+           <a th:href="@{/protoshop/list(page=${responseDTO.start - 1})}">이전</a>
+       </li>
+       
+       <li th:each="num : ${#numbers.sequence(responseDTO.start, responseDTO.end)}">
+           <a th:href="@{/protoshop/list(page=${num})}" 
+              th:text="${num}"
+              th:class="${responseDTO.page == num} ? 'active' : ''">
+           </a>
+       </li>
+       
+       <li th:if="${responseDTO.next}">
+           <a th:href="@{/protoshop/list(page=${responseDTO.end + 1})}">다음</a>
+       </li>
+   </ul>
+</div>
+
 </body>
 </html>

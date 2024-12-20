@@ -1,5 +1,7 @@
 package com.lec.project.shoppingmall.service.product;
 
+import java.util.stream.IntStream;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,28 @@ public class ProductServiceTests {
 		String product_name = productService.register(productDTO);
 		
 		log.info("상품이름 = " + product_name);
+	}
+	
+	@Test
+	@DisplayName("상품 여러건 등록하기")
+	public void testInsertMany() {
+		
+		IntStream.rangeClosed(1, 100).forEach(i -> {
+			
+			ProductDTO productDTO = ProductDTO.builder()
+					.product_code(String.format("product_code_%3d", i))
+					.product_category(String.format("product_category_%3d", i))
+					.product_detail1(String.format("product_detail1_%3d", i))
+					.product_detail2(String.format("product_detail2_%3d", i))
+					.product_name(String.format("product_name_%3d", i))
+					.product_price(i*100)
+					.product_stock(i)
+					.build();
+			
+			String product_name = productService.register(productDTO);
+			
+			log.info("상품이름 = " + product_name);
+		});
 	}
 	
 }

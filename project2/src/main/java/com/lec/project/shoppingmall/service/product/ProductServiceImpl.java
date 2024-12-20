@@ -27,4 +27,8 @@ public class ProductServiceImpl implements ProductService{
 		return product_name;
 	}
 
+	public Product findById(String productCode) {
+	    return productRepository.findById(productCode)
+	            .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
+	}
 }
