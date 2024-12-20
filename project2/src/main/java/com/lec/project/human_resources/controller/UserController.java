@@ -48,6 +48,11 @@ public class UserController {
 		return "redirect:/user/logout";
 	}
 	
+	@GetMapping("/goRegisterForm")
+	public String goRegisterForm() {
+		return "user/signUp";
+	}
+	
 	@GetMapping("/logout")
 	public String logout() {
 		return "redirect:/logout";

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+`<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
@@ -12,7 +12,6 @@
 		<input type="text" name="password" class="form-control" th:value="${member.password}" >
 		<button class="btn btn-primary memUpdateBtn">정보 수정</button>
 		<button class="btn btn-danger memRemoveBtn">회원 삭제</button>
-		<!-- super admin 권한 승계 버튼 추가 -->
 		<th:block th:if="${member.isAdmin()}"> <br />
 			<button class="btn btn-warning delegateAuthorityBtn">권한 위임</button>
 		<th:block>

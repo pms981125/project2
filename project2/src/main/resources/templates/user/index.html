@@ -709,6 +709,15 @@
 <script layout:fragment="script" th:inline="javascript">
    	const auth = /*[[${#authentication.name}]]*/""
    	
+	function register() {
+   		const form = document.createElement('form')
+   	 
+   		form.action = `/user/goRegisterForm`
+		form.method = 'get'
+		document.body.appendChild(form)
+		form.submit()
+   	}
+	
 	document.querySelector(".userInfoBtn").addEventListener("click", function(e) {
 	    e.preventDefault()
 	    e.stopPropagation()
