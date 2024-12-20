@@ -3,6 +3,7 @@ package com.lec.project.human_resources.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -26,10 +27,29 @@ public class UserController {
 	
 	@GetMapping("/userInfo")
 	public String getInfo(Model model) {
-		/*		MemberSecurityDTO memberSecurityDTO = hrService.getUser(id);
-				
-				model.addAttribute("member",  memberSecurityDTO);*/
-		
 		return "user/userInfo";
+	}
+	
+	@PostMapping("/update")
+	public String update(@RequestParam(name = "id") String id, @RequestParam(name = "password") String password) {
+		log.info("-=- userUpdate " + id + " " + password);
+
+		// hrService.update(id, password);
+		
+		return "redirect:/user/userInfo?id=" + id;
+	}
+	
+	@PostMapping("/withdrawal")
+	public String remove(@RequestParam(name = "id") String id) {
+		log.info("-=- withdrawal");
+		
+		hrService.remove(id);
+		
+		return "redirect:/user/logout";
+	}
+	
+	@GetMapping("/logout")
+	public String logout() {
+		return "redirect:/logout";
 	}
 }
