@@ -1,5 +1,7 @@
 package com.lec.project;
 
+import java.util.stream.IntStream;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,5 +26,17 @@ public class MemberRepositoryTests {
 		member.addRole(MemberRole.USER);
 		
 		memberRepository.save(member);
+	}
+	
+	@Test
+	public void addUser30() {
+		IntStream.rangeClosed(2, 30).forEach(i -> {
+			Member member = Member.builder().id("user" + i)
+					.password(passwordEncoder.encode("u"))
+					.build();
+			member.addRole(MemberRole.USER);
+			
+			memberRepository.save(member);
+		});
 	}
 }

@@ -114,7 +114,7 @@ public class AdminRepositoryTests {
 				.build();
 		
 		member.addRole(MemberRole.SUPER_ADMIN);
-		member.addRole(MemberRole.ADMIN);
+		// member.addRole(MemberRole.ADMIN);
 		
 		memberRepository.save(member);
 	}

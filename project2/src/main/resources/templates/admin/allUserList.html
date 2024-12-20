@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
+<link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+
 <div layout:fragment="content">
 	<table>
 		<tr th:each="member:${memberList}">
