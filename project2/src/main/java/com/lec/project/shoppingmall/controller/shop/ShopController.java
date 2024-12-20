@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Log4j2
 @Controller
-@RequestMapping("/shop")
+@RequestMapping("/protoshop")
 @RequiredArgsConstructor
 public class ShopController {
 
@@ -33,7 +33,7 @@ public class ShopController {
 		PageResponseDTO<ShopDTO> responseDTO = shopService.list(pageRequestDTO);
 		log.info(".........." + responseDTO);
 		model.addAttribute("responseDTO", responseDTO);
-		return "shop/list";
+		return "protoshop/list";
 	}
 	
 	@GetMapping({"/read", "/modify"})
@@ -58,14 +58,14 @@ public class ShopController {
 		if(bindingResult.hasErrors()) {
 			log.info("입력된 정보에 에러가 있습니다...........");
 			redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
-			return "redirect:/shop/register";
+			return "redirect:/protoshop/register";
 		}
 		log.info("register.........." + shopDTO);
 		
 		Long bno = shopService.register(shopDTO);
 		redirectAttributes.addFlashAttribute("result", bno);
 		
-		return "redirect:/shop/list";
+		return "redirect:/protoshop/list";
 	}
 	
 	@PostMapping("modify")
@@ -82,24 +82,24 @@ public class ShopController {
 			redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
 			redirectAttributes.addFlashAttribute("bno", shopDTO.getBno());
 			
-			return "redirect:/shop/modify?" + link;
+			return "redirect:/protoshop/modify?" + link;
 		}
 		
 		shopService.modify(shopDTO);
 		redirectAttributes.addFlashAttribute("result", "게시글수정성공..........");
 		redirectAttributes.addFlashAttribute("bno", shopDTO.getBno());
 		
-		return "redirect:/shop/read";
+		return "redirect:/protoshop/read";
 	}
 	
 	
-	@PostMapping("pathove")
+	@PostMapping("remove")
 	public String remove(@RequestParam("bno") Long bno, RedirectAttributes redirectAttributes) {
 		log.info("remove.Post..........");
 		
 		shopService.remove(bno);
 		redirectAttributes.addFlashAttribute("result", "게시글삭제성공..........");
-		return "redirect:/shop/list";
+		return "redirect:/protoshop/list";
 	}
 }
 

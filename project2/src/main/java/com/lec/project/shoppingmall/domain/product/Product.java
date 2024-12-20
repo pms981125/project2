@@ -20,20 +20,19 @@ import lombok.Setter;
 public class Product {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String product_code;
 	
 	@Column(nullable = false)
 	private String product_name;
 	
 	@Column
-	private String product_price;
+	private int product_price;
 	
 	@Column
 	private String product_category;
 	
 	@Column
-	private String product_stock;
+	private int product_stock;
 	
 	@Column
 	private String product_detail1;

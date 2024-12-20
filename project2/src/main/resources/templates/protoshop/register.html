@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>proto shop/register</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div>
+			<h2>proto shop/register</h2>
+			<form action="/protoshop/register" method="post">
+				<div>
+					<label>제목</label> <input type="text" name="board_title"
+						placeholder="제목">
+				</div>
+				<div>
+					<label>코드</label> <input type="text" name="board_code"
+						placeholder="코드">
+				</div>
+				<div>
+					<label>가격</label> <input type="number" name="product_price"
+						placeholder="가격">
+				</div>
+				<div>
+					<label>카테고리</label> <input type="text" name="product_category"
+						placeholder="카테고리">
+				</div>
+				<div>
+					<label>재고</label> <input type="number" name="product_stock"
+						placeholder="재고">
+				</div>
+				<div>
+					<label>내용1</label>
+					<textarea name="board_content1"></textarea>
+				</div>
+				<div>
+					<label>내용2</label>
+					<textarea name="board_content2"></textarea>
+				</div>
+
+				<div>
+					<button type="submit">Submit</button>
+					<button type="reset">Reset</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<script layout:fragment="script" th:inline="javascript">
+   const errors = /*[[${errors}]]*/''
+   console.log(errors)
+
+   let errorMsg = ''
+
+   if(errors) {
+       for(let i=0; i<errors.length; i++) {
+           errorMsg += `${errors[i].field}은(는) ${errors[i].code} = ${errors[i].defaultMessage}\n`
+       }
+   }
+</script>
+</body>
+</html>

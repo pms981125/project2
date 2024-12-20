@@ -1,4 +1,4 @@
-package com.lec.project.shoppingmall.service;
+package com.lec.project.shoppingmall.service.shop;
 
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -26,18 +26,13 @@ public class ShopServiceTests {
 	ShopService shopService;
 	
 	@Test
-	@DisplayName("상품 등록하기.....")
+	@DisplayName("게시판 등록하기.....")
 	public void testInsert() {
 		log.info("......" + shopService.getClass().getName());
 		
 		ShopDTO shopDTO = ShopDTO.builder()
 								.board_code("board_code Test.....")
 								.board_title("product_name Test.....")
-								.board_price(10000)//goods_price(productDTO.getProduct_price)
-								.board_category("product_category Test.....")
-								.board_stock(1000)
-								.board_content1("product_detail 1번입니다.")
-								.board_content2("product_detail 번입니다.")
 								.build();
 		
 		Long bno = shopService.register(shopDTO);
@@ -52,13 +47,8 @@ public class ShopServiceTests {
 		IntStream.rangeClosed(1, 100).forEach(i -> {
 			
 			Shop shop = Shop.builder()
-							.board_code(String.format("%3d board_code", i))
-							.board_title(String.format("%3d product_name", i))
-							.board_price(i*1000)
-							.board_category(String.format("%3d product_category", i))
-							.board_stock(i)
-							.board_content1(null)
-							.board_content2(null)
+							.board_code(String.format("board_code_%d", i))
+							.board_title(String.format("product_name_%d", i))
 							.build();
 			
 			Shop result = shopRepository.save(shop);
@@ -91,12 +81,12 @@ public class ShopServiceTests {
 	@Test
 	@DisplayName("상품 수정하기")
 	public void testUpdate() {
-		Long bno = 1L;
-		Optional<Shop> result = shopRepository.findById(bno);
-		Shop shop = result.orElseThrow();
-		shop.changeCode("[수정완료]" + shop.getBoard_code());
-		shopRepository.save(shop);
-		log.info(shop);
+//		Long bno = 1L;
+//		Optional<Shop> result = shopRepository.findById(bno);
+//		Shop shop = result.orElseThrow();
+//		shop.changeCode("[수정완료]" + shop.getBoard_code());
+//		shopRepository.save(shop);
+//		log.info(shop);
 	}
 	
 }

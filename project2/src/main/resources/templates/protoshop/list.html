@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>Proto Shop/list</h1>
+	
+	<a th:href="@{/protoshop/register}" type = button>Register</a>
+
+	<table border="1">
+		<thead>
+			<tr>
+				<th>번호(bno)</th>
+				<th>제목(board_title)</th>
+				<th>코드(board_code)</th>
+				<th>가격(product_price)</th>
+				<th>카테고리(product_category)</th>
+				<th>재고(product_stock)</th>
+				<th>내용1(board_content1)</th>
+				<th>내용2(board_content2)</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td>제목</td>
+				<td>001</td>
+				<td>10000</td>
+				<td>의류</td>
+				<td>100</td>
+				<td>내용1</td>
+				<td>내용2</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>

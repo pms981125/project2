@@ -29,22 +29,4 @@ public class Shop {
 	@Column(nullable = false)
 	private String board_title;
 	
-	@Column(nullable = false)
-	private int board_price;
-	
-	@Column
-	private String board_category;
-	
-	@Column(nullable = false)
-	private int board_stock;
-	
-	@Column
-	private String board_content1;
-	
-	@Column
-	private String board_content2;
-	
-	public void changeCode(String board_code) {
-		this.board_code = board_code;
-	}
 }

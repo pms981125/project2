@@ -26,7 +26,7 @@ public class ProductDTO {
 	private String product_category;
 	
 	@Min(0)
-	private String product_stock;
+	private int product_stock;
 	
 	private String product_detail1;
 	

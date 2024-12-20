@@ -7,7 +7,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
-import com.lec.project.shoppingmall.domain.QShop;
+import com.lec.project.shoppingmall.domain.shop.QShop;
 import com.lec.project.shoppingmall.domain.shop.Shop;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
@@ -28,7 +28,7 @@ public class ShopSearchImpl extends QuerydslRepositorySupport implements ShopSea
 		
 		if(keyword != null) {
 			BooleanBuilder booleanBuilder = new BooleanBuilder();
-			booleanBuilder.or(shop.gName.contains(keyword)); // 상품이름으로 검색
+			booleanBuilder.or(shop.board_title.contains(keyword)); // 상품이름으로 검색
 			
 			query.where(booleanBuilder);
 		}
