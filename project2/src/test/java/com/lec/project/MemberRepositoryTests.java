@@ -20,7 +20,7 @@ public class MemberRepositoryTests {
 	
 	@Test
 	public void addUser() {
-		Member member = Member.builder().id("user1")
+		Member member = Member.builder().id("user")
 				.password(passwordEncoder.encode("u"))
 				.build();
 		member.addRole(MemberRole.USER);
@@ -30,7 +30,7 @@ public class MemberRepositoryTests {
 	
 	@Test
 	public void addUser30() {
-		IntStream.rangeClosed(2, 30).forEach(i -> {
+		IntStream.rangeClosed(1, 30).forEach(i -> {
 			Member member = Member.builder().id("user" + i)
 					.password(passwordEncoder.encode("u"))
 					.build();

@@ -4,4 +4,19 @@
 
 <div>
 	<h1>회원가입 페이지</h1>
+	<form th:action="@{/user/register}" method="post" id="form">
+		<input type="text" name="id" class="form-control" placeholder="ID"> <br />
+		<input type="text" name="password" class="form-control" placeholder="비밀번호"> <br />
+		<input type="text" name="name" class="form-control" placeholder="이름"> <br />
+		<input type="text" name="ssn1" class="form-control" placeholder="주민등록번호 앞자리"> -
+		<input type="password" name="ssn2" class="form-control" placeholder="주민등록번호 뒷자리"> <br />
+		<input type="text" name="email" class="form-control" placeholder="email"> <br />
+		<select name="location" id="location">
+			<option value="Seoul">서울</option>
+			<option value="Busan">부산</option>
+			<option value="Incheon">인천</option>
+			<option value="Jeju">제주</option>
+		</select> <br />
+		<input type="submit" value="회원 가입"/>
+	</form>
 </div>

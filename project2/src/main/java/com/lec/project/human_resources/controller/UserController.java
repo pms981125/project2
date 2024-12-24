@@ -53,6 +53,13 @@ public class UserController {
 		return "user/signUp";
 	}
 	
+	@PostMapping("/register")
+	public String Register(@RequestParam("id") String id, @RequestParam("password") String password, @RequestParam("location") String location) {
+		log.info(id + "\n" + password + "\n" + location);
+		
+		return "redirect:/user/logout"; // 수정 필요
+	}
+	
 	@GetMapping("/logout")
 	public String logout() {
 		return "redirect:/logout";
