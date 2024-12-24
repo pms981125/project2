@@ -1,67 +1,82 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>proto shop/register</title>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<meta charset="UTF-8">
+<title>Proto Shop/Register</title>
 </head>
 <body>
-<h2>proto shop/register</h2>
-<form action="/protoshop/register" method="post">
-   <div>
-       <label>상품 코드</label>
-       <input type="text" name="board_code" id="board_code" placeholder="상품 코드">
-       <button type="button" onclick="searchProduct()">상품 조회</button>
-   </div>
-   <div>
-       <label>제목</label>
-       <input type="text" name="board_title" id="board_title" readonly>
-   </div>
-   <div>
-       <label>가격</label>
-       <input type="number" name="product_price" id="product_price" readonly>
-   </div>
-   <div>
-       <label>카테고리</label>
-       <input type="text" name="product_category" id="product_category" readonly>
-   </div>
-   <div>
-       <label>재고</label>
-       <input type="number" name="product_stock" id="product_stock" readonly>
-   </div>
-   <div>
-       <label>상세정보 1</label>
-       <textarea name="board_content1" id="board_content1" readonly></textarea>
-   </div>
-   <div>
-       <label>상세정보 2</label>
-       <textarea name="board_content2" id="board_content2" readonly></textarea>
-   </div>
+<h1>Proto Shop/register</h1>
 
-   <div>
-       <button type="submit">등록</button>
-       <button type="reset">초기화</button>
-   </div>
+<form action="/protoshop/register" method="post">
+    <div>
+        <label>상품 코드</label>
+        <input type="text" name="product_code" id="product_code" placeholder="상품 코드">
+        <button type="button" onclick="searchProduct()">상품 조회</button>
+    </div>
+    
+    <input type="hidden" name="product_code" id="product_code">
+    
+    <table border="1">
+        <tr>
+            <th>제목</th>
+            <td><input type="text" name="board_title" id="board_title" readonly></td>
+        </tr>
+        <tr>
+            <th>상품 코드</th>
+            <td>[[${product_code}]]</td>
+        </tr>
+        <tr>
+            <th>가격</th>
+            <td><input type="number" name="product_price" id="product_price" readonly></td>
+        </tr>
+        <tr>
+            <th>카테고리</th>
+            <td><input type="text" name="product_category" id="product_category" readonly></td>
+        </tr>
+        <tr>
+            <th>재고</th>
+            <td><input type="number" name="product_stock" id="product_stock" readonly></td>
+        </tr>
+        <tr>
+            <th>내용1</th>
+            <td><textarea name="board_content1" id="board_content1" readonly></textarea></td>
+        </tr>
+        <tr>
+            <th>내용2</th>
+            <td><textarea name="board_content2" id="board_content2" readonly></textarea></td>
+        </tr>
+    </table>
+
+    <div>
+        <button type="submit">등록</button>
+        <button type="reset">초기화</button>
+        <a th:href="@{/protoshop/list}">
+            <button type="button">목록</button>
+        </a>
+    </div>
 </form>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 function searchProduct() {
-   const productCode = document.getElementById('board_code').value;
-   
-   $.ajax({
-       url: '/api/product/' + productCode,
-       method: 'GET',
-       success: function(product) {
-           document.getElementById('board_title').value = product.product_name;
-           document.getElementById('product_price').value = product.product_price;
-           document.getElementById('product_category').value = product.product_category;
-           document.getElementById('product_stock').value = product.product_stock;
-           document.getElementById('board_content1').value = product.product_detail1;
-           document.getElementById('board_content2').value = product.product_detail2;
-       },
-       error: function() {
-           alert('상품을 찾을 수 없습니다.');
-       }
-   });
+    const productCode = document.getElementById('product_code').value;
+    
+    $.ajax({
+        url: '/api/product/' + productCode,
+        method: 'GET',
+        success: function(product) {
+            document.getElementById('board_title').value = product.product_name;
+            document.getElementById('product_code').value = product.product_code;
+            document.getElementById('product_price').value = product.product_price;
+            document.getElementById('product_category').value = product.product_category;
+            document.getElementById('product_stock').value = product.product_stock;
+            document.getElementById('board_content1').value = product.product_detail1;
+            document.getElementById('board_content2').value = product.product_detail2;
+        },
+        error: function() {
+            alert('상품을 찾을 수 없습니다.');
+        }
+    });
 }
 </script>
 </body>

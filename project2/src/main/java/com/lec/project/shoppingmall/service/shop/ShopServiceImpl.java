@@ -63,7 +63,7 @@ public class ShopServiceImpl implements ShopService{
 	
 	@Override
 	public Long register(ShopDTO shopDTO) {
-		Product product = productRepository.findById(shopDTO.getProduct_code()).orElseThrow();
+		Product product = productRepository.findById(shopDTO.getProduct_code()).orElseThrow(() -> new IllegalArgumentException("Product not found for code: " + shopDTO.getProduct_code()));
 		
 		Shop shop= Shop.builder()
 					.product_code(shopDTO.getProduct_code())
@@ -93,7 +93,6 @@ public class ShopServiceImpl implements ShopService{
 		return shopDTO;
 	}
 
-	//수정기능 product로 옮김으로 인한 일단 주석처리
 	@Override
 	public void modify(ShopDTO shopDTO) { // 상품코드만 수정하게
 
