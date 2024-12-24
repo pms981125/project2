@@ -75,7 +75,7 @@ public class HRServiceImpl implements HRService {
 		for (Member member : memberList) {
 			roleSet = member.getRoleSet();
 			
-			if (!roleSet.contains(MemberRole.ADMIN)) {
+			if (!roleSet.contains(MemberRole.ADMIN) && !roleSet.contains(MemberRole.SUPER_ADMIN)) {
 				MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(),
 																			member.getPassword(),
 																			member.getRoleSet()
