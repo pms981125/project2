@@ -2,12 +2,17 @@ package com.lec.project.human_resources.service;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -163,5 +168,31 @@ public class HRServiceImpl implements HRService {
 		
 		member.addRole(MemberRole.SUPER_ADMIN);
 		memberRepository.save(member);
+	}
+	
+	@Override
+	public Page<MemberSecurityDTO> getUserListWithPaging(Pageable pageable) { // 123
+		int page = pageable.getPageNumber() - 1;
+		int limit = 10;
+		
+		Page<Member> pages = memberRepository.findAll(PageRequest.of(page, limit));
+		Page<MemberSecurityDTO> DTOPages = pages.map(p -> 
+		new MemberSecurityDTO(p.getId(), p.getPassword(), p.getRoleSet().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).collect(Collectors.toList()))
+				);
+		
+		return DTOPages;
+	}
+
+	@Override
+	public Page<MemberSecurityDTO> getAllUserListWithPaging(Pageable pageable) {
+		int page = pageable.getPageNumber() - 1;
+		int limit = 10;
+		
+		Page<Member> pages = memberRepository.findAll(PageRequest.of(page, limit));
+		Page<MemberSecurityDTO> DTOPages = pages.map(p -> 
+			new MemberSecurityDTO(p.getId(), p.getPassword(), p.getRoleSet().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).collect(Collectors.toList()))
+		);
+		
+		return DTOPages;
 	}
 }

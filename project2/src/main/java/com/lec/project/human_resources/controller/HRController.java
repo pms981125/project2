@@ -30,6 +30,16 @@ public class HRController {
 		
 		return "admin/userInfo";
 	}
+	/*	
+		@GetMapping("/userList") // 일반 유저 목록
+		public String getUserList(Model model) {
+			List<MemberSecurityDTO> memberSecurityDTOList = hrService.getUserList();
+			
+			model.addAttribute("memberList",  memberSecurityDTOList);
+			
+			return "admin/userList";
+		}
+	 */
 	
 	@GetMapping("/userList") // 일반 유저 목록
 	public String getUserList(Model model) {
