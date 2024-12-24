@@ -6,5 +6,64 @@
 </head>
 <body>
 	<h1>Proto Shop/modify</h1>
+
+	<form action="/protoshop/modify" method="post">
+		<input type="hidden" name="bno" th:value="${dto.bno}"> <input
+			type="hidden" name="board_title" th:value="${dto.board_title}">
+		<input type="hidden" name="board_content1"
+			th:value="${dto.board_content1}"> <input type="hidden"
+			name="board_content2" th:value="${dto.board_content2}"> <input
+			type="hidden" name="product_price" th:value="${dto.product_price}">
+		<input type="hidden" name="product_category"
+			th:value="${dto.product_category}"> <input type="hidden"
+			name="product_stock" th:value="${dto.product_stock}">
+		<table border="1">
+			<tr>
+				<th>번호</th>
+				<td>[[${dto.bno}]]</td>
+			</tr>
+			<tr>
+				<th>제목</th>
+				<td>[[${dto.board_title}]]</td>
+			</tr>
+			<tr>
+				<th>상품코드</th>
+				<td><input type="text" name="product_code"
+					th:value="${dto.product_code}" required></td>
+			</tr>
+			<tr>
+				<th>가격</th>
+				<td>[[${dto.product_price}]]</td>
+			</tr>
+			<tr>
+				<th>카테고리</th>
+				<td>[[${dto.product_category}]]</td>
+			</tr>
+			<tr>
+				<th>재고</th>
+				<td>[[${dto.product_stock}]]</td>
+			</tr>
+			<tr>
+				<th>내용1</th>
+				<td>[[${dto.board_content1}]]</td>
+			</tr>
+			<tr>
+				<th>내용2</th>
+				<td>[[${dto.board_content2}]]</td>
+			</tr>
+		</table>
+
+		<!-- 버튼 그룹: 수정 없음 -->
+		<div>
+			<button type="submit">수정 완료</button>
+
+			<a th:href="@{/protoshop/read(bno=${dto.bno})}">
+				<button type="button">취소</button>
+			</a> <a th:href="@{/protoshop/list}">
+				<button type="button">목록</button>
+			</a>
+		</div>
+	</form>
+
 </body>
 </html>

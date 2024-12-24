@@ -28,17 +28,35 @@ public class Shop {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long bno;
 
-	@Column(name = "board_code")
-    private String boardCode;  // 필드명 변경
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_code", referencedColumnName = "product_code")
-    private Product product;
+	@Column
+    private String product_code;
 
 	@Column(nullable = false)
 	private String board_title;
 
-	@Column
-	private String board_content;
+	@Column//detail1
+	private String board_content1;
 
+	@Column//detail2
+	private String board_content2;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "product_code", referencedColumnName = "product_code", insertable = false, updatable = false)
+	private Product product;
+	
+	public void changeProductCode(String product_code) {
+		this.product_code = product_code;
+	}
+	
+	public void changeTitle(String board_title) {
+		this.board_title = board_title;
+	}
+	
+	public void changeDetail1(String board_contetn1) {
+		this.board_content1 = board_contetn1;
+	}
+	
+	public void changeDetail2(String board_contetn2) {
+		this.board_content2 = board_contetn2;
+	}
 }

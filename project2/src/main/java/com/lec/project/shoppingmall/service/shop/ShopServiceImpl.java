@@ -33,90 +33,80 @@ public class ShopServiceImpl implements ShopService{
 
 	@Override
 	public PageResponseDTO<ShopDTO> list(PageRequestDTO pageRequestDTO) {
-		
-		String keyword = pageRequestDTO.getKeyword();
-		Pageable pageable = pageRequestDTO.getPageable("bno");
-		
-		Page<Shop> result = shopRepository.searchAllImpl(keyword, pageable);
-		List<ShopDTO> dtoList = result.getContent()
-									.stream()
-									.map(shop -> {ShopDTO shopDTO = modelMapper.map(shop, ShopDTO.class);
-									
-									log.info("Shop boardCode: {}", shop.getBoardCode());
-									
-									if (shop.getBoardCode() != null) {
-						                   Optional<Product> productOptional = productRepository.findById(shop.getBoardCode());
-						                   
-						                   if (productOptional.isPresent()) {
-						                       Product product = productOptional.get();
-						                       
-						                       shopDTO.setProduct_price(product.getProduct_price());
-						                       shopDTO.setProduct_category(product.getProduct_category());
-						                       shopDTO.setProduct_stock(product.getProduct_stock());
-						                   } else {
-						                       log.warn("No product found for boardCode: {}", shop.getBoardCode());
-						                   }
-						               }
-									return shopDTO;
-									
-									})
-									.collect(Collectors.toList());
-		
-		return PageResponseDTO.<ShopDTO>withAll()
-		        .pageRequestDTO(pageRequestDTO)
-		        .dtoList(dtoList)
-		        .total((int)result.getTotalElements())
-		        .build();
+	   String keyword = pageRequestDTO.getKeyword();
+	   Pageable pageable = pageRequestDTO.getPageable("bno");
+	   
+	   Page<Shop> result = shopRepository.searchAllImpl(keyword, pageable);
+	   
+	   List<ShopDTO> dtoList = result.getContent()
+	        .stream()
+	        .map(shop -> {
+	            ShopDTO shopDTO = modelMapper.map(shop, ShopDTO.class);
+	            
+	            // Null 체크 추가
+	            if(shop.getProduct() != null) {
+	                shopDTO.setProduct_price(shop.getProduct().getProduct_price());
+	                shopDTO.setProduct_category(shop.getProduct().getProduct_category());
+	                shopDTO.setProduct_stock(shop.getProduct().getProduct_stock());
+	            }
+	            return shopDTO;
+	        })
+	        .collect(Collectors.toList());
+
+	   return PageResponseDTO.<ShopDTO>withAll()
+	           .pageRequestDTO(pageRequestDTO)
+	           .dtoList(dtoList)
+	           .total((int)result.getTotalElements())
+	           .build();
 	}
 	
-	// board만 등록
-//	@Override
-//	public Long register(ShopDTO shopDTO) {
-//		Shop shop = modelMapper.map(shopDTO, Shop.class);
-//		Long bno = shopRepository.save(shop).getBno();
-//		return bno;
-//	}
 	
 	@Override
 	public Long register(ShopDTO shopDTO) {
-		Product product = productRepository.findById(shopDTO.getBoardCode()).orElseThrow();
+		Product product = productRepository.findById(shopDTO.getProduct_code()).orElseThrow();
 		
 		Shop shop= Shop.builder()
-					.boardCode(shopDTO.getBoardCode())
+					.product_code(shopDTO.getProduct_code())
 					.board_title(product.getProduct_name())
-					.board_content(combineContent(product))
+					.board_content1(product.getProduct_detail1())  // detail1 저장
+		            .board_content2(product.getProduct_detail2())  // detail2 저장
 					.build();
 		
 		return shopRepository.save(shop).getBno();
 	}
 
-	private String combineContent(Product product) {
-		return String.format(
-				"*상품명: %s\n*가격: %d원\n*카테고리: %s\n*재고량: %d개\n*상품설명1: %s\n*상품설명2: %s"
-				,product.getProduct_name()
-				,product.getProduct_price()
-				,product.getProduct_category()
-				,product.getProduct_stock()
-				,product.getProduct_detail1()
-				,product.getProduct_detail2()
-				);
-	}
 
 	@Override
 	public ShopDTO readOne(Long bno) {
 		Optional<Shop> result = shopRepository.findById(bno);
 		Shop shop = result.orElseThrow();
+		
 		ShopDTO shopDTO = modelMapper.map(shop, ShopDTO.class);
+		
+		Product product = shop.getProduct();
+		
+		if(product != null) {
+	        shopDTO.setProduct_price(product.getProduct_price());
+	        shopDTO.setProduct_category(product.getProduct_category());
+	        shopDTO.setProduct_stock(product.getProduct_stock());
+		}
 		return shopDTO;
 	}
 
 	//수정기능 product로 옮김으로 인한 일단 주석처리
 	@Override
 	public void modify(ShopDTO shopDTO) { // 상품코드만 수정하게
-//
-//		Optional<Shop> result = shopRepository.findById(shopDTO.getBno());
-//		Shop shop = result.orElseThrow();
-//		shop.changeCode(shopDTO.getBoard_code());
+
+		 Shop shop = shopRepository.findById(shopDTO.getBno()).orElseThrow();
+		
+		Product product = productRepository.findById(shopDTO.getProduct_code()).orElseThrow();
+		
+		shop.changeProductCode(shopDTO.getProduct_code());
+	    shop.setBoard_title(product.getProduct_name());
+	    shop.setBoard_content1(product.getProduct_detail1());
+	    shop.setBoard_content2(product.getProduct_detail2());
+	    
+	    shopRepository.save(shop);
 	}
 
 	@Override

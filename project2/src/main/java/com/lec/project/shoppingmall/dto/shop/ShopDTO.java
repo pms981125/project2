@@ -18,7 +18,7 @@ public class ShopDTO {
 	private Long bno;
 	
 	@NotEmpty//게시판에 들어갈 상품코드
-	private String boardCode;
+	private String product_code;
 	
 	@NotEmpty//게시판에 들어갈 상품이름
 	private String board_title;

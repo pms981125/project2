@@ -40,8 +40,7 @@ public class ShopController {
 	}
 	
 	@GetMapping({"/read", "/modify"})
-	public void read(@RequestParam("bno") Long bno
-			, PageRequestDTO pageRequestDTO, Model model) {
+	public void read(@RequestParam("bno") Long bno, Model model) {
 			log.info("read or modify..........");
 			ShopDTO shopDTO = shopService.readOne(bno);
 			model.addAttribute("dto", shopDTO);
@@ -71,9 +70,9 @@ public class ShopController {
 		return "redirect:/protoshop/list";
 	}
 	
+	// 수정
 	@PostMapping("modify")
-	public String modify(PageRequestDTO pageRequestDTO
-			, @Valid ShopDTO shopDTO
+	public String modify(@Valid ShopDTO shopDTO
 			, BindingResult bindingResult
 			, RedirectAttributes redirectAttributes) {
 		log.info("modify.Post : " + shopDTO);
@@ -81,18 +80,19 @@ public class ShopController {
 		if(bindingResult.hasErrors()) {
 			log.info("입력된 정보에 에러가 있습니다..........");
 			
-			String link = pageRequestDTO.getLink();
 			redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
 			redirectAttributes.addFlashAttribute("bno", shopDTO.getBno());
 			
-			return "redirect:/protoshop/modify?" + link;
+			return "redirect:/protoshop/modify?bno=" + shopDTO.getBno();
 		}
 		
 		shopService.modify(shopDTO);
+		
+		
 		redirectAttributes.addFlashAttribute("result", "게시글수정성공..........");
 		redirectAttributes.addFlashAttribute("bno", shopDTO.getBno());
 		
-		return "redirect:/protoshop/read";
+		 return "redirect:/protoshop/read?bno=" + shopDTO.getBno();
 	}
 	
 	

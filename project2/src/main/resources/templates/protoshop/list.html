@@ -28,7 +28,7 @@
            <td>
                <a th:href="@{/protoshop/read(bno=${shop.bno})}">[[${shop.board_title}]]</a>
            </td>
-           <td>[[${shop.boardCode}]]</td>
+           <td>[[${shop.product_code}]]</td>
            <td>[[${shop.product_price}]]</td>
            <td>[[${shop.product_category}]]</td>
            <td>[[${shop.product_stock}]]</td>
@@ -39,13 +39,13 @@
 </table>
 
 <!-- 페이징 추가 -->
-<div th:if="${!responseDTO.dtoList.isEmpty()}">
-   <ul>
+<div th:with="start=${responseDTO.start}, end=${responseDTO.end}">
+   <ul th:if="${start != null && end != null}">
        <li th:if="${responseDTO.prev}">
-           <a th:href="@{/protoshop/list(page=${responseDTO.start - 1})}">이전</a>
+           <a th:href="@{/protoshop/list(page=${start - 1})}">이전</a>
        </li>
        
-       <li th:each="num : ${#numbers.sequence(responseDTO.start, responseDTO.end)}">
+       <li th:each="num : ${#numbers.sequence(start, end)}">
            <a th:href="@{/protoshop/list(page=${num})}" 
               th:text="${num}"
               th:class="${responseDTO.page == num} ? 'active' : ''">
@@ -53,7 +53,7 @@
        </li>
        
        <li th:if="${responseDTO.next}">
-           <a th:href="@{/protoshop/list(page=${responseDTO.end + 1})}">다음</a>
+           <a th:href="@{/protoshop/list(page=${end + 1})}">다음</a>
        </li>
    </ul>
 </div>
