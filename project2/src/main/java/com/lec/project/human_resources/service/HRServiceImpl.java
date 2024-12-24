@@ -96,12 +96,12 @@ public class HRServiceImpl implements HRService {
 																			  .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).collect(Collectors.toList()));
 			memberSecurityDTOList.add(memberSecurityDTO);
 		}
-
+				
 		log.info(memberSecurityDTOList);
 		
 		return memberSecurityDTOList;
 	}
-
+	
 	@Override
 	public void update(String id, String password) {
 		Optional<Member> result = memberRepository.findById(id);
