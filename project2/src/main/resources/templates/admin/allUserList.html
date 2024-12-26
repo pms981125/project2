@@ -3,28 +3,42 @@
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+<link th:href="@{/css/userList.css}" rel="stylesheet" />
 
 <div layout:fragment="content">
-	<table>
-		<tr th:each="page:${pages}">
-			<td><a th:href="|@{/sudo/userInfo(id=${page.getId()})}|">[[${page.getId()}]]</a></td>
-		</tr>
-	</table>
-	
-	<a th:href="@{/sudo/allUserList(page=1)}">첫 페이지</a>
-	<a th:href="${pages.first} ? '#' : @{/sudo/allUserList(page=${pages.number})}">이전</a>
-	<span th:each="page:${#numbers.sequence(startPage, endPage)}">
-		<span th:if="${page == pages.number + 1}" th:text="${page}"></span>
-		<span th:unless="${page == pages.number + 1}">
-			<a th:href="@{/sudo/allUserList(page=${page})}" th:text="${page}"></a>
-		</span>
-	</span>
-	<a th:href="${pages.last} ? '#' : @{/sudo/allUserList(page=${pages.number+2})}">다음</a>
-	<a th:href="@{/sudo/allUserList(page=${pages.totalPages})}">마지막 페이지</a>
-	
-	<hr />	
-	<a th:href="|@{/sudo/addAdmin}|" class="text-decoration-none">
-		<button type="button" class="btn btn-primary">관리자 추가</button>
-	</a>
+	<div class="container mt-4">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>회원 ID</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="page:${pages}">
+					<td><a th:href="|@{/sudo/userInfo(id=${page.getId()})}|">[[${page.getId()}]]</a></td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<div class="paging">
+			<a th:href="@{/sudo/allUserList(page=1)}">첫 페이지</a>
+			<a th:href="${pages.first} ? '#' : @{/sudo/allUserList(page=${pages.number})}">이전</a>
+			<span th:each="page:${#numbers.sequence(startPage, endPage)}">
+				<span th:if="${page == pages.number + 1}" th:text="${page}" class="selected"></span>
+				<span th:unless="${page == pages.number + 1}">
+					<a th:href="@{/sudo/allUserList(page=${page})}" th:text="${page}"></a>
+				</span>
+			</span>
+			<a th:href="${pages.last} ? '#' : @{/sudo/allUserList(page=${pages.number+2})}">다음</a>
+			<a th:href="@{/sudo/allUserList(page=${pages.totalPages})}">마지막 페이지</a>
+		</div>
+		
+		<hr />	
+		<div class="addAdminButton">
+			<a th:href="|@{/sudo/addAdmin}|" class="text-decoration-none">
+				<button type="button" class="btn btn-primary">관리자 추가</button>
+			</a>
+		</div>
+	</div>
 </div>
 <!-- <div th:text="${#authentication.name}">Username</div> -->

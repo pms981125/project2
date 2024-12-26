@@ -31,7 +31,7 @@ public class MemberRepositoryTests {
 	@Test
 	public void addUser30() {
 		IntStream.rangeClosed(1, 30).forEach(i -> {
-			Member member = Member.builder().id("user" + i)
+			Member member = Member.builder().id(String.format("user%02d", i))
 					.password(passwordEncoder.encode("u"))
 					.build();
 			member.addRole(MemberRole.USER);
