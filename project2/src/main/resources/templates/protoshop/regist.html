@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Proto Shop/regist</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+	<h1>Proto Shop/regist</h1>
+
+	<form id="registForm" action="/protoshop/regist" method="post"
+		onreset="resetForm()">
+
+		<div th:if="${error}" style="color: red; margin-bottom: 10px;">
+			[[${error}]]</div>
+		<div>
+			<label>상품코드 조회</label> <input type="text" name="search_product_code"
+				id="search_product_code" placeholder="상품 코드를 입력하세요">
+			<button type="button" onclick="searchProduct()">상품 조회</button>
+		</div>
+
+		<input type="hidden" name="product_code" id="product_code">
+
+		<table border="1">
+			<tr>
+				<th>제목</th>
+				<td><input type="text" name="board_title" id="board_title"
+					readonly></td>
+			</tr>
+			<tr>
+				<th>상품 코드</th>
+				<td><span id="product_code_display"></span></td>
+			</tr>
+			<tr>
+				<th>가격</th>
+				<td><input type="number" name="product_price"
+					id="product_price" readonly></td>
+			</tr>
+			<tr>
+				<th>카테고리</th>
+				<td><input type="text" name="product_category"
+					id="product_category" readonly></td>
+			</tr>
+			<tr>
+				<th>재고</th>
+				<td><input type="number" name="product_stock"
+					id="product_stock" readonly></td>
+			</tr>
+			<tr>
+				<th>내용1</th>
+				<td><textarea name="board_content1" id="board_content1"
+						readonly></textarea></td>
+			</tr>
+			<tr>
+				<th>내용2</th>
+				<td><textarea name="board_content2" id="board_content2"
+						readonly></textarea></td>
+			</tr>
+		</table>
+
+		<div>
+			<button type="submit">등록</button>
+			<button type="reset">초기화</button>
+			<a th:href="@{/protoshop/list}">
+				<button type="button">목록</button>
+			</a>
+		</div>
+	</form>
+
+	<script>
+function searchProduct() {
+    const productCode = document.getElementById('search_product_code').value;
+    // ProductCode중복확인
+    $.ajax({
+    	url: '/api/shop/checkProductCode',
+    	method: 'GET',
+    	data: { productCode: productCode },
+	    success: function(response){
+    		if(response.exists){
+    			 alert('이미 등록된 productCode입니다.');
+    		return;
+    	}
+		// ProductCode 조회
+		$.ajax({
+			url: '/api/product/' + productCode,
+			method: 'GET',
+			success: function(product) {
+				document.getElementById('product_code').value = product.product_code;
+				document.getElementById('product_code_display').textContent = product.product_code;
+				document.getElementById('board_title').value = product.product_name;
+				document.getElementById('product_category').value = product.product_category;
+				document.getElementById('product_price').value = product.product_price;
+				document.getElementById('product_stock').value = product.product_stock;
+				document.getElementById('board_content1').value = product.product_detail1;
+				document.getElementById('board_content2').value = product.product_detail2;
+			},
+			error: function() {
+    			alert('상품을 찾을 수 없습니다.');
+				}
+			});
+		},
+		error: function() {
+    		alert('상품 코드 중복 확인 중 오류가 발생했습니다.');
+		}
+	});
+}
+
+function resetForm() {
+    // 모든 입력 필드 초기화
+    document.getElementById('search_product_code').value = '';
+    document.getElementById('product_code').value = '';
+    document.getElementById('product_code_display').textContent = '';
+    document.getElementById('board_title').value = '';
+    document.getElementById('product_price').value = '';
+    document.getElementById('product_category').value = '';
+    document.getElementById('product_stock').value = '';
+    document.getElementById('board_content1').value = '';
+    document.getElementById('board_content2').value = '';
+}
+</script>
+</body>
+</html>
