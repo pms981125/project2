@@ -63,7 +63,13 @@ public class ShopServiceImpl implements ShopService{
 	
 	@Override
 	public Long register(ShopDTO shopDTO) {
-		Product product = productRepository.findById(shopDTO.getProduct_code()).orElseThrow(() -> new IllegalArgumentException("Product not found for code: " + shopDTO.getProduct_code()));
+		//product_code 존재 확인
+		if(shopRepository.existsByProductCode(shopDTO.getProduct_code())) {
+			throw new IllegalArgumentException("이미 등록된 product_code입니다.");
+		}
+		
+		Product product = productRepository.findById(shopDTO.getProduct_code()).orElseThrow(() -> 
+							new IllegalArgumentException("Product not found for code: " + shopDTO.getProduct_code()));
 		
 		Shop shop= Shop.builder()
 					.product_code(shopDTO.getProduct_code())
@@ -93,19 +99,32 @@ public class ShopServiceImpl implements ShopService{
 		return shopDTO;
 	}
 
+	
+	//수정
 	@Override
-	public void modify(ShopDTO shopDTO) { // 상품코드만 수정하게
+	public void modify(ShopDTO shopDTO) { // 상품코드로만 수정하게
 
-		 Shop shop = shopRepository.findById(shopDTO.getBno()).orElseThrow();
+		//list의 shop에서 조회
+		Shop existsShop = shopRepository.findById(shopDTO.getBno())
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
 		
-		Product product = productRepository.findById(shopDTO.getProduct_code()).orElseThrow();
-		
-		shop.changeProductCode(shopDTO.getProduct_code());
-	    shop.setBoard_title(product.getProduct_name());
-	    shop.setBoard_content1(product.getProduct_detail1());
-	    shop.setBoard_content2(product.getProduct_detail2());
+		// 기존 product_code와 새로운 product_code가 다른 경우에만 중복 체크
+	    if (!existsShop.getProduct_code().equals(shopDTO.getProduct_code())) {
+	        if (shopRepository.existsByProductCode(shopDTO.getProduct_code())) {
+	            throw new IllegalArgumentException("이미 등록된 상품 코드입니다.");
+	        }
+	    }
 	    
-	    shopRepository.save(shop);
+	    // 새로운 Product 조회
+	    Product product = productRepository.findById(shopDTO.getProduct_code())
+	            .orElseThrow(() -> new IllegalArgumentException("해당 상품 코드의 상품이 존재하지 않습니다."));
+				
+	    existsShop.changeProductCode(shopDTO.getProduct_code());
+	    existsShop.setBoard_title(product.getProduct_name());
+	    existsShop.setBoard_content1(product.getProduct_detail1());
+	    existsShop.setBoard_content2(product.getProduct_detail2());
+	    
+	    shopRepository.save(existsShop);
 	}
 
 	@Override

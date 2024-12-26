@@ -2,21 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Proto Shop/modify</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 	<h1>Proto Shop/modify</h1>
 
-	<form action="/protoshop/modify" method="post">
+	<div>
+		<label>상품 코드</label> <input type="text" id="search_product_code"
+			placeholder="상품 코드">
+		<button type="button" onclick="searchProduct()">상품 조회</button>
+	</div>
+
+	<form id="modifyForm" action="/protoshop/modify" method="post"
+		onreset="resetForm()">
 		<input type="hidden" name="bno" th:value="${dto.bno}"> <input
-			type="hidden" name="board_title" th:value="${dto.board_title}">
-		<input type="hidden" name="board_content1"
-			th:value="${dto.board_content1}"> <input type="hidden"
-			name="board_content2" th:value="${dto.board_content2}"> <input
-			type="hidden" name="product_price" th:value="${dto.product_price}">
-		<input type="hidden" name="product_category"
-			th:value="${dto.product_category}"> <input type="hidden"
-			name="product_stock" th:value="${dto.product_stock}">
+			type="hidden" name="product_code" id="product_code">
+
 		<table border="1">
 			<tr>
 				<th>번호</th>
@@ -24,39 +26,43 @@
 			</tr>
 			<tr>
 				<th>제목</th>
-				<td>[[${dto.board_title}]]</td>
+				<td><input type="text" name="board_title" id="board_title"
+					th:value="${dto.board_title}" readonly></td>
 			</tr>
 			<tr>
-				<th>상품코드</th>
-				<td><input type="text" name="product_code"
-					th:value="${dto.product_code}" required></td>
+				<th>상품 코드</th>
+				<td><span id="product_code_display">[[${dto.product_code}]]</span></td>
 			</tr>
 			<tr>
 				<th>가격</th>
-				<td>[[${dto.product_price}]]</td>
+				<td><input type="number" name="product_price"
+					id="product_price" th:value="${dto.product_price}" readonly></td>
 			</tr>
 			<tr>
 				<th>카테고리</th>
-				<td>[[${dto.product_category}]]</td>
+				<td><input type="text" name="product_category"
+					id="product_category" th:value="${dto.product_category}" readonly></td>
 			</tr>
 			<tr>
 				<th>재고</th>
-				<td>[[${dto.product_stock}]]</td>
+				<td><input type="number" name="product_stock"
+					id="product_stock" th:value="${dto.product_stock}" readonly></td>
 			</tr>
 			<tr>
 				<th>내용1</th>
-				<td>[[${dto.board_content1}]]</td>
+				<td><textarea name="board_content1" id="board_content1"
+						readonly>[[${dto.board_content1}]]</textarea></td>
 			</tr>
 			<tr>
 				<th>내용2</th>
-				<td>[[${dto.board_content2}]]</td>
+				<td><textarea name="board_content2" id="board_content2"
+						readonly>[[${dto.board_content2}]]</textarea></td>
 			</tr>
 		</table>
 
-		<!-- 버튼 그룹: 수정 없음 -->
 		<div>
 			<button type="submit">수정 완료</button>
-
+			<button type="reset">초기화</button>
 			<a th:href="@{/protoshop/read(bno=${dto.bno})}">
 				<button type="button">취소</button>
 			</a> <a th:href="@{/protoshop/list}">
@@ -65,5 +71,50 @@
 		</div>
 	</form>
 
+	<script>
+
+// 페이지 로드 시 에러 메시지 확인
+document.addEventListener('DOMContentLoaded', function() {
+    // Thymeleaf로 전달된 에러 메시지 확인
+    const errorMessage = '[[${error}]]';
+    if (errorMessage && errorMessage.trim() !== '') {
+        alert(errorMessage);
+    }
+});
+function searchProduct() {
+    const productCode = document.getElementById('search_product_code').value;
+    
+    $.ajax({
+        url: '/api/product/' + productCode,
+        method: 'GET',
+        success: function(product) {
+            document.getElementById('product_code').value = product.product_code;
+            document.getElementById('product_code_display').textContent = product.product_code;
+            document.getElementById('board_title').value = product.product_name;
+            document.getElementById('product_price').value = product.product_price;
+            document.getElementById('product_category').value = product.product_category;
+            document.getElementById('product_stock').value = product.product_stock;
+            document.getElementById('board_content1').value = product.product_detail1;
+            document.getElementById('board_content2').value = product.product_detail2;
+        },
+        error: function() {
+            alert('상품을 찾을 수 없습니다.');
+        }
+    });
+}
+
+function resetForm() {
+    // 모든 입력 필드 초기화
+    document.getElementById('search_product_code').value = '';
+    document.getElementById('product_code').value = '';
+    document.getElementById('product_code_display').textContent = '[[${dto.product_code}]]';
+    document.getElementById('board_title').value = '[[${dto.board_title}]]';
+    document.getElementById('product_price').value = '[[${dto.product_price}]]';
+    document.getElementById('product_category').value = '[[${dto.product_category}]]';
+    document.getElementById('product_stock').value = '[[${dto.product_stock}]]';
+    document.getElementById('board_content1').value = '[[${dto.board_content1}]]';
+    document.getElementById('board_content2').value = '[[${dto.board_content2}]]';
+}
+</script>
 </body>
 </html>

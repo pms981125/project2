@@ -32,7 +32,7 @@ public class ShopController {
 	private final ShopService shopService;
 	
 	@GetMapping("/list")
-	public String glist(PageRequestDTO pageRequestDTO, Model model) {
+	public String list(PageRequestDTO pageRequestDTO, Model model) {
 		PageResponseDTO<ShopDTO> responseDTO = shopService.list(pageRequestDTO);
 		log.info(".........." + responseDTO);
 		model.addAttribute("responseDTO", responseDTO);
@@ -46,23 +46,23 @@ public class ShopController {
 			model.addAttribute("dto", shopDTO);
 			}
 	
-	@GetMapping("/register")
+	@GetMapping("/regist")
 	public void registerGet() {
-		log.info("register.GET..........");
+		log.info("regist.GET..........");
 	}
 	
-	@PostMapping("/register")	// 상품등록
+	@PostMapping("/regist")	// 상품등록
 	public String registerPost(@Valid ShopDTO shopDTO	// 폼에서 전송된 데이터를 검증
 			, BindingResult bindingResult				// 검증 결과를 담는 객체
 			, RedirectAttributes redirectAttributes) {	// 리다이렉트시 데이터 전달
-		log.info("register.Post..........");
+		log.info("regist.Post..........");
 		
 		if(bindingResult.hasErrors()) {
 			log.info("입력된 정보에 에러가 있습니다...........");
 			redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
-			return "redirect:/protoshop/register";
+			return "redirect:/protoshop/regist";
 		}
-		log.info("register.........." + shopDTO);
+		log.info("regist.........." + shopDTO);
 		
 		Long bno = shopService.register(shopDTO);
 		redirectAttributes.addFlashAttribute("result", bno);
@@ -77,22 +77,27 @@ public class ShopController {
 			, RedirectAttributes redirectAttributes) {
 		log.info("modify.Post : " + shopDTO);
 		
-		if(bindingResult.hasErrors()) {
-			log.info("입력된 정보에 에러가 있습니다..........");
+		try {
+			if(bindingResult.hasErrors()) {
+				log.info("입력된 정보에 에러가 있습니다..........");
+				
+				redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
+				redirectAttributes.addFlashAttribute("bno", shopDTO.getBno());
+				
+				return "redirect:/protoshop/modify?bno=" + shopDTO.getBno();
+			}
 			
-			redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
+			shopService.modify(shopDTO);
+			
+			
+			redirectAttributes.addFlashAttribute("result", "게시글수정성공..........");
 			redirectAttributes.addFlashAttribute("bno", shopDTO.getBno());
 			
-			return "redirect:/protoshop/modify?bno=" + shopDTO.getBno();
+			 return "redirect:/protoshop/read?bno=" + shopDTO.getBno();
+		} catch (IllegalArgumentException e) {
+			redirectAttributes.addFlashAttribute("error", e.getMessage());
+	        return "redirect:/protoshop/modify?bno=" + shopDTO.getBno();
 		}
-		
-		shopService.modify(shopDTO);
-		
-		
-		redirectAttributes.addFlashAttribute("result", "게시글수정성공..........");
-		redirectAttributes.addFlashAttribute("bno", shopDTO.getBno());
-		
-		 return "redirect:/protoshop/read?bno=" + shopDTO.getBno();
 	}
 	
 	
