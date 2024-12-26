@@ -6,10 +6,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -171,14 +173,25 @@ public class HRServiceImpl implements HRService {
 	}
 	
 	@Override
-	public Page<MemberSecurityDTO> getUserListWithPaging(Pageable pageable) { // 123
+	public Page<MemberSecurityDTO> getUserListWithPaging(Pageable pageable) {
 		int page = pageable.getPageNumber() - 1;
 		int limit = 10;
 		
 		Page<Member> pages = memberRepository.findAll(PageRequest.of(page, limit));
-		Page<MemberSecurityDTO> DTOPages = pages.map(p -> 
-		new MemberSecurityDTO(p.getId(), p.getPassword(), p.getRoleSet().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).collect(Collectors.toList()))
-				);
+		Page<MemberSecurityDTO> DTOPages = new PageImpl<>(
+			    pages.getContent().stream()
+			        .filter(member -> member.getRoleSet().contains(MemberRole.USER))
+			        .map(member -> new MemberSecurityDTO(
+			            member.getId(),
+			            member.getPassword(),
+			            member.getRoleSet().stream()
+			                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+			                .collect(Collectors.toList())
+			        ))
+			        .collect(Collectors.toList()),
+			    pages.getPageable(), // 기존 Pageable 유지
+			    pages.getTotalElements() // 원래의 총 요소 개수
+			);
 		
 		return DTOPages;
 	}

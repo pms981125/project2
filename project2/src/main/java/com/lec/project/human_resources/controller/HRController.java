@@ -2,6 +2,9 @@ package com.lec.project.human_resources.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,10 +45,15 @@ public class HRController {
 	 */
 	
 	@GetMapping("/userList") // 일반 유저 목록
-	public String getUserList(Model model) {
-		List<MemberSecurityDTO> memberSecurityDTOList = hrService.getUserList();
+	public String getUserList(@PageableDefault(page = 1) Pageable pageable, Model model) {
+		Page<MemberSecurityDTO> pages = hrService.getUserListWithPaging(pageable);
+		int limit = 5;
+		int startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / limit))) - 1) * limit + 1;
+		int endPage = Math.min(startPage + limit - 1, pages.getTotalPages());
 		
-		model.addAttribute("memberList",  memberSecurityDTOList);
+		model.addAttribute("pages", pages);
+		model.addAttribute("startPage", startPage);
+		model.addAttribute("endPage", endPage);
 		
 		return "admin/userList";
 	}
