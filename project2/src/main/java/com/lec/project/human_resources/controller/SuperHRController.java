@@ -34,8 +34,16 @@ public class SuperHRController {
 		}*/
 	
 	@GetMapping("/allUserList") // 모든 유저 목록
-	public String getAllUserList(@PageableDefault(page = 1) Pageable pageable, Model model, @RequestParam(name = "size", defaultValue = "10") int size) {
-		Page<MemberSecurityDTO> pages = hrService.getAllUserListWithPaging(pageable, size);
+	public String getAllUserList(@PageableDefault(page = 1) Pageable pageable, Model model, @RequestParam(name = "size", defaultValue = "10") int size, 
+								 @RequestParam(name = "onlyAdmin", defaultValue = "false") boolean onlyAdmin) {
+		Page<MemberSecurityDTO> pages = null;
+		
+		if (onlyAdmin) {
+			pages = hrService.getAdminListWithPaging(pageable, size);
+		} else {
+			pages = hrService.getAllUserListWithPaging(pageable, size);
+		}
+		
 		int limit = 5;
 		int startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / limit))) - 1) * limit + 1;
 		int endPage = Math.min(startPage + limit - 1, pages.getTotalPages());
@@ -44,6 +52,7 @@ public class SuperHRController {
 		model.addAttribute("startPage", startPage);
 		model.addAttribute("endPage", endPage);
 		model.addAttribute("size", size);
+		model.addAttribute("onlyAdmin", onlyAdmin);
 		
 		return "admin/allUserList";
 	}

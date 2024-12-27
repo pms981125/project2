@@ -15,6 +15,7 @@ public interface HRService {
 	Page<MemberSecurityDTO> getUserListWithPaging(Pageable pageable, int size);
 	List<MemberSecurityDTO> getAllUserList();
 	Page<MemberSecurityDTO> getAllUserListWithPaging(Pageable pageable, int size);
+	Page<MemberSecurityDTO> getAdminListWithPaging(Pageable pageable, int size);
 	void update(String originalId, String newId);
 	void remove(String id);
 	void addAdmin(String id, String password, String name, String ssnFront, String ssnEnd, String email);

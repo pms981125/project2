@@ -55,8 +55,6 @@ public class HRServiceImpl implements HRService {
 		Optional<Member> result = memberRepository.findById(id);
 		Member member = result.orElseThrow();
 		
-		// 패스워드 복호화? 
-		
 		MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(),
 																	member.getPassword(),
 																	member.getRoleSet()
@@ -221,6 +219,31 @@ public class HRServiceImpl implements HRService {
 		Page<MemberSecurityDTO> DTOPages = pages.map(p -> 
 			new MemberSecurityDTO(p.getId(), p.getPassword(), p.getRoleSet().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).collect(Collectors.toList()))
 		);
+		
+		return DTOPages;
+	}
+	
+	@Override
+	public Page<MemberSecurityDTO> getAdminListWithPaging(Pageable pageable, int size) {
+		int page = pageable.getPageNumber() - 1;
+		int limit = size;
+		MemberRole[] admin = { MemberRole.ADMIN, MemberRole.SUPER_ADMIN };
+		
+		Page<Member> pages = memberRepository.findAll(PageRequest.of(page, limit));
+		Page<MemberSecurityDTO> DTOPages = new PageImpl<>(
+			    pages.getContent().stream()
+			        .filter(member -> member.getRoleSet().contains(MemberRole.ADMIN)) // superAdmin 추가
+			        .map(member -> new MemberSecurityDTO(
+			            member.getId(),
+			            member.getPassword(),
+			            member.getRoleSet().stream()
+			                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+			                .collect(Collectors.toList())
+			        ))
+			        .collect(Collectors.toList()), // ERR_INCOMPLETE_CHUNKED_ENCODING 200 (OK)?
+			    pages.getPageable(), // 기존 Pageable 유지
+			    pages.getTotalElements() // 원래의 총 요소 개수
+			);
 		
 		return DTOPages;
 	}

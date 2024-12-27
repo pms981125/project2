@@ -83,3 +83,12 @@ compileQuerydsl{
 configurations {
     querydsl.extendsFrom compileClasspath
 }
+
+jar {
+    enabled = false
+}
+
+bootJar {
+    archiveFileName = 'app.jar'
+    launchScript()
+}
