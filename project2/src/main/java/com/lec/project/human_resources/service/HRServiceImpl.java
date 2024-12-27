@@ -173,9 +173,9 @@ public class HRServiceImpl implements HRService {
 	}
 	
 	@Override
-	public Page<MemberSecurityDTO> getUserListWithPaging(Pageable pageable) {
+	public Page<MemberSecurityDTO> getUserListWithPaging(Pageable pageable, int size) {
 		int page = pageable.getPageNumber() - 1;
-		int limit = 10;
+		int limit = size;
 		
 		Page<Member> pages = memberRepository.findAll(PageRequest.of(page, limit));
 		Page<MemberSecurityDTO> DTOPages = new PageImpl<>(
@@ -197,9 +197,9 @@ public class HRServiceImpl implements HRService {
 	}
 
 	@Override
-	public Page<MemberSecurityDTO> getAllUserListWithPaging(Pageable pageable) {
+	public Page<MemberSecurityDTO> getAllUserListWithPaging(Pageable pageable, int size) {
 		int page = pageable.getPageNumber() - 1;
-		int limit = 10;
+		int limit = size;
 		
 		Page<Member> pages = memberRepository.findAll(PageRequest.of(page, limit));
 		Page<MemberSecurityDTO> DTOPages = pages.map(p -> 

@@ -12,9 +12,9 @@ public interface HRService {
 	MemberSecurityDTO getUser(String id);
 	//AdminDTO getAdmin(String id);
 	List<MemberSecurityDTO> getUserList();
-	Page<MemberSecurityDTO> getUserListWithPaging(Pageable pageable);
+	Page<MemberSecurityDTO> getUserListWithPaging(Pageable pageable, int size);
 	List<MemberSecurityDTO> getAllUserList();
-	Page<MemberSecurityDTO> getAllUserListWithPaging(Pageable pageable);
+	Page<MemberSecurityDTO> getAllUserListWithPaging(Pageable pageable, int size);
 	void update(String id, String password);
 	void remove(String id);
 	void addAdmin(String id, String password, String name, String ssnFront, String ssnEnd, String email);

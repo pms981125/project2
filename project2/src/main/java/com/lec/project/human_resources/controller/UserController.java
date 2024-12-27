@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.lec.project.MemberSecurityDTO;
 import com.lec.project.human_resources.service.HRService;
 
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,5 @@
 package com.lec.project.human_resources.controller;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -35,8 +33,8 @@ public class SuperHRController {
 		}*/
 	
 	@GetMapping("/allUserList") // 모든 유저 목록
-	public String getAllUserList(@PageableDefault(page = 1) Pageable pageable, Model model) {
-		Page<MemberSecurityDTO> pages = hrService.getAllUserListWithPaging(pageable);
+	public String getAllUserList(@PageableDefault(page = 1) Pageable pageable, Model model, @RequestParam(name = "size", defaultValue = "10") int size) {
+		Page<MemberSecurityDTO> pages = hrService.getAllUserListWithPaging(pageable, size);
 		int limit = 5;
 		int startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / limit))) - 1) * limit + 1;
 		int endPage = Math.min(startPage + limit - 1, pages.getTotalPages());
@@ -44,6 +42,7 @@ public class SuperHRController {
 		model.addAttribute("pages", pages);
 		model.addAttribute("startPage", startPage);
 		model.addAttribute("endPage", endPage);
+		model.addAttribute("size", size);
 		
 		return "admin/allUserList";
 	}
