@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.lec.project.MemberSecurityDTO;
 import com.lec.project.human_resources.service.HRService;
 
+import groovyjarjarantlr4.v4.parse.ANTLRParser.element_return;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -56,13 +57,11 @@ public class SuperHRController {
 		return "admin/allUserInfo";
 	}
 	
-	@PostMapping("/update") // 유저 정보 수정 - 현재는 비밀번호만 가능
-	public String update(@RequestParam(name = "id") String id, @RequestParam(name = "password") String password) {
-		log.info("-=- update " + id + " " + password);
-
-		hrService.update(id, password);
+	@PostMapping("/update") // 유저 정보 수정 - 틀
+	public String update(@RequestParam(name = "originalId") String originalId, @RequestParam(name = "newId") String newId) {
+		hrService.update(originalId, newId);
 		
-		return "redirect:/sudo/userInfo?id=" + id;
+		return "redirect:/sudo/userInfo?id=" + originalId;
 	}
 	
 	@PostMapping("/remove") // 유저 삭제

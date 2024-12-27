@@ -27,6 +27,8 @@ public class Member {
 	
 	private String password;
 	
+	private String cartId;
+	
 	@Enumerated(EnumType.STRING)
 	@ElementCollection(fetch = FetchType.LAZY)
 	@Builder.Default

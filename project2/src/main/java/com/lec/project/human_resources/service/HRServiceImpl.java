@@ -110,14 +110,30 @@ public class HRServiceImpl implements HRService {
 	}
 	
 	@Override
-	public void update(String id, String password) {
-		Optional<Member> result = memberRepository.findById(id);
-		Member member = result.orElseThrow();
+	public void update(String originalId, String newId) {
+		log.info(originalId + " fvf " + newId);
 		
-		member.setPassword(password); // password 수정
+		Optional<Member> result = memberRepository.findById(originalId);
+		Member member = result.orElseThrow();
+			
+		// member.setId(newId); // 기본키는 수정하지 않는다.
+		// member.setPassword(password); // password 수정, 암호화 도입으로 수행 X
+		
 		memberRepository.save(member);
 	}
 
+	/*
+		private boolean isUniqueId(String newId) { 사용 X
+			try {
+				Optional<Member> result = memberRepository.findById(newId);
+				Member member = result.orElseThrow();
+				
+				return false;
+			} catch (Exception e) {
+				return true;
+			}
+		}
+	*/
 	@Override
 	public void remove(String id) {
 		memberRepository.deleteById(id);

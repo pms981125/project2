@@ -11,7 +11,7 @@
 			<!-- [[${member.getId()}]] -->
 			<div class="form-group input-group">
 				<div class="input-group-prepend"><span class="input-group-text">ID</span></div>
-				<input type="text" name="id" class="form-control" th:value="${member.id}" readonly>
+				<input type="text" name="newId" class="form-control" th:value="${member.id}">
 			</div>
 			<!-- <input type="text" name="password" class="form-control" th:value="${member.password}" > -->
 			<div class="form-group input-group mt-sm-1 justify-content-center">
@@ -30,10 +30,19 @@
 
 <script layout:fragment="script" th:inline="javascript">
 	const form = document.querySelector("#form")
+	const originalId = /*[[${member.id}]]*/'';
 
 	document.querySelector(".memUpdateBtn").addEventListener("click", function(e) {
 	    e.preventDefault()
 	    e.stopPropagation()
+	    
+		let input1 = document.createElement('input')
+
+	    input1.type = 'hidden'
+	    input1.name = 'originalId'
+	    input1.value = originalId
+	    
+	    form.appendChild(input1)
 	    
 	    form.action = `/sudo/update`
 	    form.method = 'post'

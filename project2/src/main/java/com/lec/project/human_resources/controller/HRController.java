@@ -57,13 +57,11 @@ public class HRController {
 		return "admin/userList";
 	}
 	
-	@PostMapping("/update") // 유저 정보 수정 - 현재는 비밀번호만 가능
-	public String update(@RequestParam(name = "id") String id, @RequestParam(name = "password") String password) {
-		log.info("-=- update " + id + " " + password);
-
-		hrService.update(id, password);
+	@PostMapping("/update") // 유저 정보 수정 - 틀
+	public String update(@RequestParam(name = "originalId") String originalId, @RequestParam(name = "newId") String newId) {
+		hrService.update(originalId, newId);
 		
-		return "redirect:/hr/userInfo?id=" + id;
+		return "redirect:/hr/userInfo?id=" + originalId;
 	}
 	
 	@PostMapping("/remove") // 유저 삭제
