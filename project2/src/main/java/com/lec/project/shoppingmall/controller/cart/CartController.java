@@ -1,5 +1,7 @@
 package com.lec.project.shoppingmall.controller.cart;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,52 +23,60 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 @Log4j2
 public class CartController {
-    
-    private final CartService cartService;
-    
-    @GetMapping("/list")
-    public void list(
-        PageRequestDTO pageRequestDTO,
-        Model model
-    ) {
-        PageResponseDTO<CartListDTO> responseDTO = cartService.list(pageRequestDTO);
-        int totalPrice = cartService.getTotalPrice();
-        
-        model.addAttribute("responseDTO", responseDTO);
-        model.addAttribute("totalPrice", totalPrice);
-    }
-    
-    @GetMapping("/read")
-    public void read(@RequestParam("id") Long id, Model model) {
-        CartListDTO dto = cartService.readOne(id);
-        model.addAttribute("dto", dto);
-    }
-    
-    @GetMapping("/modify")
-    public void modify(@RequestParam("id") Long id, Model model) {
-        CartListDTO dto = cartService.readOne(id);
-        model.addAttribute("dto", dto);
-    }
-    
-    @PostMapping("/modify")
-    public String modify(
-        @RequestParam Long id,
-        @RequestParam int count,
-        RedirectAttributes redirectAttributes
-    ) {
-        try {
-            cartService.modify(id, count);
-            redirectAttributes.addFlashAttribute("result", "수정완료");
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/cart/modify?id=" + id;
-        }
-        return "redirect:/cart/read?id=" + id;
-    }
-    
-    @PostMapping("/remove")
-    public String remove(@RequestParam("id") Long id) {
-        cartService.remove(id);
-        return "redirect:/cart/list";
-    }
+
+	private final CartService cartService;
+
+	@GetMapping("/list")
+	public void list(PageRequestDTO pageRequestDTO
+			, @AuthenticationPrincipal UserDetails userDetails
+			, Model model) {
+		String memberId = userDetails.getUsername();
+		PageResponseDTO<CartListDTO> responseDTO = cartService.list(pageRequestDTO, memberId);
+		int totalPrice = cartService.getTotalPrice(memberId);
+
+		model.addAttribute("responseDTO", responseDTO);
+		model.addAttribute("totalPrice", totalPrice);
+	}
+
+	@GetMapping("/read")
+	public void read(@RequestParam("id") Long id
+			, @AuthenticationPrincipal UserDetails userDetails
+			, Model model) {
+		String memberId = userDetails.getUsername();
+		CartListDTO dto = cartService.readOne(id, memberId);
+		model.addAttribute("dto", dto);
+	}
+
+	@GetMapping("/modify")
+	public void modify(@RequestParam("id") Long id
+			, @AuthenticationPrincipal UserDetails userDetails
+			, Model model) {
+		String memberId = userDetails.getUsername();
+		CartListDTO dto = cartService.readOne(id, memberId);
+		model.addAttribute("dto", dto);
+	}
+
+	@PostMapping("/modify")
+	public String modify(@RequestParam("id") Long id
+			, @RequestParam("count") int count
+			, @AuthenticationPrincipal UserDetails userDetails
+			, RedirectAttributes redirectAttributes) {
+		try {
+			String memberId = userDetails.getUsername();
+			cartService.modify(id, count, memberId);
+			redirectAttributes.addFlashAttribute("result", "수정완료");
+		} catch (IllegalArgumentException e) {
+			redirectAttributes.addFlashAttribute("error", e.getMessage());
+			return "redirect:/cart/modify?id=" + id;
+		}
+		return "redirect:/cart/read?id=" + id;
+	}
+
+	@PostMapping("/remove")
+	public String remove(@RequestParam("id") Long id
+			, @AuthenticationPrincipal UserDetails userDetails) {
+	    String memberId = userDetails.getUsername();
+	    cartService.remove(id, memberId);
+	    return "redirect:/cart/list";
+	}
 }

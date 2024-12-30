@@ -52,7 +52,6 @@ public class CartProduct {
 		return cartProduct;
 	}
 	
-	// 편의 메서드 추가
     public void updateCount(int newCount) {
         this.count = newCount;
         this.total_price = newCount * this.product.getProduct_price();

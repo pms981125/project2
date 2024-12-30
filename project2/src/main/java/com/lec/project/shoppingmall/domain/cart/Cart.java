@@ -29,4 +29,10 @@ public class Cart {
 	@OneToOne
 	@JoinColumn(name = "member_id")
 	private Member member;
+	
+	public static Cart createCart(Member member) {
+		return Cart.builder()
+				.member(member)
+				.build();
+	}
 }
