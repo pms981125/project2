@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Cart/modify</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+	<h1>Cart/modify</h1>
+
+	<form id="modifyForm" action="/cart/modify" method="post">
+		<input type="hidden" name="id" th:value="${dto.id}"> <input
+			type="hidden" name="product_code" th:value="${dto.product_code}">
+
+		<table border="1">
+			<tr>
+				<th>번호</th>
+				<td>[[${dto.id}]]</td>
+			</tr>
+			<tr>
+				<th>상품명</th>
+				<td>[[${dto.product_name}]]</td>
+			</tr>
+			<tr>
+				<th>상품코드</th>
+				<td>[[${dto.product_code}]]</td>
+			</tr>
+			<tr>
+				<th>수량</th>
+				<td><input type="number" name="count" th:value="${dto.count}"
+					min="1"></td>
+			</tr>
+			<tr>
+				<th>개당 가격</th>
+				<td>[[${dto.price}]]</td>
+			</tr>
+			<tr>
+				<th>총 가격</th>
+				<td>[[${dto.total_price}]]</td>
+			</tr>
+		</table>
+
+		<div>
+			<button type="submit">수정 완료</button>
+			<button type="reset">초기화</button>
+			<a th:href="@{/cart/read(id=${dto.id})}">
+				<button type="button">취소</button>
+			</a> <a th:href="@{/cart/list}">
+				<button type="button">목록</button>
+			</a>
+		</div>
+	</form>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const errorMessage = /*[[${error}]]*/'';
+			if (errorMessage && errorMessage.trim() !== '') {
+				alert(errorMessage);
+			}
+		});
+
+		const count = document.querySelector('input[name="count"]').value;
+		const originalCount = /*[[${dto.count}]]*/'';
+		const price = /*[[${dto.price}]]*/'';
+
+		function updateTotalPrice() {
+			const count = parseInt(countInput.value) || 0;
+			const totalPrice = count * price;
+			document.querySelector('.total-price').textContent = new Intl.NumberFormat(
+					'ko-KR').format(totalPrice)
+					+ '원';
+		}
+
+		countInput.addEventListener('change', updateTotalPrice);
+
+		document.querySelector('button[type="reset"]').addEventListener(
+				'click', function(e) {
+					e.preventDefault();
+					countInput.value = originalCount;
+					updateTotalPrice();
+				});
+	</script>
+
+</body>
+</html>

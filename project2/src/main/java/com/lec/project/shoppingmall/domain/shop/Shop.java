@@ -40,6 +40,7 @@ public class Shop {
 	@Column//detail2
 	private String board_content2;
 
+	// 이후 상품 묶음 판매등의 확장을 위해 OneToOne가 아닌 ManyToOne으로 코드 작성
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_code", referencedColumnName = "product_code", insertable = false, updatable = false)
 	private Product product;

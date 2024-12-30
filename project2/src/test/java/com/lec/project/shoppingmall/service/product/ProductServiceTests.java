@@ -49,11 +49,11 @@ public class ProductServiceTests {
 		IntStream.rangeClosed(1, 200).forEach(i -> {
 			
 			ProductDTO productDTO = ProductDTO.builder()
-					.product_code(String.format("product_%03d", i))
-					.product_category(String.format("product_category_%03d", i))
-					.product_detail1(String.format("product_detail1_%03d", i))
-					.product_detail2(String.format("product_detail2_%03d", i))
-					.product_name(String.format("product_name_%03d", i))
+					.product_code(String.format("상품코드 %03d", i))
+					.product_category(String.format("카테고리 %03d", i%10))
+					.product_detail1(String.format("세부정보 %03d", i))
+					.product_detail2(String.format("세부정보2 %03d", i))
+					.product_name(String.format("상품 %03d", i))
 					.product_price(i*100)
 					.product_stock(i)
 					.build();

@@ -53,7 +53,7 @@ public class ShopServiceTests {
     public void testInsertMany() {
         IntStream.rangeClosed(1, 100).forEach(i -> {
             ShopDTO shopDTO = ShopDTO.builder()
-                .product_code(String.format("product_%03d", i))
+                .product_code(String.format("상품코드 %03d", i))
                 .build();
 
             Long bno = shopService.register(shopDTO);
