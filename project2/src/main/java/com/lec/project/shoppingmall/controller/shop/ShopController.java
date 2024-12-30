@@ -1,6 +1,7 @@
 package com.lec.project.shoppingmall.controller.shop;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -46,11 +47,13 @@ public class ShopController {
 			model.addAttribute("dto", shopDTO);
 			}
 	
+	@PreAuthorize("hasRole('MANAGER')")
 	@GetMapping("/regist")
 	public void registerGet() {
 		log.info("regist.GET..........");
 	}
 	
+	@PreAuthorize("hasRole('MANAGER')")
 	@PostMapping("/regist")	// 상품등록
 	public String registerPost(@Valid ShopDTO shopDTO	// 폼에서 전송된 데이터를 검증
 			, BindingResult bindingResult				// 검증 결과를 담는 객체
@@ -70,7 +73,9 @@ public class ShopController {
 		return "redirect:/protoshop/list";
 	}
 	
+	
 	// 수정
+	@PreAuthorize("hasRole('MANAGER')")
 	@PostMapping("modify")
 	public String modify(@Valid ShopDTO shopDTO
 			, BindingResult bindingResult
@@ -100,7 +105,7 @@ public class ShopController {
 		}
 	}
 	
-	
+	@PreAuthorize("hasRole('MANAGER')")
 	@PostMapping("remove")
 	public String remove(@RequestParam("bno") Long bno, RedirectAttributes redirectAttributes) {
 		log.info("remove.Post..........");
