@@ -33,6 +33,11 @@ public class WebSecurityConfig {
         	.authorizeHttpRequests(auth -> auth.requestMatchers("/admin/**").hasRole("ADMIN") // 효과 X
         									   .requestMatchers("/hr/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
         									   .requestMatchers("/sudo/**").hasRole("SUPER_ADMIN")
+        									   
+        								        // protoshop 관련 권한을 MANAGER에 부여
+        								       .requestMatchers("/protoshop/modify/**", "/protoshop/remove/**", "/protoshop/regist/**").hasRole("MANAGER")
+        								       .requestMatchers("/protoshop/list", "/protoshop/read/**", "/cart/**").permitAll()
+        								        
         									   .requestMatchers("/user/**").hasRole("USER") // 없애도 될듯?
         									   .anyRequest().authenticated())
         	.formLogin(form -> form//.loginPage("/login")
