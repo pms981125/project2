@@ -29,6 +29,16 @@ public class MemberRepositoryTests {
 	}
 	
 	@Test
+	public void addManager() {
+		Member member = Member.builder().id("manager")
+				.password(passwordEncoder.encode("m"))
+				.build();
+		member.addRole(MemberRole.MANAGER);
+		
+		memberRepository.save(member);
+	}
+	
+	@Test
 	public void addUser30() {
 		IntStream.rangeClosed(1, 30).forEach(i -> {
 			Member member = Member.builder().id(String.format("user%02d", i))

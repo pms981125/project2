@@ -30,7 +30,7 @@
 			</tbody>
 		</table>
 		
-		<div class="paging">
+		<div class="paging"> <!-- 페이징 수정 -->
 			<a th:href="@{/sudo/allUserList(page=1, size=${size}, onlyAdmin=${onlyAdmin})}">첫 페이지</a>
 			<a th:href="${pages.first} ? '#' : @{/sudo/allUserList(page=${pages.number}, size=${size}, onlyAdmin=${onlyAdmin})}">이전</a>
 			<span th:each="page:${#numbers.sequence(startPage, endPage)}">
@@ -61,6 +61,7 @@
 	
 	const pages = /*[[${pages}]]*/''
 	
+	console.log(page)
 	console.log(pages)
 	
 	selectSize.addEventListener('change', function(e) {
@@ -90,8 +91,6 @@
 		const form = document.createElement('form')
 		const size = selectSize.value
 		const checkBox = onlyAdmin.checked
-		
-		console.log(checkBox)
 		
 		let input1 = document.createElement('input')
 		let input2 = document.createElement('input')

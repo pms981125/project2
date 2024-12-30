@@ -1,6 +1,10 @@
 package com.lec.project.human_resources.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
@@ -13,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.lec.project.MemberSecurityDTO;
 import com.lec.project.human_resources.service.HRService;
 
-import groovyjarjarantlr4.v4.parse.ANTLRParser.element_return;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -37,16 +40,19 @@ public class SuperHRController {
 	public String getAllUserList(@PageableDefault(page = 1) Pageable pageable, Model model, @RequestParam(name = "size", defaultValue = "10") int size, 
 								 @RequestParam(name = "onlyAdmin", defaultValue = "false") boolean onlyAdmin) {
 		Page<MemberSecurityDTO> pages = null;
+		int limit = 5;
+		int startPage; 
+		int endPage; 
 		
 		if (onlyAdmin) {
 			pages = hrService.getAdminListWithPaging(pageable, size);
+			startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / limit))) - 1) * limit + 1;
+			endPage = Math.min(startPage + limit, pages.getTotalPages());
 		} else {
 			pages = hrService.getAllUserListWithPaging(pageable, size);
+			startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / limit))) - 1) * limit + 1;
+			endPage = Math.min(startPage + limit, pages.getTotalPages());
 		}
-		
-		int limit = 5;
-		int startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / limit))) - 1) * limit + 1;
-		int endPage = Math.min(startPage + limit - 1, pages.getTotalPages());
 		
 		model.addAttribute("pages", pages);
 		model.addAttribute("startPage", startPage);
@@ -56,7 +62,7 @@ public class SuperHRController {
 		
 		return "admin/allUserList";
 	}
-
+	
 	@GetMapping("/userInfo") // 유저 상세정보
 	public String getInfo(@RequestParam("id") String id, Model model) {
 		MemberSecurityDTO memberSecurityDTO = hrService.getUser(id);
