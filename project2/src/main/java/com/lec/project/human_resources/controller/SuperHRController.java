@@ -41,13 +41,9 @@ public class SuperHRController {
 		int endPage; 
 		
 		if (onlyAdmin) {
-			pages = hrService.getAdminListWithPaging(pageable, size);
+			pages = hrService.getAdminListWithPaging(pageable.getPageNumber() - 1, pageable, size);
 			startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / limit))) - 1) * limit + 1;
 			endPage = Math.min(startPage + limit, pages.getTotalPages());
-			
-			/*			System.out.println(pages);
-						System.out.println(pages.getNumber());
-						System.out.println(pages.getTotalElements());*/
 		} else {
 			pages = hrService.getAllUserListWithPaging(pageable, size);
 			startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / limit))) - 1) * limit + 1;

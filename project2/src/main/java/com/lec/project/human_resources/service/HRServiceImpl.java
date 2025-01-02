@@ -202,19 +202,16 @@ public class HRServiceImpl implements HRService {
 		Page<MemberSecurityDTO> DTOPages = pages
 				.map(p -> new MemberSecurityDTO(p.getId(), p.getPassword(), p.getRoleSet().stream()
 						.map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).collect(Collectors.toList())));
-		/*		
-				System.out.println(DTOPages);
-				System.out.println(pageable);
-				System.out.println(DTOPages.getSize());
-				*/
+		
 		return DTOPages;
 	}
 
 	@Override
-	public Page<MemberSecurityDTO> getAdminListWithPaging(Pageable pageable, int size) {
+	public Page<MemberSecurityDTO> getAdminListWithPaging(int p, Pageable pageable, int size) {
 		int page = pageable.getPageNumber() - 1;
 		int limit = size;
-				
+		
+		List<Member> listSize = memberRepository.findAll().stream().filter(member -> member.getRoleSet().contains(MemberRole.ADMIN)).collect(Collectors.toList());
 		Page<Member> pages = memberRepository.findAll(PageRequest.of(page, limit));
 		List<MemberSecurityDTO> DTOPages = pages.getContent().stream()
 												.filter(member -> member.getRoleSet().contains(MemberRole.ADMIN))
@@ -225,26 +222,7 @@ public class HRServiceImpl implements HRService {
 													 	   .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
 													 	   .collect(Collectors.toList())))
 												.collect(Collectors.toList());
-		/*
-				System.out.println(DTOPages);
-				System.out.println(pageable);
-				System.out.println(DTOPages.size());
-				System.out.println(pages.getTotalElements());
-				System.out.println(pages.getTotalPages());
-				System.out.println(pages.getNumber());
-		 */
 		
-		PageImpl page1 = new PageImpl<>(DTOPages, pageable, DTOPages.size());
-		
-		System.out.println(DTOPages);
-		System.out.println(pageable);
-		System.out.println(DTOPages.size());
-		
-		System.out.println(page1);
-		System.out.println(page1.getNumber());
-		System.out.println(page1.getTotalElements());
-		
-		// return new PageImpl<>(DTOPages, pageable, DTOPages.size());
-		return page1;
+		return new PageImpl<>(DTOPages, pageable.withPage(p), listSize.size());
 	}
 }
