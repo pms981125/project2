@@ -20,7 +20,7 @@ spring:
   servlet:
     multipart:
       enabled: true
-      location: d:/pms/98.temp/upload/
+      location: d:/sungil/98.temp/upload/
       max-request-size: 30MB
       max-file-size: 10MB
   security:
@@ -57,11 +57,11 @@ server:
       charset: utf-8
 # file upload/download
 path:
-  upload: D:/sungil/98.temp/upload/
-  download: D:/sungil/98.temp/download/
+  upload: d:/sungil/98.temp/upload/
+  download: d:/sungil/98.temp/download/
 com:
   lec:
     upload:
-      path: d:/pms/98.temp/upload/
+      path: d:/sungil/98.temp/upload/
     jwt:
       secret: hello1234567890

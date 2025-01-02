@@ -31,4 +31,8 @@ public class ShopDTO {
     // 게시글 내용 필드 추가
     private String board_content1;
     private String board_content2;
+    
+    // 이미지 관련 필드 추가
+    private String img_path;
+    private String thumbnail_path;
 }

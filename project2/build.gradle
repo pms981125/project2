@@ -54,6 +54,9 @@ dependencies {
     annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
     annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
    	annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+   	
+   	// 이미지.thumbnail
+	implementation 'net.coobird:thumbnailator:0.4.20'
 	
 }
 

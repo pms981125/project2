@@ -13,12 +13,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.lec.project.shoppingmall.domain.product.Product;
 import com.lec.project.shoppingmall.dto.PageRequestDTO;
 import com.lec.project.shoppingmall.dto.PageResponseDTO;
+import com.lec.project.shoppingmall.dto.product.image.ProductImageDTO;
 import com.lec.project.shoppingmall.dto.shop.ShopDTO;
+import com.lec.project.shoppingmall.service.product.image.ProductImageService;
 import com.lec.project.shoppingmall.service.shop.ShopService;
 
 import jakarta.validation.Valid;
@@ -33,6 +36,7 @@ import lombok.extern.log4j.Log4j2;
 public class ShopController {
 
 	private final ShopService shopService;
+	private final ProductImageService productImageService;
 	
 	@GetMapping("/list")
 	public String list(PageRequestDTO pageRequestDTO
@@ -51,6 +55,13 @@ public class ShopController {
 		PageResponseDTO<ShopDTO> responseDTO = shopService.list(pageRequestDTO, keyword, category);
 		log.info(".........." + responseDTO);
 		
+		responseDTO.getDtoList().forEach(shopDTO -> {
+			ProductImageDTO mainImage = productImageService.getMainImage(shopDTO.getProduct_code());
+			if(mainImage != null) {
+				shopDTO.setThumbnail_path(mainImage.getThumnail_path());
+			}
+		});
+		
 		model.addAttribute("responseDTO", responseDTO);
 		model.addAttribute("keyword", keyword);
 		model.addAttribute("category", category);
@@ -62,6 +73,12 @@ public class ShopController {
 	public void read(@RequestParam("bno") Long bno, Model model) {
 			log.info("read or modify..........");
 			ShopDTO shopDTO = shopService.readOne(bno);
+			
+			ProductImageDTO mainImage = productImageService.getMainImage(shopDTO.getProduct_code());
+			if(mainImage != null) {
+				shopDTO.setImg_path(mainImage.getImg_path());
+				shopDTO.setThumbnail_path(mainImage.getThumnail_path());
+			}
 			model.addAttribute("dto", shopDTO);
 			}
 	
@@ -74,6 +91,7 @@ public class ShopController {
 	@PreAuthorize("hasRole('MANAGER')")
 	@PostMapping("/regist")	// 상품등록
 	public String registerPost(@Valid ShopDTO shopDTO	// 폼에서 전송된 데이터를 검증
+			, @RequestParam(value = "productImage", required = false) MultipartFile productImage
 			, BindingResult bindingResult				// 검증 결과를 담는 객체
 			, RedirectAttributes redirectAttributes) {	// 리다이렉트시 데이터 전달
 		log.info("regist.Post..........");
@@ -86,6 +104,15 @@ public class ShopController {
 		log.info("regist.........." + shopDTO);
 		
 		Long bno = shopService.register(shopDTO);
+		
+		if(productImage != null && !productImage.isEmpty()) {
+			try {
+				productImageService.uploadProductImage(productImage, shopDTO.getProduct_code(), true);
+			} catch(Exception e) {
+				log.error("이미지 업로드 실패..........", e);
+				redirectAttributes.addFlashAttribute("imageError", "이미지 업로드에 실패했습니다.");
+			}
+		}
 		redirectAttributes.addFlashAttribute("result", bno);
 		
 		return "redirect:/protoshop/list";
@@ -96,6 +123,7 @@ public class ShopController {
 	@PreAuthorize("hasRole('MANAGER')")
 	@PostMapping("modify")
 	public String modify(@Valid ShopDTO shopDTO
+			, @RequestParam(value = "productImage", required = false) MultipartFile productImage
 			, BindingResult bindingResult
 			, RedirectAttributes redirectAttributes) {
 		log.info("modify.Post : " + shopDTO);
@@ -112,6 +140,15 @@ public class ShopController {
 			
 			shopService.modify(shopDTO);
 			
+			// 이미지 업로드 (메인 이미지로)
+            if (productImage != null && !productImage.isEmpty()) {
+                try {
+                    productImageService.uploadProductImage(productImage, shopDTO.getProduct_code(), true);
+                } catch (Exception e) {
+                    log.error("이미지 업로드 실패", e);
+                    redirectAttributes.addFlashAttribute("imageError", "이미지 업로드에 실패했습니다.");
+                }
+            }			
 			
 			redirectAttributes.addFlashAttribute("result", "게시글수정성공..........");
 			redirectAttributes.addFlashAttribute("bno", shopDTO.getBno());
