@@ -61,8 +61,11 @@ public class CartServiceImpl implements CartService {
 			return dto;
 		}).collect(Collectors.toList());
 
-		return PageResponseDTO.<CartListDTO>withAll().pageRequestDTO(pageRequestDTO).dtoList(dtoList)
-				.total((int) result.getTotalElements()).build();
+		return PageResponseDTO.<CartListDTO>withAll()
+				.pageRequestDTO(pageRequestDTO)
+				.dtoList(dtoList)
+				.total((int) result.getTotalElements())
+				.build();
 	}
 
 	@Override
@@ -112,7 +115,7 @@ public class CartServiceImpl implements CartService {
 	@Override
 	public void removeAll(String memberId) {
 		 Cart cart = getOrCreateCart(memberId);
-		cartProductRepository.deleteAll();
+		cartProductRepository.deleteByCart(cart);
 	}
 
 	@Override
@@ -131,7 +134,7 @@ public class CartServiceImpl implements CartService {
 			cartProductRepository.save(cartProduct);
 		} else {
 			CartProduct cartProduct = CartProduct.CreateProductCart(
-					null
+					cart
 					, product
 					, count
 					, count * product.getProduct_price());
@@ -143,8 +146,7 @@ public class CartServiceImpl implements CartService {
 	@Override
 	public int getTotalPrice(String memberId) {
 		 Cart cart = getOrCreateCart(memberId);
-		return cartProductRepository
-				.findAll()
+		return cartProductRepository.findByCart(cart)
 				.stream()
 				.mapToInt(CartProduct::getTotal_price)
 				.sum();

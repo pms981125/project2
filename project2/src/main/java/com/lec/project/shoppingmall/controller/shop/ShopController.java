@@ -2,6 +2,8 @@ package com.lec.project.shoppingmall.controller.shop;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,7 +35,13 @@ public class ShopController {
 	private final ShopService shopService;
 	
 	@GetMapping("/list")
-	public String list(PageRequestDTO pageRequestDTO, Model model) {
+	public String list(PageRequestDTO pageRequestDTO
+			, @AuthenticationPrincipal UserDetails userDetails
+			, Model model) {
+		
+		if(userDetails != null) {
+			model.addAttribute("memberId", userDetails.getUsername());
+		}
 		PageResponseDTO<ShopDTO> responseDTO = shopService.list(pageRequestDTO);
 		log.info(".........." + responseDTO);
 		model.addAttribute("responseDTO", responseDTO);
@@ -113,6 +121,11 @@ public class ShopController {
 		shopService.remove(bno);
 		redirectAttributes.addFlashAttribute("result", "게시글삭제성공..........");
 		return "redirect:/protoshop/list";
+	}
+	
+	@GetMapping("/logout")
+	public String logout() {
+		return "redirect:/logout";
 	}
 	
 }

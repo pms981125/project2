@@ -5,7 +5,14 @@
 <title>Cart/list</title>
 </head>
 <body>
+
 <h1>Cart/list</h1>
+
+<div>
+    접속 ID: <strong th:text="${memberId}"></strong>
+    총 결제금액: <strong th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')}">0</strong>원
+    <a th:href="@{/logout}"><button>로그아웃</button></a>
+</div>
 
 <table border="1">
    <thead>

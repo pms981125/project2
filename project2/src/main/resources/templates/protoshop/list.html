@@ -9,54 +9,56 @@
 	<div sec:authorize="hasRole('ROLE_MANAGER')">
 		<a th:href="@{/protoshop/regist}"><button>상품 등록하기</button></a>
 	</div>
-	<a th:href="@{/cart/list}"><button>장바구니</button></a>
+<div>
+    접속 ID: <strong th:text="${memberId}"></strong>
+    <a th:href="@{/cart/list}"><button>장바구니</button></a>
+    <a th:href="@{/logout}"><button>로그아웃</button></a>
+</div>
+		<table border="1">
+			<thead>
+				<tr>
+					<th>번호</th>
+					<th>제목</th>
+					<th>상품코드</th>
+					<th>가격</th>
+					<th>카테고리</th>
+					<th>재고</th>
+					<th>내용1</th>
+					<th>내용2</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="shop : ${responseDTO.dtoList}">
+					<td>[[${shop.bno}]]</td>
+					<td><a th:href="@{/protoshop/read(bno=${shop.bno})}">[[${shop.board_title}]]</a>
+					</td>
+					<td>[[${shop.product_code}]]</td>
+					<td>[[${shop.product_price}]]</td>
+					<td>[[${shop.product_category}]]</td>
+					<td>[[${shop.product_stock}]]</td>
+					<td>[[${shop.board_content1}]]</td>
+					<td>[[${shop.board_content2}]]</td>
+				</tr>
+			</tbody>
+		</table>
 
-	<table border="1">
-		<thead>
-			<tr>
-				<th>번호</th>
-				<th>제목</th>
-				<th>상품코드</th>
-				<th>가격</th>
-				<th>카테고리</th>
-				<th>재고</th>
-				<th>내용1</th>
-				<th>내용2</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr th:each="shop : ${responseDTO.dtoList}">
-				<td>[[${shop.bno}]]</td>
-				<td><a th:href="@{/protoshop/read(bno=${shop.bno})}">[[${shop.board_title}]]</a>
-				</td>
-				<td>[[${shop.product_code}]]</td>
-				<td>[[${shop.product_price}]]</td>
-				<td>[[${shop.product_category}]]</td>
-				<td>[[${shop.product_stock}]]</td>
-				<td>[[${shop.board_content1}]]</td>
-				<td>[[${shop.board_content2}]]</td>
-			</tr>
-		</tbody>
-	</table>
+		<div style="margin-top: 20px;">
+			<a th:href="@{/cart/list}"><button>장바구니로 이동</button></a>
+		</div>
 
-	<div style="margin-top: 20px;">
-		<a th:href="@{/cart/list}"><button>장바구니로 이동</button></a>
-	</div>
+		<!-- 페이징 추가 -->
+		<div th:with="start=${responseDTO.start}, end=${responseDTO.end}">
+			<ul th:if="${start != null && end != null}">
+				<li th:if="${responseDTO.prev}"><a
+					th:href="@{/protoshop/list(page=${start - 1})}">이전</a></li>
 
-	<!-- 페이징 추가 -->
-	<div th:with="start=${responseDTO.start}, end=${responseDTO.end}">
-		<ul th:if="${start != null && end != null}">
-			<li th:if="${responseDTO.prev}"><a
-				th:href="@{/protoshop/list(page=${start - 1})}">이전</a></li>
+				<li th:each="num : ${#numbers.sequence(start, end)}"><a
+					th:href="@{/protoshop/list(page=${num})}" th:text="${num}"
+					th:class="${responseDTO.page == num} ? 'active' : ''"> </a></li>
 
-			<li th:each="num : ${#numbers.sequence(start, end)}"><a
-				th:href="@{/protoshop/list(page=${num})}" th:text="${num}"
-				th:class="${responseDTO.page == num} ? 'active' : ''"> </a></li>
-
-			<li th:if="${responseDTO.next}"><a
-				th:href="@{/protoshop/list(page=${end + 1})}">다음</a></li>
-		</ul>
-	</div>
-
+				<li th:if="${responseDTO.next}"><a
+					th:href="@{/protoshop/list(page=${end + 1})}">다음</a></li>
+			</ul>
+		</div>
 </body>
 </html>

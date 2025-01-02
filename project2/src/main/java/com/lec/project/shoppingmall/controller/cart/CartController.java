@@ -31,6 +31,8 @@ public class CartController {
 			, @AuthenticationPrincipal UserDetails userDetails
 			, Model model) {
 		String memberId = userDetails.getUsername();
+		model.addAttribute("memberId", memberId);
+		
 		PageResponseDTO<CartListDTO> responseDTO = cartService.list(pageRequestDTO, memberId);
 		int totalPrice = cartService.getTotalPrice(memberId);
 
@@ -78,5 +80,10 @@ public class CartController {
 	    String memberId = userDetails.getUsername();
 	    cartService.remove(id, memberId);
 	    return "redirect:/cart/list";
+	}
+	
+	@GetMapping("/logout")
+	public String logout() {
+		return "redirect:/logout";
 	}
 }
