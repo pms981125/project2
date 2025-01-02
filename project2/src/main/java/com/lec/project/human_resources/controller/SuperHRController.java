@@ -1,10 +1,6 @@
 package com.lec.project.human_resources.controller;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
@@ -48,6 +44,10 @@ public class SuperHRController {
 			pages = hrService.getAdminListWithPaging(pageable, size);
 			startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / limit))) - 1) * limit + 1;
 			endPage = Math.min(startPage + limit, pages.getTotalPages());
+			
+			/*			System.out.println(pages);
+						System.out.println(pages.getNumber());
+						System.out.println(pages.getTotalElements());*/
 		} else {
 			pages = hrService.getAllUserListWithPaging(pageable, size);
 			startPage = (((int) Math.ceil(((double) pageable.getPageNumber() / limit))) - 1) * limit + 1;

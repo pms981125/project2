@@ -214,7 +214,6 @@ public class HRServiceImpl implements HRService {
 	public Page<MemberSecurityDTO> getAdminListWithPaging(Pageable pageable, int size) {
 		int page = pageable.getPageNumber() - 1;
 		int limit = size;
-		MemberRole[] admin = { MemberRole.ADMIN, MemberRole.SUPER_ADMIN };
 				
 		Page<Member> pages = memberRepository.findAll(PageRequest.of(page, limit));
 		List<MemberSecurityDTO> DTOPages = pages.getContent().stream()
@@ -226,14 +225,26 @@ public class HRServiceImpl implements HRService {
 													 	   .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
 													 	   .collect(Collectors.toList())))
 												.collect(Collectors.toList());
-		/*					
+		/*
 				System.out.println(DTOPages);
 				System.out.println(pageable);
 				System.out.println(DTOPages.size());
 				System.out.println(pages.getTotalElements());
 				System.out.println(pages.getTotalPages());
 				System.out.println(pages.getNumber());
-		*/					
-		return new PageImpl<>(DTOPages, pageable, DTOPages.size());
+		 */
+		
+		PageImpl page1 = new PageImpl<>(DTOPages, pageable, DTOPages.size());
+		
+		System.out.println(DTOPages);
+		System.out.println(pageable);
+		System.out.println(DTOPages.size());
+		
+		System.out.println(page1);
+		System.out.println(page1.getNumber());
+		System.out.println(page1.getTotalElements());
+		
+		// return new PageImpl<>(DTOPages, pageable, DTOPages.size());
+		return page1;
 	}
 }

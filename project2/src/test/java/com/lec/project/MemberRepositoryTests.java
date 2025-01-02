@@ -49,4 +49,16 @@ public class MemberRepositoryTests {
 			memberRepository.save(member);
 		});
 	}
+	
+	@Test
+	public void addA30() {
+		IntStream.rangeClosed(1, 30).forEach(i -> {
+			Member member = Member.builder().id(String.format("admin%03d", i * 10))
+					.password(passwordEncoder.encode("a"))
+					.build();
+			member.addRole(MemberRole.ADMIN);
+			
+			memberRepository.save(member);
+		});
+	}
 }

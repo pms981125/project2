@@ -71,9 +71,11 @@
 	selectSize.addEventListener('change', function(e) {
 		const form = document.createElement('form')
 		const size = selectSize.value
+		const checkBox = onlyAdmin.checked
 		
 		let input1 = document.createElement('input')
 		let input2 = document.createElement('input')
+		let input3 = document.createElement('input')
 
 		input1.type = 'hidden'
 	    input1.name = 'page'
@@ -81,9 +83,13 @@
 		input2.type = 'hidden'
 	    input2.name = 'size'
 	    input2.value = size
+		input3.type = 'hidden'
+		input3.name = 'onlyAdmin'
+		input3.value = checkBox
 	    
 	    form.appendChild(input1)
 	    form.appendChild(input2)
+	    form.appendChild(input3)
 		
 		form.action = `/sudo/allUserList`
 		form.method = 'get'
@@ -98,21 +104,16 @@
 		
 		let input1 = document.createElement('input')
 		let input2 = document.createElement('input')
-		let input3 = document.createElement('input')
 
 		input1.type = 'hidden'
-	    input1.name = 'page'
-	    input1.value = page
+	    input1.name = 'size'
+	    input1.value = size
 		input2.type = 'hidden'
-	    input2.name = 'size'
-	    input2.value = size
-		input3.type = 'hidden'
-	    input3.name = 'onlyAdmin'
-	    input3.value = checkBox
+	    input2.name = 'onlyAdmin'
+	    input2.value = checkBox
 	    
 	    form.appendChild(input1)
 	    form.appendChild(input2)
-	    form.appendChild(input3)
 		
 		form.action = `/sudo/allUserList`
 		form.method = 'get'
