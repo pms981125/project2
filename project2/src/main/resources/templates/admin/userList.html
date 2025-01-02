@@ -30,16 +30,20 @@
 		</table>
 		
 		<div class="paging">
-			<a th:href="@{/hr/userList(page=1, size=${size})}">첫 페이지</a>
-			<a th:href="${pages.first} ? '#' : @{/hr/userList(page=${pages.number}, size=${size})}">이전</a>
+			<span th:if="${!pages.first}" >
+				<a th:href="@{/hr/userList(page=1, size=${size})}">첫 페이지</a>
+				<a th:href="${pages.first} ? '#' : @{/hr/userList(page=${pages.number}, size=${size})}">이전</a>
+			</span>
 			<span th:each="page:${#numbers.sequence(startPage, endPage)}">
 				<span th:if="${page == pages.number + 1}" th:text="${page}" class="selected"></span>
 				<span th:unless="${page == pages.number + 1}">
 					<a th:href="@{/hr/userList(page=${page}, size=${size})}" th:text="${page}"></a>
 				</span>
 			</span>
-			<a th:href="${pages.last} ? '#' : @{/hr/userList(page=${pages.number+2}, size=${size})}">다음</a>
-			<a th:href="@{/hr/userList(page=${pages.totalPages}, size=${size})}">마지막 페이지</a>
+			<span th:if="${!pages.last}" >
+				<a th:href="${pages.last} ? '#' : @{/hr/userList(page=${pages.number+2}, size=${size})}">다음</a>
+				<a th:href="@{/hr/userList(page=${pages.totalPages}, size=${size})}">마지막 페이지</a>
+			</span>
 		</div>
 		<hr />
 		<div class="button">

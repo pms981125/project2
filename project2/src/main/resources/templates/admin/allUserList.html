@@ -30,17 +30,21 @@
 			</tbody>
 		</table>
 		
-		<div class="paging"> <!-- 페이징 수정 -->
-			<a th:href="@{/sudo/allUserList(page=1, size=${size}, onlyAdmin=${onlyAdmin})}">첫 페이지</a>
-			<a th:href="${pages.first} ? '#' : @{/sudo/allUserList(page=${pages.number}, size=${size}, onlyAdmin=${onlyAdmin})}">이전</a>
+		<div class="paging">
+			<span th:if="${!pages.first}" >
+				<a th:href="@{/sudo/allUserList(page=1, size=${size}, onlyAdmin=${onlyAdmin})}">첫 페이지</a>
+				<a th:href="${pages.first} ? '#' : @{/sudo/allUserList(page=${pages.number}, size=${size}, onlyAdmin=${onlyAdmin})}">이전</a>
+			</span>
 			<span th:each="page:${#numbers.sequence(startPage, endPage)}">
 				<span th:if="${page == pages.number + 1}" th:text="${page}" class="selected"></span>
 				<span th:unless="${page == pages.number + 1}">
 					<a th:href="@{/sudo/allUserList(page=${page}, size=${size}, onlyAdmin=${onlyAdmin})}" th:text="${page}"></a>
 				</span>
 			</span>
-			<a th:href="${pages.last} ? '#' : @{/sudo/allUserList(page=${pages.number+2}, size=${size}, onlyAdmin=${onlyAdmin})}">다음</a>
-			<a th:href="@{/sudo/allUserList(page=${pages.totalPages}, size=${size}, onlyAdmin=${onlyAdmin})}">마지막 페이지</a>
+			<span th:if="${!pages.last}" >
+				<a th:href="${pages.last} ? '#' : @{/sudo/allUserList(page=${pages.number+2}, size=${size}, onlyAdmin=${onlyAdmin})}">다음</a>
+				<a th:href="@{/sudo/allUserList(page=${pages.totalPages}, size=${size}, onlyAdmin=${onlyAdmin})}">마지막 페이지</a>
+			</span>
 		</div>
 		
 		<hr />	
