@@ -2,28 +2,57 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
-<!-- [[${member}]] -->
+<link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+
 <div layout:fragment="content">
-	<form th:action="@{/sudo/addAdmin}" method="post" id="form">
-		아이디 <input type="text" name="id" class="form-control">	<br />
-		비밀번호 <input type="text" name="password" class="form-control">	<br />
-		이름 <input type="text" name="name" class="form-control">	<br />
-		주민등록번호 <input type="text" name="ssnFront" class="form-control">
-		- <input type="text" name="ssnEnd" class="form-control">	<br />
-		이메일 <input type="text" name="email" class="form-control">	<br />
-		<button class="btn btn-primary addAdminBtn">관리자 추가</button>
-	</form>
+	<div class="container mt-4">
+		<form th:action="@{/sudo/addAdmin}" method="post" id="form" class="form">
+			<div class="form-group input-group">
+				<div class="input-group-prepend"><span class="input-group-text">ID</span></div>
+				<input type="text" name="id" class="form-control" placeholder="ID" required>
+			</div>
+			<div class="form-group input-group">
+				<div class="input-group-prepend"><span class="input-group-text">비밀번호</span></div>
+				<input type="text" name="password" class="form-control" placeholder="7자리 이상의 영•숫자 조합" required>
+			</div>
+			<div class="form-group input-group">
+				<div class="input-group-prepend"><span class="input-group-text">이름</span></div>
+				<input type="text" name="name" class="form-control" placeholder="이름" required>
+			</div>
+			<div class="form-group input-group">
+				<div class="input-group-prepend"><span class="input-group-text">주민등록번호</span></div>
+				<input type="text" name="ssnFront" class="form-control" required> - <input type="text" name="ssnEnd" class="form-control" required>
+			</div>
+			
+			<div class="form-group input-group">
+				<div class="input-group-prepend"><span class="input-group-text">이메일</span></div>
+				<input type="text" name="email" class="form-control" placeholder="이메일" required>
+			</div>
+			<div class="form-group input-group mt-sm-1 justify-content-center">
+				<!-- <button class="btn btn-primary addAdminBtn">관리자 추가</button> -->
+				<input type="submit" class="btn btn-primary" value="관리자 추가" />
+				<button class="btn btn-success goBackBtn ml-2" >이전</button>
+			</div>
+		</form>
+	</div>
 </div>
 
 <script layout:fragment="script" th:inline="javascript">
 	const form = document.querySelector("#form")
 
-	document.querySelector(".addAdminBtn").addEventListener("click", function(e) {
+/* 	document.querySelector(".addAdminBtn").addEventListener("click", function(e) {
 	    e.preventDefault()
 	    e.stopPropagation()
 	    
 	    form.action = `/sudo/addAdmin`
 	    form.method = 'post'
 	    form.submit()
+	}, false) */
+	
+	document.querySelector(".goBackBtn").addEventListener("click", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	    
+		location.href = "/sudo/allUserList"
 	}, false)
 </script>
