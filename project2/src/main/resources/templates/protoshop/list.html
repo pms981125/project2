@@ -9,56 +9,78 @@
 	<div sec:authorize="hasRole('ROLE_MANAGER')">
 		<a th:href="@{/protoshop/regist}"><button>상품 등록하기</button></a>
 	</div>
-<div>
-    접속 ID: <strong th:text="${memberId}"></strong>
-    <a th:href="@{/cart/list}"><button>장바구니</button></a>
-    <a th:href="@{/logout}"><button>로그아웃</button></a>
-</div>
-		<table border="1">
-			<thead>
-				<tr>
-					<th>번호</th>
-					<th>제목</th>
-					<th>상품코드</th>
-					<th>가격</th>
-					<th>카테고리</th>
-					<th>재고</th>
-					<th>내용1</th>
-					<th>내용2</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="shop : ${responseDTO.dtoList}">
-					<td>[[${shop.bno}]]</td>
-					<td><a th:href="@{/protoshop/read(bno=${shop.bno})}">[[${shop.board_title}]]</a>
-					</td>
-					<td>[[${shop.product_code}]]</td>
-					<td>[[${shop.product_price}]]</td>
-					<td>[[${shop.product_category}]]</td>
-					<td>[[${shop.product_stock}]]</td>
-					<td>[[${shop.board_content1}]]</td>
-					<td>[[${shop.board_content2}]]</td>
-				</tr>
-			</tbody>
-		</table>
-
-		<div style="margin-top: 20px;">
-			<a th:href="@{/cart/list}"><button>장바구니로 이동</button></a>
+	<div>
+		접속 ID: <strong th:text="${memberId}"></strong> <a
+			th:href="@{/cart/list}"><button>장바구니</button></a> <a
+			th:href="@{/logout}"><button>로그아웃</button></a>
+		<!-- 검색폼 -->
+		<div>
+			<form th:action="@{/protoshop/list}" method="get">
+				<select name="category">
+					<option value="">전체 카테고리</option>
+					<option value="category 000"
+						th:selected="${category == 'category 000'}">category 000</option>
+					<option value="category 001"
+						th:selected="${category == 'category 001'}">category 001</option>
+					<option value="category 002"
+						th:selected="${category == 'category 002'}">category 002</option>
+					<option value="category 003"
+						th:selected="${category == 'category 003'}">category 003</option>
+					<option value="category 004"
+						th:selected="${category == 'category 004'}">category 004</option>
+					<!-- 필요한 카테고리 추가 -->
+				</select> <input type="text" name="keyword" th:value="${keyword}"
+					placeholder="상품명 또는 제목 검색...">
+				<button type="submit">검색</button>
+			</form>
 		</div>
 
-		<!-- 페이징 추가 -->
-		<div th:with="start=${responseDTO.start}, end=${responseDTO.end}">
-			<ul th:if="${start != null && end != null}">
-				<li th:if="${responseDTO.prev}"><a
-					th:href="@{/protoshop/list(page=${start - 1})}">이전</a></li>
+	</div>
+	<table border="1">
+		<thead>
+			<tr>
+				<th>번호</th>
+				<th>제목</th>
+				<th>상품코드</th>
+				<th>가격</th>
+				<th>카테고리</th>
+				<th>재고</th>
+				<th>내용1</th>
+				<th>내용2</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="shop : ${responseDTO.dtoList}">
+				<td>[[${shop.bno}]]</td>
+				<td><a th:href="@{/protoshop/read(bno=${shop.bno})}">[[${shop.board_title}]]</a>
+				</td>
+				<td>[[${shop.product_code}]]</td>
+				<td>[[${shop.product_price}]]</td>
+				<td>[[${shop.product_category}]]</td>
+				<td>[[${shop.product_stock}]]</td>
+				<td>[[${shop.board_content1}]]</td>
+				<td>[[${shop.board_content2}]]</td>
+			</tr>
+		</tbody>
+	</table>
 
-				<li th:each="num : ${#numbers.sequence(start, end)}"><a
-					th:href="@{/protoshop/list(page=${num})}" th:text="${num}"
-					th:class="${responseDTO.page == num} ? 'active' : ''"> </a></li>
+	<div style="margin-top: 20px;">
+		<a th:href="@{/cart/list}"><button>장바구니로 이동</button></a>
+	</div>
 
-				<li th:if="${responseDTO.next}"><a
-					th:href="@{/protoshop/list(page=${end + 1})}">다음</a></li>
-			</ul>
-		</div>
+	<!-- 페이징 추가 -->
+	<div th:with="start=${responseDTO.start}, end=${responseDTO.end}">
+		<ul th:if="${start != null && end != null}">
+			<li th:if="${responseDTO.prev}"><a
+				th:href="@{/protoshop/list(page=${start - 1}, category=${category}, keyword=${keyword})}">이전</a>
+			<li th:each="num : ${#numbers.sequence(start, end)}"><a
+				th:href="@{/protoshop/list(page=${num}, category=${category}, keyword=${keyword})}"
+				th:text="${num}"
+				th:class="${responseDTO.page == num} ? 'active' : ''"> </a></li>
+
+			<li th:if="${responseDTO.next}"><a
+				th:href="@{/protoshop/list(page=${end + 1}, category=${category}, keyword=${keyword})}">다음</a>
+		</ul>
+	</div>
 </body>
 </html>

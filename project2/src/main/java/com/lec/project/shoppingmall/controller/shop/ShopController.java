@@ -37,14 +37,24 @@ public class ShopController {
 	@GetMapping("/list")
 	public String list(PageRequestDTO pageRequestDTO
 			, @AuthenticationPrincipal UserDetails userDetails
+			, @RequestParam(name = "keyword", required = false) String keyword
+			, @RequestParam(name = "category", required = false) String category		
 			, Model model) {
+		
+		log.info("category: " + category);
+	    log.info("keyword: " + keyword);
 		
 		if(userDetails != null) {
 			model.addAttribute("memberId", userDetails.getUsername());
 		}
-		PageResponseDTO<ShopDTO> responseDTO = shopService.list(pageRequestDTO);
+		
+		PageResponseDTO<ShopDTO> responseDTO = shopService.list(pageRequestDTO, keyword, category);
 		log.info(".........." + responseDTO);
+		
 		model.addAttribute("responseDTO", responseDTO);
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("category", category);
+			
 		return "protoshop/list";
 	}
 	

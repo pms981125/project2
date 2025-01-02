@@ -10,5 +10,5 @@ public interface ShopService {
 	ShopDTO readOne(Long bno);
 	void modify(ShopDTO shopDTO);
 	void remove(Long bno);
-	PageResponseDTO<ShopDTO> list(PageRequestDTO pageRequestDTO);
+	PageResponseDTO<ShopDTO> list(PageRequestDTO pageRequestDTO, String keyword, String category);
 }

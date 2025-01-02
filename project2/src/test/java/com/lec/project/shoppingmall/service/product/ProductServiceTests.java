@@ -46,11 +46,11 @@ public class ProductServiceTests {
 	@DisplayName("상품 여러건 등록하기")
 	public void testInsertMany() {
 		
-		IntStream.rangeClosed(1, 200).forEach(i -> {
+		IntStream.rangeClosed(1, 1000).forEach(i -> {
 			
 			ProductDTO productDTO = ProductDTO.builder()
 					.product_code(String.format("상품코드 %03d", i))
-					.product_category(String.format("카테고리 %03d", i%10))
+					.product_category(String.format("category %03d", i%5))
 					.product_detail1(String.format("세부정보 %03d", i))
 					.product_detail2(String.format("세부정보2 %03d", i))
 					.product_name(String.format("상품 %03d", i))

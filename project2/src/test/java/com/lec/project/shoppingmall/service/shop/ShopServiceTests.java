@@ -51,7 +51,7 @@ public class ShopServiceTests {
 	@Test
     @DisplayName("여러 게시판 일괄 등록")
     public void testInsertMany() {
-        IntStream.rangeClosed(1, 100).forEach(i -> {
+        IntStream.rangeClosed(1, 500).forEach(i -> {
             ShopDTO shopDTO = ShopDTO.builder()
                 .product_code(String.format("상품코드 %03d", i))
                 .build();

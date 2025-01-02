@@ -32,11 +32,11 @@ public class ShopServiceImpl implements ShopService{
 	private final ShopRepository shopRepository;
 
 	@Override
-	public PageResponseDTO<ShopDTO> list(PageRequestDTO pageRequestDTO) {
-	   String keyword = pageRequestDTO.getKeyword();
+	public PageResponseDTO<ShopDTO> list(PageRequestDTO pageRequestDTO, String keyword, String category) {
 	   Pageable pageable = pageRequestDTO.getPageable("bno");
 	   
-	   Page<Shop> result = shopRepository.searchAllImpl(keyword, pageable);
+	   log.info("Service - Category: {}, Keyword: {}", category, keyword);
+	   Page<Shop> result = shopRepository.searchAllImpl(keyword, category, pageable);
 	   
 	   List<ShopDTO> dtoList = result.getContent()
 	        .stream()
