@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
+<head>
+	<meta charset="UTF-8">
+	<title>Edgecut</title>
+	<link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+
+	<!-- Font Awesome style -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}" />
+	
+	<!-- Custom styles for this template -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+	
+	<!-- Responsive style -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/responsive.css}" />
+</head>
+<body>
+<div layout:fragment="content">
+	<div class="row mt-3 justify-content-center">
+		<form action="/account/list" method="get">
+			<div class="col">
+				<input type="hidden" name="size" th:value="${pageRequestDTO.size}"/>
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<select name="type" class="form-select">
+							<option value="">----</option>
+							<option value="accountId" th:selected="${pageRequestDTO.type == 'accountId'}">계좌번호</option>
+						</select>
+					</div>
+					<input type="text" class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}"/>
+					<div class="input-group-append">
+                        <button class="btn btn-outline-secondary searchBtn" type="submit">Search</button>
+                        <button class="btn btn-outline-secondary clearBtn" type="button">Clear</button>
+                       	<a th:href="@{/account/register}" class="btn btn-success clearBtn" type="button">Register</a>
+                    </div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+	<div class="row mt-3">
+		<div class="col">
+			<div class="card">
+				<div class="card-header">
+					Account List
+				</div>
+				<div class="card-body">
+					<h5 class="card-title">Account List</h5>
+					<table class="table" style="text-align: center;">
+						<thead>
+							<tr>
+								<th scope="col">계좌번호</th>
+								<th scope="col">계좌개설일</th>
+								<th scope="col">잔액</th>
+							</tr>
+						</thead>
+						<tbody th:with="link = ${pageRequestDTO.getLink()}">
+							<tr th:each="dto:${responseDTO.dtoList}">
+								<th scope="row">
+									<a th:href="|@{/account/read(accountId =${dto.accountId})}&${link}|"> [[${dto.accountId}]] </a>
+								</th>
+								<td scope="row">[[${#temporals.format(dto.createDate, 'yyyy-MM-dd')}]]</td>
+								<td scope="row">[[${dto.balance}]]</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="float-end">
+						<ul class="pagination flex-wrap justify-content-center">
+							<li class="page-item" th:if="${responseDTO.prev}">
+								<a class="page-link" th:data-num="${responseDTO.start - 1}">Prev</a>
+							</li>
+							
+							<th:block th:each="i: ${#numbers.sequence(responseDTO.start, responseDTO.end)}">
+	                                <li th:class="${responseDTO.page == i}?'page-item active':'page-item'" >
+	                                    <a class="page-link"  th:data-num="${i}">[[${i}]]</a>
+	                                </li>
+	                        </th:block>
+							
+							
+							<li class="page-item" th:if="${responseDTO.next}">
+								<a class="page-link" th:data-num="${responseDTO.end + 1}">Next</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script layout:fragment="script" th:inline="javascript">
+
+	document.querySelector(".pagination").addEventListener("click", function (e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+
+		const target = e.target
+/* 		
+		console.log(e)
+		console.log(target)
+		console.log(target.tagName)
+ */		
+		if(target.tagName != 'A') {
+			return
+		}
+		
+	    const num = target.getAttribute("data-num")
+	    const formObj = document.querySelector("form")
+	    
+	    formObj.innerHTML += `<input type='hidden' name='page' value='${num}'>`
+	    formObj.submit()  // localhost:8090/board/list?page=3
+	    		
+	}, false)
+	
+		document.querySelector(".clearBtn").addEventListener("click", function (e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	    
+	    self.location = '/account/list'
+	    
+	}, false)	
+
+</script>
+</html>
+
+
+
+
+
+
+

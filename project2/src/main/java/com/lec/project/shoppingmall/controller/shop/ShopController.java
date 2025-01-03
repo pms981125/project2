@@ -53,7 +53,7 @@ public class ShopController {
 		}
 		
 		PageResponseDTO<ShopDTO> responseDTO = shopService.list(pageRequestDTO, keyword, category);
-		log.info(".........." + responseDTO);
+		log.info(".........." + responseDTO.getDtoList());
 		
 		responseDTO.getDtoList().forEach(shopDTO -> {
 			ProductImageDTO mainImage = productImageService.getMainImage(shopDTO.getProduct_code());

@@ -106,6 +106,14 @@ public class SuperHRController {
 		return "redirect:/sudo/logout";
 	}
 	
+	@PostMapping("/initializePassword") // 비밀번호 초기화(재발급)
+	public String initializePassword(@RequestParam("memberId") String memberId){
+		log.info(memberId + " dhbahswk");
+		
+		return "redirect:/sudo/userInfo?id=" + memberId;
+		// return "redirect:/sudo/allUserList";
+	}
+	
 	@GetMapping("/logout")
 	public String logout() {
 		return "redirect:/logout";

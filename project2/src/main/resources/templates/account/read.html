@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<title>Edgecut</title>
+	<link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+	<!-- Font Awesome style -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}" />
+	
+	<!-- Custom styles for this template -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+	
+	<!-- Responsive style -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/responsive.css}" />
+</head>
+	<div layout:fragment="content">
+		<div class="row mt-3">
+			<div class="col">
+				<div class="card">
+					<div class="card-header">
+						Account Read
+					</div>
+					<div class="card-body">
+						<div class="input-group mb-3">
+							<span class="input-group-text">계좌번호</span>
+							<input type="text" class="form-control" th:value="${accountDTO.accountId}" readonly/>
+						</div>
+						<div class="input-group mb-3">
+							<span class="input-group-text">개설일</span>
+							<input type="text" class="form-control" th:value="${#temporals.format(accountDTO.createDate, 'yyyy-MM-dd')}" readonly/>
+						</div>
+						<div class="input-group mb-3">
+							<span class="input-group-text">잔액</span>
+							<input type="text" class="form-control" th:value="${accountDTO.balance}" readonly/>
+						</div>
+						<div class="my-4">
+							<div class="float-end" th:with="link= ${pageRequestDTO.getLink()}">
+								<a th:href="|@{/account/list}?${link}|" class="text-decoration-none">
+									<button type="button" class="btn btn-primary">List</button>
+								</a>
+								<a th:href="@{/account/transfer}" class="btn btn-success" type="button">이체하기</a>
+							</div>
+						</div> 
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row mt-3">
+		    <div class="col-md-12">
+		        <div class="my-4 ">
+		            <button class="btn btn-info addTransferBtn">TRANSFER</button>
+		        </div>
+		        <ul class="list-group transferList">
+		        </ul>
+		    </div>
+		</div>
+		
+		
+		<div class="row mt-3">
+			<div class="col">
+				<ul class="pagination transferPaging">
+				</ul>
+			</div>
+		</div>
+		<div class="modal transferModal" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">이체</h5>
+					</div>
+					<div class="modal-body">
+						<div class="input-group mb-3">
+							<span class="input-group-text">계좌번호</span>
+							<input type="text" class="form-control senderAccountId" id="senderAccountId" name="senderAccountId" th:value="${accountDTO.accountId}" readonly/>
+						</div>
+						<div class="input-group mb-3">
+							<span class="input-group-text">이체할계좌</span>
+							<input type="text" class="form-control receiverAccountId" id="receiverAccountId" name="receiverAccountId"/>
+						</div>
+						<div class="input-group mb-3">
+							<span class="input-group-text">이체금액</span>
+							<input type="text" class="form-control transferAmount" id="transferAmount" name="transferAmount"/>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary transferBtn">이체</button>
+						<button type="button" class="btn btn-outline-dark closeTransferBtn">닫기</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script src="/js/transfer.js"></script>  
+	</div>
+	
+<script layout:fragment="script" th:inline="javascript">
+	const accountId = /*[[${accountDTO.accountId}]]*/''
+	//console.log(accountId)
+	
+	const transferList = document.querySelector('.transferList') //이체목록
+	const transferPaging = document.querySelector('.transferPaging') //페이지목록
+	
+	//이체기록 출력
+	function printList(dtoList) {
+		let str = ''
+		if(dtoList && dtoList.length > 0) {
+			for(const dto of dtoList) {
+				str += `<li class="list-group-item d-flex replyItem">
+					<span class="col-2">${dto.accountHistoryId}</span>
+					<span class="col-6" data-accountHistoryId="${dto.accountHistoryId}">${dto.transferTarget}</span>
+					<span class="col-2">${dto.transferAmount}</span>
+					<span class="col-2">${dto.transferDate}</span>
+				</li>`
+			}
+		}
+		transferList.innerHTML = str
+	}
+	
+	//페이지목록출력
+	function printPage(data) {
+		let pageStr = '';
+		
+		if(data.prev) {
+			pageStr += `<li class="page-item"><a class="page-link" data-page="${data.start-1}">Prev</a></li>`
+		}
+		
+		for(let i = data.start; i <= data.end; i++) {
+			pageStr += `<li class="page-item ${i == data.page?"active":""} "><a class="page-link" data-page="${i}">${i}</a></li>`
+		}
+		
+		if(data.next) {
+			 pageStr += `<li class="page-item"><a class="page-link" data-page="${data.end+1}">Next</a></li>`
+		}
+		
+		transferPaging.innerHTML = pageStr
+	}
+	
+	function printTransfer(page, size, goLast) {
+		getList({accountId, page, size, goLast})
+		.then(
+			data => {
+				printList(data.dtoList) 
+				printPage(data)          
+			}
+		).catch(
+			e => console.log(e)
+		)
+	}
+	
+	printTransfer(1, 10, true)
+	
+	//이체(모달창)
+	const transferModal = new bootstrap.Modal(document.querySelector('.transferModal'))
+	const transferBtn = document.querySelector('.transferBtn')
+	const senderAccountId = document.querySelector('.senderAccountId')
+	const receiverAccountId = document.querySelector('.receiverAccountId')
+	const transferAmount = document.querySelector('.transferAmount')
+	const closeTransferBtn = document.querySelector('.closeTransferBtn')
+	
+	document.querySelector('.addTransferBtn').addEventListener('click', function(e) {
+		transferModal.show()
+	}, false)
+	
+	document.querySelector('.closeTransferBtn').addEventListener('click', function(e) {
+		transferModal.hide()
+	}, false)
+	
+	document.querySelector('.transferBtn').addEventListener('click', function(e) {
+		const transferObj = {
+			accountHistoryId: accountHistoryId.value,
+			transferTarget: transferTarget.value,
+			transferAmount: transferAmount.value,
+			transferDate: transferDate.value
+		}
+		
+		addTransfer(transferObj).then(
+			result => {
+				alert(result.receiverAccountId)
+				transferModal.hide()
+				accountHistoryId.value = ''
+				transferTarget.value = ''
+				transferAmount.value = ''
+				transferDate.value = ''
+				printTransfer(1, 10, true)
+			}		
+		).catch(
+			e => { alert("에러발생!!") }
+		)
+	}, false)
+	
+	// 페이징처리
+	let page = 1
+	let size = 10
+	
+	transferPaging.addEventListener('click', function(e) {
+		
+		e.preventDefault()
+		e.stopPropagation()
+		
+		const target = e.target
+		
+		if(!target || target.tagName != 'A') {
+			return
+		}
+		
+		const pageNum = target.getAttribute("data-page")
+		page = pageNum
+		printTransfer(page, size, false)
+		
+	}, false)
+</script>

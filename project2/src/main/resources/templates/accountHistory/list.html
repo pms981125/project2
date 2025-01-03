@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<title>Edgecut</title>
+	<link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+
+	<!-- Font Awesome style -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}" />
+	
+	<!-- Custom styles for this template -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+	
+	<!-- Responsive style -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/responsive.css}" />
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="row mt-3 justify-content-center">
+			<form action="/accountHistory/list" method="get">
+				<div class="col">
+					<input type="hidden" name="size" th:value="${pageRequestDTO.size}"/>
+					<div class="input-group">
+						<div class="input-group-prepend">
+							<select name="type" class="form-select">
+								<option value="">----</option>
+							</select>
+						</div>
+						<input type="text" class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}"/>
+							<div class="input-group-append">
+	                        <button class="btn btn-outline-secondary searchBtn" type="submit">Search</button>
+	                        <button class="btn btn-outline-secondary clearBtn" type="button">Clear</button>
+                      		<a th:href="@{/accountHistory/register}" class="btn btn-success clearBtn" type="button">이체하기</a>
+                   	 	</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="row mt-3">
+		<div class="col">
+			<div class="card">
+				<div class="card-header">
+					AccountHistory
+				</div>
+				<div class="card-body">
+					<h5 class="card-title">AccountHistory</h5>
+					<table class="table" style="text-align: center;">
+						<thead>
+							<tr>
+								<th scope="col">이체내역번호</th>
+								<th scope="col">이체대상</th>
+								<th scope="col">이체금액</th>
+								<th scope="col">이체날짜</th>
+							</tr>
+						</thead>
+						<tbody th:with="link = ${pageRequestDTO.getLink()}">
+							<tr th:each="dto:${responseDTO.dtoList}">
+								<th scope="row">
+									[[${dto.accountHistoryId}]]
+								</th>
+								<td scope="row">[[${dto.transferTarget}]]</td>
+								<td scope="row">[[${dto.transferAmount}]]</td>
+								<td scope="row">[[${#temporals.format(dto.transferDate, 'yyyy-MM-dd')}]]</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

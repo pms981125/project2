@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메시지함</title>
+</head>
+<body>
+    <h1>메시지함</h1>
+
+    <!-- 에러 메시지 표시 -->
+    <div th:if="${param.error}" style="color:red;">
+        삭제 권한이 없습니다.
+    </div>
+
+    <h2>받은 메시지</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>보낸 사람</th>
+                <th>내용</th>
+                <th>보낸 시간</th>
+                <th>삭제</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="message : ${receivedMessages}">
+                <td th:text="${message.sender.id}">보낸 사람 ID</td>
+                <td th:text="${message.content}">메시지 내용</td>
+                <td th:text="${#temporals.format(message.sentAt, 'yyyy-MM-dd HH:mm')}">보낸 시간</td>
+                <td>
+					<form th:action="@{/messages/delete/{id}(id=${message.id})}" method="post" style="display:inline;">
+					    <button type="submit">삭제</button>
+					</form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>보낸 메시지</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>받는 사람</th>
+                <th>내용</th>
+                <th>보낸 시간</th>
+                <th>삭제</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="message : ${sentMessages}">
+                <td th:text="${message.receiver.id}">받는 사람 ID</td>
+                <td th:text="${message.content}">메시지 내용</td>
+                <td th:text="${#temporals.format(message.sentAt, 'yyyy-MM-dd HH:mm')}">보낸 시간</td>
+                <td>
+					<form th:action="@{/messages/delete/{id}(id=${message.id})}" method="post" style="display:inline;">
+					    <button type="submit">삭제</button>
+					</form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br>
+    <button onclick="window.location.href='/messages/send'">새 메시지 작성</button>
+</body>
+</html>
