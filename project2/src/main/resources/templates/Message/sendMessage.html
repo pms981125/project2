@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>메시지함</title>
+</head>
+<body>
+    <h1>메시지함</h1>
+
+    <!-- 메시지 목록 표시 -->
+    <div>
+        <h3>메시지 목록</h3>
+        <ul>
+            <li th:each="message : ${messages}">
+                <strong th:text="${message.sender.username}">Sender</strong>: 
+                <span th:text="${message.content}">Message Content</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 메시지 전송 폼 -->
+	<form th:action="@{/messages/send}" method="post">
+	    <label for="receiverId">수신자 ID:</label>
+	    <input type="text" id="receiverId" name="receiverId" required />
+	    
+	    <label for="content">내용:</label>
+	    <textarea id="content" name="content" required></textarea>
+	    
+	    <button type="submit">보내기</button>
+	</form>
+
+
+
+    <br>
+    <a href="/market/detail/{postId}">게시글로 돌아가기</a>
+</body>
+</html>

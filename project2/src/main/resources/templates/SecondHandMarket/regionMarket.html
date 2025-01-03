@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>지역별 중고거래 게시판</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <h1>지역별 중고거래 게시판</h1>
+    
+    <!-- 글쓰기 버튼 -->
+    <a href="/market/write" class="button">글쓰기</a>
+    
+    <!-- 메시지함 버튼 -->
+    <a href="/messages/inbox" class="button">메시지함</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>가격</th>
+                <th>지역</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="post : ${posts}">
+                <td th:text="${post.postId}"></td>
+                <td>
+                    <a th:href="@{/market/detail/{postId}(postId=${post.postId})}" 
+                       th:text="${post.title}"></a>
+                </td>
+                <td th:text="${post.price}"></td>
+                <td th:text="${post.region}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
+
+
+
