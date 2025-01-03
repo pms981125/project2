@@ -8,6 +8,12 @@
 <body>
 	<h1>Proto Shop/modify</h1>
 
+	<div style="margin: 20px 0;">
+			<img th:if="${dto.thumbnail_path != null}"
+				th:src="@{/display(filename=${dto.thumbnail_path})}"
+				style="max-width: 500px; height: auto;">
+		</div>
+
 	<div>
 		<label>상품 코드</label> <input type="text" id="search_product_code"
 			placeholder="상품 코드">
@@ -17,13 +23,10 @@
 	<form id="modifyForm" action="/protoshop/modify" method="post"
 		enctype="multipart/form-data" onreset="resetForm()">
 
-		<div style="margin: 20px 0;">
-			<img th:if="${dto.img_path}"
-				 th:src="@{/display(filename=${shop.thumbnail_path})}"
-				style="max-width: 500px; height: auto;">
-		</div>
-		<input type="hidden" name="bno" th:value="${dto.bno}">
-		<input type="hidden" name="product_code" id="product_code"
+		
+		
+		<input type="hidden" name="bno" th:value="${dto.bno}"> <input
+			type="hidden" name="product_code" id="product_code"
 			th:value="${dto.product_code}">
 
 		<table border="1">

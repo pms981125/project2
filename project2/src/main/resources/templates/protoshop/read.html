@@ -9,9 +9,10 @@
 
 	<!-- 이미지 표시 영역 추가 -->
 	<div style="margin: 20px 0;">
-		<img th:if="${dto.thumbnail_path != null}"
-			th:src="@{/display(filename=${dto.thumbnail_path})}"
-			style="max-width: 500px; height: auto;">
+		<th:block th:each="image : ${productImages}">
+			<img th:src="@{/display(filename=${image.thumbnail_path})}"
+				style="max-width: 500px; height: auto; margin-bottom: 10px;">
+		</th:block>
 	</div>
 
 	<table border="1">
@@ -62,18 +63,18 @@
 				<button type="submit">삭제</button>
 			</form>
 		</div>
-			<a th:href="@{/protoshop/list}">
-				<button type="button">목록</button>
-			</a>
-			<button type="button" onclick="addToCart()">장바구니 담기</button>
-		</div>
+		<a th:href="@{/protoshop/list}">
+			<button type="button">목록</button>
+		</a>
+		<button type="button" onclick="addToCart()">장바구니 담기</button>
+	</div>
 
-		<!-- 수량 입력 -->
-		<div style="margin-top: 10px;">
-			<label>수량: </label> <input type="number" id="quantity" value="1"
-				min="1" style="width: 60px;">
-		</div>
-		<script th:inline="javascript">
+	<!-- 수량 입력 -->
+	<div style="margin-top: 10px;">
+		<label>수량: </label> <input type="number" id="quantity" value="1"
+			min="1" style="width: 60px;">
+	</div>
+	<script th:inline="javascript">
 function addToCart() {
     const quantity = document.getElementById('quantity').value;
     const productCode = /*[[${dto.product_code}]]*/ '';

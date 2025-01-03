@@ -23,4 +23,12 @@ public interface ProductImageService {
 	
 	void changeMainImage(String productCode, String imageId);
 
+	//여러 이미지 추가
+	List<ProductImageDTO> uploadMultipleProductImages(
+			List<MultipartFile> files
+			, String productCode
+			, boolean isMainImage
+			) throws IOException;
+	
+	
 }

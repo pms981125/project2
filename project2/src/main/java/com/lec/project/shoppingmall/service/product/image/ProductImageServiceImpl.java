@@ -1,6 +1,7 @@
 package com.lec.project.shoppingmall.service.product.image;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,6 +71,28 @@ public class ProductImageServiceImpl implements ProductImageService {
 	    log.info("Saved ProductImage to database: {}", savedImage.getImg_id());
 
 	    return modelMapper.map(savedImage, ProductImageDTO.class);
+	}
+	
+	@Override
+	public List<ProductImageDTO> uploadMultipleProductImages(
+			List<MultipartFile> files
+			, String productCode
+			, boolean isMainImage
+			) throws IOException {
+		
+		List<ProductImageDTO> uploadedImages = new ArrayList<>();
+		
+		for (int i = 0; i< files.size(); i++) {
+			MultipartFile file = files.get(i);
+			boolean isFirstImageMain = (i == 0 && isMainImage);
+			
+			ProductImageDTO imageDTO = uploadProductImage(file
+					, productCode
+					, isFirstImageMain);
+			uploadedImages.add(imageDTO);
+		}
+		
+		return uploadedImages;
 	}
 
 	@Override
