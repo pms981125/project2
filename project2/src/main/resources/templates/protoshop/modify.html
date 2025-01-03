@@ -15,9 +15,16 @@
 	</div>
 
 	<form id="modifyForm" action="/protoshop/modify" method="post"
-		onreset="resetForm()">
-		<input type="hidden" name="bno" th:value="${dto.bno}"> <input
-			type="hidden" name="product_code" id="product_code">
+		enctype="multipart/form-data" onreset="resetForm()">
+
+		<div style="margin: 20px 0;">
+			<img th:if="${dto.img_path}"
+				 th:src="@{/display(filename=${shop.thumbnail_path})}"
+				style="max-width: 500px; height: auto;">
+		</div>
+		<input type="hidden" name="bno" th:value="${dto.bno}">
+		<input type="hidden" name="product_code" id="product_code"
+			th:value="${dto.product_code}">
 
 		<table border="1">
 			<tr>
@@ -60,6 +67,13 @@
 			</tr>
 		</table>
 
+		<div sec:authorize="hasRole('MANAGER')" style="margin: 20px 0;">
+			<label>상품 이미지 변경:</label> <input type="file" name="productImage"
+				accept="image/*">
+			<p style="color: gray; font-size: 0.9em;">* 새로운 이미지를 업로드하면 기존
+				이미지가 대체됩니다.</p>
+		</div>
+
 		<div>
 			<button type="submit">수정 완료</button>
 			<button type="reset">초기화</button>
@@ -72,49 +86,48 @@
 	</form>
 
 	<script>
+		// 페이지 로드 시 에러 메시지 확인
+		document.addEventListener('DOMContentLoaded', function() {
+			// Thymeleaf로 전달된 에러 메시지 확인
+			const errorMessage = '[[${error}]]';
+			if (errorMessage && errorMessage.trim() !== '') {
+				alert(errorMessage);
+			}
+		});
+		function searchProduct() {
+			const productCode = document.getElementById('search_product_code').value;
 
-// 페이지 로드 시 에러 메시지 확인
-document.addEventListener('DOMContentLoaded', function() {
-    // Thymeleaf로 전달된 에러 메시지 확인
-    const errorMessage = '[[${error}]]';
-    if (errorMessage && errorMessage.trim() !== '') {
-        alert(errorMessage);
-    }
-});
-function searchProduct() {
-    const productCode = document.getElementById('search_product_code').value;
-    
-    $.ajax({
-        url: '/api/product/' + productCode,
-        method: 'GET',
-        success: function(product) {
-            document.getElementById('product_code').value = product.product_code;
-            document.getElementById('product_code_display').textContent = product.product_code;
-            document.getElementById('board_title').value = product.product_name;
-            document.getElementById('product_price').value = product.product_price;
-            document.getElementById('product_category').value = product.product_category;
-            document.getElementById('product_stock').value = product.product_stock;
-            document.getElementById('board_content1').value = product.product_detail1;
-            document.getElementById('board_content2').value = product.product_detail2;
-        },
-        error: function() {
-            alert('상품을 찾을 수 없습니다.');
-        }
-    });
-}
+			$.ajax({
+				url : '/api/product/' + productCode,
+				method : 'GET',
+				success : function(product) {
+					document.getElementById('product_code').value = product.product_code;
+					document.getElementById('product_code_display').textContent = product.product_code;
+					document.getElementById('board_title').value = product.product_name;
+					document.getElementById('product_price').value = product.product_price;
+					document.getElementById('product_category').value = product.product_category;
+					document.getElementById('product_stock').value = product.product_stock;
+					document.getElementById('board_content1').value = product.product_detail1;
+					document.getElementById('board_content2').value = product.product_detail2;
+				},
+				error : function() {
+					alert('상품을 찾을 수 없습니다.');
+				}
+			});
+		}
 
-function resetForm() {
-    // 모든 입력 필드 초기화
-    document.getElementById('search_product_code').value = '';
-    document.getElementById('product_code').value = '';
-    document.getElementById('product_code_display').textContent = '[[${dto.product_code}]]';
-    document.getElementById('board_title').value = '[[${dto.board_title}]]';
-    document.getElementById('product_price').value = '[[${dto.product_price}]]';
-    document.getElementById('product_category').value = '[[${dto.product_category}]]';
-    document.getElementById('product_stock').value = '[[${dto.product_stock}]]';
-    document.getElementById('board_content1').value = '[[${dto.board_content1}]]';
-    document.getElementById('board_content2').value = '[[${dto.board_content2}]]';
-}
-</script>
+		function resetForm() {
+			// 모든 입력 필드 초기화
+			document.getElementById('search_product_code').value = '';
+			document.getElementById('product_code').value = '';
+			document.getElementById('product_code_display').textContent = '[[${dto.product_code}]]';
+			document.getElementById('board_title').value = '[[${dto.board_title}]]';
+			document.getElementById('product_price').value = '[[${dto.product_price}]]';
+			document.getElementById('product_category').value = '[[${dto.product_category}]]';
+			document.getElementById('product_stock').value = '[[${dto.product_stock}]]';
+			document.getElementById('board_content1').value = '[[${dto.board_content1}]]';
+			document.getElementById('board_content2').value = '[[${dto.board_content2}]]';
+		}
+	</script>
 </body>
 </html>

@@ -7,6 +7,13 @@
 <body>
 	<h1>Proto Shop/read</h1>
 
+	<!-- 이미지 표시 영역 추가 -->
+	<div style="margin: 20px 0;">
+		<img th:if="${dto.thumbnail_path != null}"
+			th:src="@{/display(filename=${dto.thumbnail_path})}"
+			style="max-width: 500px; height: auto;">
+	</div>
+
 	<table border="1">
 		<tr>
 			<th>번호</th>
@@ -44,28 +51,29 @@
 
 	<!-- 버튼 그룹 -->
 	<div>
-		<a th:href="@{/protoshop/modify(bno=${dto.bno})}">
-			<button type="button">수정</button>
-		</a>
+		<div sec:authorize="hasRole('ROLE_MANAGER')">
+			<a th:href="@{/protoshop/modify(bno=${dto.bno})}">
+				<button type="button">수정</button>
+			</a>
 
-		<form action="/protoshop/remove" method="post"
-			style="display: inline;">
-			<input type="hidden" name="bno" th:value="${dto.bno}">
-			<button type="submit">삭제</button>
-		</form>
+			<form action="/protoshop/remove" method="post"
+				style="display: inline;">
+				<input type="hidden" name="bno" th:value="${dto.bno}">
+				<button type="submit">삭제</button>
+			</form>
+		</div>
+			<a th:href="@{/protoshop/list}">
+				<button type="button">목록</button>
+			</a>
+			<button type="button" onclick="addToCart()">장바구니 담기</button>
+		</div>
 
-		<a th:href="@{/protoshop/list}">
-			<button type="button">목록</button>
-		</a>
-		<button type="button" onclick="addToCart()">장바구니 담기</button>
-	</div>
-
-	<!-- 수량 입력 -->
-	<div style="margin-top: 10px;">
-		<label>수량: </label> <input type="number" id="quantity" value="1"
-			min="1" style="width: 60px;">
-	</div>
-	<script th:inline="javascript">
+		<!-- 수량 입력 -->
+		<div style="margin-top: 10px;">
+			<label>수량: </label> <input type="number" id="quantity" value="1"
+				min="1" style="width: 60px;">
+		</div>
+		<script th:inline="javascript">
 function addToCart() {
     const quantity = document.getElementById('quantity').value;
     const productCode = /*[[${dto.product_code}]]*/ '';

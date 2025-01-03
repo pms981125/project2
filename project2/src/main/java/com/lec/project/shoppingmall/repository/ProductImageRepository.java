@@ -14,12 +14,11 @@ public interface ProductImageRepository extends JpaRepository<ProductImage, Stri
 
     List<ProductImage> findByProduct(Product product);
     
-    // @Query 어노테이션을 사용하여 명시적으로 쿼리 정의
     @Query("SELECT pi FROM ProductImage pi WHERE pi.product = :product AND pi.is_main_img = true")
     Optional<ProductImage> findByProductAndMainImgTrue(@Param("product") Product product);
     
     @Query("SELECT pi FROM ProductImage pi WHERE pi.product.product_code = :productCode")
-    List<ProductImage> findByProductCode(@Param("productCode") String productCode);
+    List<ProductImage> findAllByProductCode(@Param("productCode") String productCode);
     
     @Query("SELECT pi FROM ProductImage pi WHERE pi.product.product_code = :productCode AND pi.is_main_img = true")
     Optional<ProductImage> findMainImageByProductCode(@Param("productCode") String productCode);

@@ -46,20 +46,26 @@
 	</form>
 
 	<script th:inline="javascript">
-document.addEventListener('DOMContentLoaded', function() {
-    const countInput = document.querySelector('input[name="count"]');
-    const price = /*[[${product.product_price}]]*/ 0;
-    
-    function updateTotalPrice() {
-        const count = parseInt(countInput.value) || 0;
-        const totalPrice = count * price;
-        document.querySelector('td:last-child').textContent = 
-            new Intl.NumberFormat('ko-KR').format(totalPrice) + '원';
-    }
-    
-    countInput.addEventListener('change', updateTotalPrice);
-});
-</script>
+		document
+				.addEventListener(
+						'DOMContentLoaded',
+						function() {
+							const countInput = document
+									.querySelector('input[name="count"]');
+							const price = /*[[${product.product_price}]]*/0;
+
+							function updateTotalPrice() {
+								const count = parseInt(countInput.value) || 0;
+								const totalPrice = count * price;
+								document.querySelector('td:last-child').textContent = new Intl.NumberFormat(
+										'ko-KR').format(totalPrice)
+										+ '원';
+							}
+
+							countInput.addEventListener('change',
+									updateTotalPrice);
+						});
+	</script>
 
 </body>
 </html>

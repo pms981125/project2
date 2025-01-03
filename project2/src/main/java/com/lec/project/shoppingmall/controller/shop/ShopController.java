@@ -58,7 +58,8 @@ public class ShopController {
 		responseDTO.getDtoList().forEach(shopDTO -> {
 			ProductImageDTO mainImage = productImageService.getMainImage(shopDTO.getProduct_code());
 			if(mainImage != null) {
-				shopDTO.setThumbnail_path(mainImage.getThumnail_path());
+				shopDTO.setImg_path(mainImage.getImg_path());
+				shopDTO.setThumbnail_path(mainImage.getThumbnail_path());
 			}
 		});
 		
@@ -74,10 +75,13 @@ public class ShopController {
 			log.info("read or modify..........");
 			ShopDTO shopDTO = shopService.readOne(bno);
 			
+			 // 이미지 경로 로깅
+		    log.info("Shop DTO - Thumbnail Path: {}", shopDTO.getThumbnail_path());
+			
 			ProductImageDTO mainImage = productImageService.getMainImage(shopDTO.getProduct_code());
 			if(mainImage != null) {
 				shopDTO.setImg_path(mainImage.getImg_path());
-				shopDTO.setThumbnail_path(mainImage.getThumnail_path());
+				shopDTO.setThumbnail_path(mainImage.getThumbnail_path());
 			}
 			model.addAttribute("dto", shopDTO);
 			}
@@ -143,7 +147,10 @@ public class ShopController {
 			// 이미지 업로드 (메인 이미지로)
             if (productImage != null && !productImage.isEmpty()) {
                 try {
-                    productImageService.uploadProductImage(productImage, shopDTO.getProduct_code(), true);
+                	ProductImageDTO imageDTO = productImageService.uploadProductImage(productImage, shopDTO.getProduct_code(), true);
+                    if (imageDTO != null) {
+                        log.info("Image uploaded successfully: {}", imageDTO.getImg_path());
+                    }
                 } catch (Exception e) {
                     log.error("이미지 업로드 실패", e);
                     redirectAttributes.addFlashAttribute("imageError", "이미지 업로드에 실패했습니다.");

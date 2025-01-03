@@ -9,7 +9,7 @@
 	<h1>Proto Shop/regist</h1>
 
 	<form id="registForm" action="/protoshop/regist" method="post"
-		onreset="resetForm()">
+		enctype="multipart/form-data" onreset="resetForm()">
 
 		<div th:if="${error}" style="color: red; margin-bottom: 10px;">
 			[[${error}]]</div>
@@ -58,6 +58,13 @@
 			</tr>
 		</table>
 
+		<div sec:authorize="hasRole('MANAGER')" style="margin: 20px 0;">
+			<label>상품 이미지:</label> <input type="file" name="productImage"
+				accept="image/*">
+			<p style="color: gray; font-size: 0.9em;">* 첫 번째 업로드되는 이미지가 대표
+				이미지로 설정됩니다.</p>
+		</div>
+
 		<div>
 			<button type="submit">등록</button>
 			<button type="reset">초기화</button>
@@ -68,55 +75,67 @@
 	</form>
 
 	<script>
-function searchProduct() {
-    const productCode = document.getElementById('search_product_code').value;
-    // ProductCode중복확인
-    $.ajax({
-    	url: '/api/shop/checkProductCode',
-    	method: 'GET',
-    	data: { productCode: productCode },
-	    success: function(response){
-    		if(response.exists){
-    			 alert('이미 등록된 productCode입니다.');
-    		return;
-    	}
-		// ProductCode 조회
-		$.ajax({
-			url: '/api/product/' + productCode,
-			method: 'GET',
-			success: function(product) {
-				document.getElementById('product_code').value = product.product_code;
-				document.getElementById('product_code_display').textContent = product.product_code;
-				document.getElementById('board_title').value = product.product_name;
-				document.getElementById('product_category').value = product.product_category;
-				document.getElementById('product_price').value = product.product_price;
-				document.getElementById('product_stock').value = product.product_stock;
-				document.getElementById('board_content1').value = product.product_detail1;
-				document.getElementById('board_content2').value = product.product_detail2;
-			},
-			error: function() {
-    			alert('상품을 찾을 수 없습니다.');
-				}
-			});
-		},
-		error: function() {
-    		alert('상품 코드 중복 확인 중 오류가 발생했습니다.');
+		function searchProduct() {
+			const productCode = document.getElementById('search_product_code').value;
+			// ProductCode중복확인
+			$
+					.ajax({
+						url : '/api/shop/checkProductCode',
+						method : 'GET',
+						data : {
+							productCode : productCode
+						},
+						success : function(response) {
+							if (response.exists) {
+								alert('이미 등록된 productCode입니다.');
+								return;
+							}
+							// ProductCode 조회
+							$
+									.ajax({
+										url : '/api/product/' + productCode,
+										method : 'GET',
+										success : function(product) {
+											document
+													.getElementById('product_code').value = product.product_code;
+											document
+													.getElementById('product_code_display').textContent = product.product_code;
+											document
+													.getElementById('board_title').value = product.product_name;
+											document
+													.getElementById('product_category').value = product.product_category;
+											document
+													.getElementById('product_price').value = product.product_price;
+											document
+													.getElementById('product_stock').value = product.product_stock;
+											document
+													.getElementById('board_content1').value = product.product_detail1;
+											document
+													.getElementById('board_content2').value = product.product_detail2;
+										},
+										error : function() {
+											alert('상품을 찾을 수 없습니다.');
+										}
+									});
+						},
+						error : function() {
+							alert('상품 코드 중복 확인 중 오류가 발생했습니다.');
+						}
+					});
 		}
-	});
-}
 
-function resetForm() {
-    // 모든 입력 필드 초기화
-    document.getElementById('search_product_code').value = '';
-    document.getElementById('product_code').value = '';
-    document.getElementById('product_code_display').textContent = '';
-    document.getElementById('board_title').value = '';
-    document.getElementById('product_price').value = '';
-    document.getElementById('product_category').value = '';
-    document.getElementById('product_stock').value = '';
-    document.getElementById('board_content1').value = '';
-    document.getElementById('board_content2').value = '';
-}
-</script>
+		function resetForm() {
+			// 모든 입력 필드 초기화
+			document.getElementById('search_product_code').value = '';
+			document.getElementById('product_code').value = '';
+			document.getElementById('product_code_display').textContent = '';
+			document.getElementById('board_title').value = '';
+			document.getElementById('product_price').value = '';
+			document.getElementById('product_category').value = '';
+			document.getElementById('product_stock').value = '';
+			document.getElementById('board_content1').value = '';
+			document.getElementById('board_content2').value = '';
+		}
+	</script>
 </body>
 </html>

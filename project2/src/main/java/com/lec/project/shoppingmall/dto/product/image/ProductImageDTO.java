@@ -15,7 +15,7 @@ public class ProductImageDTO {
 	private String original_img_name;
 	private String stored_img_name;
 	private String img_path;
-	private String thumnail_path;
+	private String thumbnail_path;
 	private Boolean is_main_img;
 	private String product_code;
 }

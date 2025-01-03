@@ -32,65 +32,70 @@ public class ProductImageServiceImpl implements ProductImageService {
 
 	@Override
 	public ProductImageDTO uploadProductImage(MultipartFile file, String productCode, boolean isMainImage)
-			throws IOException {	
+	        throws IOException {    
 
-		// 파일 유효성 검사
-		if (file == null || file.isEmpty()) {
-			throw new IllegalArgumentException("업로드할 파일이 없습니다.........");
-		}
+	    // 파일 유효성 검사
+	    if (file == null || file.isEmpty()) {
+	        throw new IllegalArgumentException("업로드할 파일이 없습니다.........");
+	    }
 
-		// 이미지 파일 확인
-		if (!fileUtils.isImageFile(file) || !fileUtils.isAllowedExtension(file)) {
-			throw new IllegalArgumentException("유효하지 않은 이미지 파일입니다.........");
-		}
+	    // 이미지 파일 확인
+	    if (!fileUtils.isImageFile(file) || !fileUtils.isAllowedExtension(file)) {
+	        throw new IllegalArgumentException("유효하지 않은 이미지 파일입니다.........");
+	    }
 
-		// 상품 조회
-		Product product = productRepository.findById(productCode)
-				.orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다.........."));
+	    // 상품 조회
+	    Product product = productRepository.findById(productCode)
+	            .orElseThrow(() -> {
+	                return new IllegalArgumentException("상품을 찾을 수 없습니다..........");
+	            });
 
-		// 대표 이미지 초기화
-		if (isMainImage) {
-			log.info("Resetting main image flag for product: {}", productCode);
-			List<ProductImage> existingImages = productImageRepository.findByProductCode(productCode);
-			existingImages.forEach(img -> img.setIs_main_img(false));
-			productImageRepository.saveAll(existingImages);
-		}
+	    // 원본 이미지 저장
+	    String originalImagePath = fileUtils.saveOriginalFile(file);
 
-		// 원본 이미지 저장
-		String originalImagePath = fileUtils.saveOriginalFile(file);
+	    // 썸네일 생성
+	    String thumbnailPath = fileUtils.createThumbnail(originalImagePath);
 
-		// 썸네일 생성
-		String thumbnailPath = fileUtils.createThumbnail(originalImagePath);
+	    ProductImage productImage = ProductImage.createProductImage(
+	            file.getOriginalFilename(),
+	            originalImagePath,
+	            originalImagePath,
+	            thumbnailPath,
+	            product,
+	            isMainImage
+	    );
+	    log.info("Created ProductImage entity: {}", productImage.getImg_id());
 
-		ProductImage productImage = ProductImage.createProductImage(
-				file.getOriginalFilename()
-				, originalImagePath
-				, originalImagePath
-				, thumbnailPath
-				, product
-				, isMainImage
-		);
+	    ProductImage savedImage = productImageRepository.save(productImage);
+	    log.info("Saved ProductImage to database: {}", savedImage.getImg_id());
 
-		ProductImage savedImage = productImageRepository.save(productImage);
-
-		log.info("Image uploaded: {}, Main Image: {}", savedImage.getImg_id(), savedImage.getIs_main_img());
-
-		return modelMapper.map(savedImage, ProductImageDTO.class);
+	    return modelMapper.map(savedImage, ProductImageDTO.class);
 	}
 
 	@Override
 	public List<ProductImageDTO> getProductImages(String productCode) {
-		List<ProductImage> images = productImageRepository.findByProductCode(productCode);
+		List<ProductImage> images = productImageRepository.findAllByProductCode(productCode);
 		log.info("Found {} images for product {}", images.size(), productCode);
 		return images.stream().map(image -> modelMapper.map(image, ProductImageDTO.class)).collect(Collectors.toList());
 	}
 
 	@Override
 	public ProductImageDTO getMainImage(String productCode) {
-		return productImageRepository.findMainImageByProductCode(productCode).map(image -> {
-			log.info("Main image found for product {}: {}", productCode, image.getImg_id());
-			return modelMapper.map(image, ProductImageDTO.class);
-		}).orElse(null);
+	    log.info("Getting main image for product code: {}", productCode);
+	    
+	    List<ProductImage> mainImages = productImageRepository.findAllByProductCode(productCode)
+	            .stream()
+	            .filter(pi -> pi.getIs_main_img())
+	            .collect(Collectors.toList());
+	            
+	    if (!mainImages.isEmpty()) {
+	        ProductImage mainImage = mainImages.get(0); // 첫 번째 대표 이미지 선택
+	        log.info("Main image found for product {}: {}", productCode, mainImage.getImg_id());
+	        return modelMapper.map(mainImage, ProductImageDTO.class);
+	    }
+	    
+	    log.info("No main image found for product code: {}", productCode);
+	    return null;
 	}
 
 	@Override
@@ -117,7 +122,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 		Product product = productRepository.findById(productCode)
 				.orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다.........."));
 
-		List<ProductImage> productImages = productImageRepository.findByProductCode(productCode);
+		List<ProductImage> productImages = productImageRepository.findAllByProductCode(productCode);
 		productImages.forEach(img -> img.setIs_main_img(false));
 		productImageRepository.saveAll(productImages);
 		// 새 대표 이미지 설정

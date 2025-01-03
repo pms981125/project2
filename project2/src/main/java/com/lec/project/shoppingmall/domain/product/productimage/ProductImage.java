@@ -53,7 +53,6 @@ public class ProductImage {
     @JoinColumn(name = "product_code", nullable = false)
     private Product product;
 	
-	@Builder
 	public static ProductImage createProductImage(
 				String originalFileName
 				, String storedFileName

@@ -22,4 +22,8 @@ public class CartListDTO {
 	private int price;
 	
 	private int total_price;
+	
+	private String img_path;
+	
+	private String thumbnail_path;
 }

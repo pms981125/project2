@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -40,20 +41,24 @@ public class FileUtils {
 
     // 원본 이미지 저장
     public String saveOriginalFile(MultipartFile file) throws IOException {
-        if(file == null || file.isEmpty()) {
-            return null;
-        }
-
-        String folderPath = makeFolder();
-        String uuid = UUID.randomUUID().toString();
-        String saveFileName = uuid + "_" + file.getOriginalFilename();
-        String savePath = folderPath + File.separator + saveFileName;
-
-        Path destinationPath = Paths.get(uploadPath, savePath);
-        file.transferTo(destinationPath);
-        
-        return savePath;
-    }
+		   String folderPath = makeFolder();
+		   // 경로 구분자를 '/'로 통일
+		   folderPath = folderPath.replace("\\", "/");
+		   
+		   // UUID를 사용한 고유한 파일명 생성
+		   String uuid = UUID.randomUUID().toString();
+		   String originalFileName = file.getOriginalFilename();
+		   String savedFileName = uuid + "_" + originalFileName;
+		   
+		   // 최종 저장 경로 ('/'로 통일)
+		   String savePath = folderPath + "/" + savedFileName;
+		   
+		   // 실제 파일 저장 (덮어쓰기 옵션 추가)
+		   Path targetPath = Paths.get(uploadPath, folderPath, savedFileName);
+		   Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+		   
+		   return savePath;
+		}
 
     // 썸네일 이미지 생성
     public String createThumbnail(String originalImagePath) throws IOException {
