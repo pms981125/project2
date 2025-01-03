@@ -98,7 +98,7 @@ public class SuperHRController {
 	}
 	
 	@PostMapping("/delegate") // SuperAdmin 위임
-	public String delegateAuthority(@RequestParam("superAdminId") String superAdminId, @RequestParam("adminId") String adminId){
+	public String delegateAuthority(@RequestParam("superAdminId") String superAdminId, @RequestParam("adminId") String adminId) {
 		// log.info(superAdminId + "234124-013" + adminId);
 		hrService.delagateAuthority(superAdminId, adminId); 
 		
@@ -107,8 +107,10 @@ public class SuperHRController {
 	}
 	
 	@PostMapping("/initializePassword") // 비밀번호 초기화(재발급)
-	public String initializePassword(@RequestParam("memberId") String memberId){
-		log.info(memberId + " dhbahswk");
+	public String initializePassword(@RequestParam("memberId") String memberId) {
+		// log.info(memberId + " dhbahswk");
+
+		hrService.initializePassword(memberId);
 		
 		return "redirect:/sudo/userInfo?id=" + memberId;
 		// return "redirect:/sudo/allUserList";

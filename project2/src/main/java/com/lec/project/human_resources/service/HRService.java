@@ -20,4 +20,5 @@ public interface HRService {
 	void remove(String id);
 	void addAdmin(String id, String password, String name, String ssnFront, String ssnEnd, String email);
 	void delagateAuthority(String superAdminId, String adminId);
+	void initializePassword(String memberId);
 }

@@ -225,4 +225,12 @@ public class HRServiceImpl implements HRService {
 		
 		return new PageImpl<>(DTOPages, pageable.withPage(p), listSize.size());
 	}
+
+	@Override
+	public void initializePassword(String memberId) {
+		Optional<Member> result = memberRepository.findById(memberId);
+		Member member = result.orElseThrow();
+		
+		// String password = passwordEncoder.encode(generatePassword());
+	}
 }
