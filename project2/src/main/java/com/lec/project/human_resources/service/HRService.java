@@ -2,6 +2,9 @@ package com.lec.project.human_resources.service;
 
 import java.util.List;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,5 +23,5 @@ public interface HRService {
 	void remove(String id);
 	void addAdmin(String id, String password, String name, String ssnFront, String ssnEnd, String email);
 	void delagateAuthority(String superAdminId, String adminId);
-	void initializePassword(String memberId);
+	void initializePassword(String memberId) throws AddressException, MessagingException;
 }

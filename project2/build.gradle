@@ -57,6 +57,9 @@ dependencies {
    	
    	// 이미지.thumbnail
 	implementation 'net.coobird:thumbnailator:0.4.20'
+	
+	// 이메일
+	implementation 'javax.mail:mail:1.4.7'
 }
 
 tasks.named('test') {

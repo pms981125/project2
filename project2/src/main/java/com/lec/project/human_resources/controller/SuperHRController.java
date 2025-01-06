@@ -1,5 +1,8 @@
 package com.lec.project.human_resources.controller;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -107,7 +110,7 @@ public class SuperHRController {
 	}
 	
 	@PostMapping("/initializePassword") // 비밀번호 초기화(재발급)
-	public String initializePassword(@RequestParam("memberId") String memberId) {
+	public String initializePassword(@RequestParam("memberId") String memberId) throws AddressException, MessagingException {
 		// log.info(memberId + " dhbahswk");
 
 		hrService.initializePassword(memberId);

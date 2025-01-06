@@ -6,16 +6,20 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import javax.mail.*;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,7 +29,6 @@ import com.lec.project.MemberRepository;
 import com.lec.project.MemberRole;
 import com.lec.project.MemberSecurityDTO;
 import com.lec.project.human_resources.domain.Admin;
-import com.lec.project.human_resources.dto.AdminDTO;
 import com.lec.project.human_resources.repository.AdminRepository;
 
 import jakarta.transaction.Transactional;
@@ -59,8 +62,6 @@ public class HRServiceImpl implements HRService {
 		MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(), member.getPassword(),
 				member.getRoleSet().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
 						.collect(Collectors.toList()));
-
-		log.info(memberSecurityDTO);
 
 		return memberSecurityDTO;
 	}
@@ -227,10 +228,61 @@ public class HRServiceImpl implements HRService {
 	}
 
 	@Override
-	public void initializePassword(String memberId) {
+	public void initializePassword(String memberId) throws AddressException, MessagingException {
 		Optional<Member> result = memberRepository.findById(memberId);
 		Member member = result.orElseThrow();
+		String password = generatePassword();
 		
-		// String password = passwordEncoder.encode(generatePassword());
+		member.setPassword(passwordEncoder.encode(password));
+		
+		memberRepository.save(member); // admin?
+		
+		// String address = member.getEmail(); 회원의 이메일
+		String address = ""; // 메일 수신자 - 네이버
+		String sender = ""; // 메일 송신자 - 구글
+		String senderPassword = "khed zxab durs cgoy"; // 앱 비밀번호
+        String host = "smtp.gmail.com"; // 구글 메일 서버 호스트 이름
+
+        Properties props = new Properties();	// SMTP 프로토콜 설정
+        
+        props.setProperty("mail.smtp.host", host);
+        props.setProperty("mail.smtp.port", "587");
+        props.setProperty("mail.smtp.auth", "true");
+        props.setProperty("mail.smtp.starttls.enable", "true");
+        props.setProperty("mail.smtp.ssl.trust", host);
+        props.setProperty("mail.debug", "true");
+        props.setProperty("mail.smtp.localhost", "localhost");
+        props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+        
+        Session session = Session.getInstance(props, new Authenticator() {
+        	protected PasswordAuthentication getPasswordAuthentication() {
+        		return new PasswordAuthentication(sender, senderPassword);
+        	}
+        });
+        
+        Message message = new MimeMessage(session);
+        
+        message.setFrom(new InternetAddress(sender));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(address));
+        message.setSubject("[테스트] 비밀번호");
+        message.setText(memberId + "님의 초기화된 비밀번호는 " + password + " 입니다");
+        
+        Transport.send(message);
+	}
+
+	private String generatePassword() {
+		String string = "";
+		
+		for (int i = 0; i < 10; i++) {
+			int n = (int) ((Math.random() * 57) + 65);
+			
+			while (!(n < 91 || n > 96)) {
+				n = (int) ((Math.random() * 57) + 65);
+			}
+
+			string += (char) n;
+		}
+		
+		return string;
 	}
 }
