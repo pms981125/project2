@@ -38,7 +38,7 @@ public class WebSecurityConfig {
         								       .requestMatchers("/protoshop/modify/**", "/protoshop/remove/**", "/protoshop/regist/**").hasRole("MANAGER")
         								       .requestMatchers("/protoshop/list", "/protoshop/read/**", "/cart/**").permitAll()
         								        
-        									   .requestMatchers("/user/**").hasRole("USER") // 없애도 될듯?
+        									   // .requestMatchers("/user/**").hasRole("USER") // 없애도 될듯?
         									   .anyRequest().authenticated())
         	.formLogin(form -> form//.loginPage("/login")
         						   .permitAll()

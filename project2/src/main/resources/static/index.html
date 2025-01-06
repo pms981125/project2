@@ -73,16 +73,19 @@
             </ul>
           </div>
           <div class="quote_btn-container">
-            <a href="">
-              <span>
-                Login
-              </span>
-              <i class="fa fa-user" aria-hidden="true"></i>
-            </a>
+           <a href="javascript:register()">
+	              <span>
+	                Sign Up
+	              </span>
+	              <i class="fa fa-user" aria-hidden="true"></i>
+	            </a>
             <form class="form-inline">
-              <button class="btn  my-2 my-sm-0 nav_search-btn" type="button">
-                <i class="fa fa-search" aria-hidden="true"></i>
-              </button>
+              <button class="btn  my-2 my-sm-0 userInfoBtn" type="button" onclick="javascript:getUserInfo()">
+	                <i class="fa fa-search" aria-hidden="true"></i>
+	          </button>
+              	<button class="btn  my-2 my-sm-0 logoutBtn" type="button" onclick="javascript:logout()">
+					<i class="fa fa-solid fa-unlock"></i>
+	          	</button>
             </form>
           </div>
         </div>
@@ -704,11 +707,39 @@
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap"></script>
   <!-- End Google Map -->
   
-  	<script>
-    	const auth = /*[[${#authentication.name}]]*/""
-    	
-		console.log(auth)
-  	</script>
+<script>
+	function register() {
+		const form = document.createElement('form')
+   	   	 
+		form.action = `/user/goRegisterForm`
+   		form.method = 'get'
+   		document.body.appendChild(form)
+   		form.submit()
+	}
+   		
+   	document.querySelector(".userInfoBtn").addEventListener("click", function(e) {
+   		e.preventDefault()
+   		e.stopPropagation()
+   		    
+   		const form = document.createElement('form')
+   		    
+   		form.action = `/user/userInfo`
+   		form.method = 'get'
+   		document.body.appendChild(form)
+   		form.submit()
+	}, false)
+   		
+   	document.querySelector(".logoutBtn").addEventListener("click", function(e) {
+   		e.preventDefault()
+   		e.stopPropagation()
+   		    
+   		const form = document.createElement('form')
+   		    
+   		form.action = `/user/logout`
+   		form.method = 'get'
+   		document.body.appendChild(form)
+   		form.submit()
+	}, false)
+</script>
 </body>
-
 </html>
