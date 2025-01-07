@@ -23,3 +23,7 @@ div.paging {
 div.button {
 	text-align: right;
 }
+
+span > a:hover {
+	color: #62626c; /*  */
+}

@@ -39,8 +39,11 @@ public class WebSecurityConfig {
         								       .requestMatchers("/protoshop/list", "/protoshop/read/**", "/cart/**").permitAll()
         								        
         									   // .requestMatchers("/user/**").hasRole("USER") // 없애도 될듯?
+        								       // .requestMatchers("/login.html").permitAll()
+        								       .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // 정적 리소스 접근 허용
         									   .anyRequest().authenticated())
-        	.formLogin(form -> form//.loginPage("/login")
+        	.formLogin(form -> form.loginPage("/login.html")
+        						   .loginProcessingUrl("/loginProcess")
         						   .permitAll()
         						   .successHandler(successHandler()))
         	.logout(out -> out.logoutUrl("/logout")
