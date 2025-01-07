@@ -36,7 +36,14 @@
 				<input type="hidden" th:value="${item.product_code}" />
 				<td><a th:href="@{/cart/read(id=${item.id})}">[[${item.product_name}]]</a>
 				</td>
-				<td>[[${item.count}]]</td>
+				<td>
+    				<button type="button" onclick="updateQuantity(this, -1)">-</button>
+    				<input type="number" th:value="${item.count}" 
+           					th:data-price="${item.price}" th:data-id="${item.id}" 
+           					min="1" style="width: 50px;" 
+           					onchange="updateQuantity(this, 0)">
+    				<button type="button" onclick="updateQuantity(this, 1)">+</button>
+				</td>
 				<td>[[${#numbers.formatInteger(item.price, 0, 'COMMA')}]]원</td>
 				<td>[[${#numbers.formatInteger(item.total_price, 0,
 					'COMMA')}]]원</td>
@@ -90,6 +97,49 @@ function clearCart() {
             }
         });
     }
+}
+
+function updateQuantity(element, change) {
+    const row = element.closest('tr');
+    const input = row.querySelector('input[type="number"]');
+    const id = input.dataset.id;
+    let newQuantity;
+
+    if (change === 0) {
+        newQuantity = parseInt(input.value);
+    } else {
+        newQuantity = parseInt(input.value) + change;
+    }
+
+    if (newQuantity < 1) {
+        newQuantity = 1;
+        return;
+    }
+
+    fetch('/api/cart/updateQuantity', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `id=${id}&quantity=${newQuantity}`
+    })
+    .then(response => {
+        if(response.ok) {
+            input.value = newQuantity;
+            const price = parseInt(input.dataset.price);
+            const totalPrice = price * newQuantity;
+            row.querySelector('td:nth-last-child(2)').textContent = 
+                new Intl.NumberFormat('ko-KR').format(totalPrice) + '원';
+            location.reload();  // 총액 업데이트를 위해 페이지 새로고침
+        } else {
+            alert('수량 업데이트에 실패했습니다.');
+            location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('수량 업데이트 중 오류가 발생했습니다.');
+    });
 }
 </script>
 

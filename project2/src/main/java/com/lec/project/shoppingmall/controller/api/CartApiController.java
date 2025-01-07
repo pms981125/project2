@@ -1,5 +1,7 @@
 package com.lec.project.shoppingmall.controller.api;
 
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,4 +45,28 @@ public class CartApiController {
 		        return ResponseEntity.badRequest().build();
 		    }
 	}
+	
+	@PostMapping("/updateQuantity")
+	public ResponseEntity<Object> updateQuantity(
+			@AuthenticationPrincipal UserDetails userDetails,
+			@RequestParam("id") Long id,
+			@RequestParam("quantity") int quantity
+			) {
+		try {
+			String memberId = userDetails.getUsername();
+			cartService.modify(id, quantity, memberId);
+			
+			int newTotalPrice = cartService.getTotalPrice(memberId);
+			return ResponseEntity.ok().body(Map.of(
+					"success", true,
+					"totalPrice", newTotalPrice
+					));
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body(Map.of(
+					"success", false,
+					"message", e.getMessage()
+					));
+		}
+	}
+	
 }
