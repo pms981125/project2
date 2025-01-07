@@ -3,6 +3,7 @@ package com.lec.project.shoppingmall.service.product.image;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -123,18 +124,35 @@ public class ProductImageServiceImpl implements ProductImageService {
 
 	@Override
 	public void deleteImage(String imageId) {
+		log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Attempting to delete image with ID: {}", imageId); // 로그 추가
+		
+		// 이미지 ID가 null이나 빈 문자열인지 먼저 체크
+	    if (imageId == null || imageId.trim().isEmpty()) {
+	        log.error("Invalid image ID: null or empty");
+	        throw new IllegalArgumentException("유효하지 않은 이미지 ID입니다.");
+	    }
+
+	    Optional<ProductImage> imageOptional = productImageRepository.findById(imageId);
+	    
+	    if (imageOptional.isEmpty()) {
+	        log.error("No image found with ID: {}", imageId);
+	        throw new IllegalArgumentException("이미지를 찾을 수 없습니다..........");
+	    }
+		
 		ProductImage productImage = productImageRepository.findById(imageId)
 				.orElseThrow(() -> new IllegalArgumentException("이미지를 찾을 수 없습니다........."));
 
 		try {
+			//실제 파일 삭제
 			fileUtils.deleteFile(productImage.getImg_path());
 			fileUtils.deleteFile(productImage.getThumbnail_path());
 
+			//DB에서 이미지 정보 삭제
 			productImageRepository.delete(productImage);
 
 			log.info("Image deleted: {}", imageId);
 		} catch (IOException e) {
-			log.error("이미지 삭제 중 오류 발생", e);
+			log.error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@이미지 삭제 중 오류 발생", e);
 			throw new RuntimeException("이미지 삭제 중 오류가 발생했습니다..........", e);
 		}
 

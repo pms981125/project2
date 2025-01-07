@@ -189,6 +189,21 @@ public class ShopController {
 		redirectAttributes.addFlashAttribute("result", "게시글삭제성공..........");
 		return "redirect:/protoshop/list";
 	}
+	
+	@PreAuthorize("hasRole('MANAGER')")
+	@PostMapping("/deleteImage")
+	public ResponseEntity<?>deleteImage(
+			@RequestParam("imageId") String imageId,
+			@RequestParam("productCode") String productCode
+			){
+		try {
+			productImageService.deleteImage(imageId);
+			return ResponseEntity.ok().build();
+		} catch (Exception e) {
+			log.error("이미지 삭제 실패.........", e);
+			return ResponseEntity.badRequest().build();
+		}
+	}
 
 	@GetMapping("/logout")
 	public String logout() {
