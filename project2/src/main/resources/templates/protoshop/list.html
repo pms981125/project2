@@ -13,6 +13,11 @@
 		접속 ID: <strong th:text="${memberId}"></strong> <a
 			th:href="@{/cart/list}"><button>장바구니</button></a> <a
 			th:href="@{/logout}"><button>로그아웃</button></a>
+			
+		<div th:if="${searchError}" style="color: red; margin: 10px 0; text-align: center;">
+        	[[${searchError}]]
+    	</div>
+			
 		<!-- 검색폼 -->
 		<div>
 			<form th:action="@{/protoshop/list}" method="get">

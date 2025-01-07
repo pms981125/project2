@@ -42,7 +42,9 @@ public class ShopController {
 	@GetMapping("/list")
 	public String list(PageRequestDTO pageRequestDTO, @AuthenticationPrincipal UserDetails userDetails,
 			@RequestParam(name = "keyword", required = false) String keyword,
-			@RequestParam(name = "category", required = false) String category, Model model) {
+			@RequestParam(name = "category", required = false) String category,
+			Model model,
+			RedirectAttributes redirectAttributes) {
 
 		log.info("category: " + category);
 		log.info("keyword: " + keyword);
@@ -50,21 +52,32 @@ public class ShopController {
 		if (userDetails != null) {
 			model.addAttribute("memberId", userDetails.getUsername());
 		}
-
-		PageResponseDTO<ShopDTO> responseDTO = shopService.list(pageRequestDTO, keyword, category);
-		log.info(".........." + responseDTO.getDtoList());
-
-		responseDTO.getDtoList().forEach(shopDTO -> {
-			ProductImageDTO mainImage = productImageService.getMainImage(shopDTO.getProduct_code());
-			if (mainImage != null) {
-				shopDTO.setImg_path(mainImage.getImg_path());
-				shopDTO.setThumbnail_path(mainImage.getThumbnail_path());
+		
+		try {
+			PageResponseDTO<ShopDTO> responseDTO = shopService.list(pageRequestDTO, keyword, category);
+			
+			if(responseDTO.getDtoList().isEmpty() && (keyword != null || category != null)) {
+				redirectAttributes.addFlashAttribute("searchError", "검색 결과가 없습니다. 다른 검색어를 입력해주세요");
+				return "redirect:/protoshop/list";
 			}
-		});
-
-		model.addAttribute("responseDTO", responseDTO);
-		model.addAttribute("keyword", keyword);
-		model.addAttribute("category", category);
+			
+			responseDTO.getDtoList().forEach(shopDTO -> {
+				ProductImageDTO mainImage = productImageService.getMainImage(shopDTO.getProduct_code());
+				if (mainImage != null) {
+					shopDTO.setImg_path(mainImage.getImg_path());
+					shopDTO.setThumbnail_path(mainImage.getThumbnail_path());
+				}
+			});
+			
+			model.addAttribute("responseDTO", responseDTO);
+			model.addAttribute("keyword", keyword);
+			model.addAttribute("category", category);
+			
+		} catch (Exception e) {
+			log.error("검색처리 중 오류 발생.....", e);
+			redirectAttributes.addFlashAttribute("searchError", "검색처리 중 오류가 발생했습니다. 다시 시도해주세요");
+			return "redirect:/protoshop/list";
+		}
 
 		return "protoshop/list";
 	}
