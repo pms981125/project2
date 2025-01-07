@@ -41,7 +41,7 @@
 			</tr>
 			<tr>
 				<th>가격</th>
-				<td><input type="number" name="product_price" id="product_price" th:value="${dto.product_price}" readonly></td>
+				<td><input type="number" name="product_price" id="product_price" th:value="${dto.product_price}"></td>
 			</tr>
 			<tr>
 				<th>카테고리</th>
@@ -53,11 +53,11 @@
 			</tr>
 			<tr>
 				<th>내용1</th>
-				<td><textarea name="board_content1" id="board_content1" readonly>[[${dto.board_content1}]]</textarea></td>
+				<td><textarea name="board_content1" id="board_content1">[[${dto.board_content1}]]</textarea></td>
 			</tr>
 			<tr>
 				<th>내용2</th>
-				<td><textarea name="board_content2" id="board_content2" readonly>[[${dto.board_content2}]]</textarea></td>
+				<td><textarea name="board_content2" id="board_content2">[[${dto.board_content2}]]</textarea></td>
 			</tr>
 		</table>
 

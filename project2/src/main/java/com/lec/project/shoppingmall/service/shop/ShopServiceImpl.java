@@ -129,11 +129,19 @@ public class ShopServiceImpl implements ShopService {
 		Product product = productRepository.findById(shopDTO.getProduct_code())
 				.orElseThrow(() -> new IllegalArgumentException("해당 상품 코드의 상품이 존재하지 않습니다."));
 
+		
+		//shop에서 수정된 가격과 내용 업데이트
+		product	.setProduct_price(shopDTO.getProduct_price());
+		product.setProduct_detail1(shopDTO.getBoard_content1());
+		product.setProduct_detail2(shopDTO.getBoard_content2());
+		
+		//shop의 내용 업데이트
 		existsShop.changeProductCode(shopDTO.getProduct_code());
-		existsShop.setBoard_title(product.getProduct_name());
-		existsShop.setBoard_content1(product.getProduct_detail1());
-		existsShop.setBoard_content2(product.getProduct_detail2());
+		existsShop.changeTitle(product.getProduct_name());
+		existsShop.changeDetail1(shopDTO.getBoard_content1());
+		existsShop.changeDetail2(shopDTO.getBoard_content2());
 
+		productRepository.save(product);
 		shopRepository.save(existsShop);
 	}
 
