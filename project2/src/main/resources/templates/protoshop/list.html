@@ -54,7 +54,7 @@
 			<tr th:each="shop : ${responseDTO.dtoList}">
 				<!-- 썸네일 이미지 추가 -->
 				<td><img th:if="${shop.thumbnail_path}"
-					  th:src="@{/display(filename=${shop.thumbnail_path})}"
+					th:src="@{/display(filename=${shop.thumbnail_path})}"
 					style="max-width: 100px; height: auto;"></td>
 				<td>[[${shop.bno}]]</td>
 				<td><a th:href="@{/protoshop/read(bno=${shop.bno})}">[[${shop.board_title}]]</a>

@@ -8,11 +8,9 @@
 <body>
 	<h1>Proto Shop/regist</h1>
 
-	<form id="registForm" action="/protoshop/regist" method="post"
-		enctype="multipart/form-data" onreset="resetForm()">
+	<form id="registForm" action="/protoshop/regist" method="post" enctype="multipart/form-data">
 
-		<div th:if="${error}" style="color: red; margin-bottom: 10px;">
-			[[${error}]]</div>
+		<div th:if="${error}" style="color: red; margin-bottom: 10px;">[[${error}]]</div>
 		<div>
 			<label>상품코드 조회</label> <input type="text" name="search_product_code"
 				id="search_product_code" placeholder="상품 코드를 입력하세요">
@@ -59,15 +57,23 @@
 		</table>
 
 		<div sec:authorize="hasRole('MANAGER')" style="margin: 20px 0;">
-			<label>상품 이미지:</label> <input type="file" name="productImages"
-				multiple accept="image/*">
-			<p style="color: gray; font-size: 0.9em;">* 첫 번째 업로드되는 이미지가 대표
-				이미지로 설정됩니다.</p>
+			<label>상품 이미지:</label>
+			<input type="file"
+					id="productImages"
+					name="productImages"
+					multiple
+					accept="image/*"
+					onchange="previewImages(this)">
+			<p style="color: gray; font-size: 0.9em;">* 첫 번째 업로드되는 이미지가 대표	이미지로 설정됩니다.</p>
 		</div>
 
+		<!-- 이미지 미리보기 컨테이너 추가 -->
+		<div id="imagePreviewContainer" style="margin: 20px 0;">
+		
+		</div>
+	
 		<div>
 			<button type="submit">등록</button>
-			<button type="reset">초기화</button>
 			<a th:href="@{/protoshop/list}">
 				<button type="button">목록</button>
 			</a>
@@ -78,63 +84,95 @@
 		function searchProduct() {
 			const productCode = document.getElementById('search_product_code').value;
 			// ProductCode중복확인
-			$
-					.ajax({
-						url : '/api/shop/checkProductCode',
+			$.ajax({
+				url : '/api/shop/checkProductCode',
+				method : 'GET',
+				data : {
+					productCode : productCode
+				},
+				success : function(response) {
+					if (response.exists) {
+						alert('이미 등록된 productCode입니다.');
+						return;
+					}
+					// ProductCode 조회
+					$.ajax({
+						url : '/api/product/' + productCode,
 						method : 'GET',
-						data : {
-							productCode : productCode
-						},
-						success : function(response) {
-							if (response.exists) {
-								alert('이미 등록된 productCode입니다.');
-								return;
-							}
-							// ProductCode 조회
-							$
-									.ajax({
-										url : '/api/product/' + productCode,
-										method : 'GET',
-										success : function(product) {
-											document
-													.getElementById('product_code').value = product.product_code;
-											document
-													.getElementById('product_code_display').textContent = product.product_code;
-											document
-													.getElementById('board_title').value = product.product_name;
-											document
-													.getElementById('product_category').value = product.product_category;
-											document
-													.getElementById('product_price').value = product.product_price;
-											document
-													.getElementById('product_stock').value = product.product_stock;
-											document
-													.getElementById('board_content1').value = product.product_detail1;
-											document
-													.getElementById('board_content2').value = product.product_detail2;
-										},
-										error : function() {
-											alert('상품을 찾을 수 없습니다.');
-										}
-									});
+						success : function(product) {
+							document.getElementById('product_code').value = product.product_code;
+							document.getElementById('product_code_display').textContent = product.product_code;
+							document.getElementById('board_title').value = product.product_name;
+							document.getElementById('product_category').value = product.product_category;
+							document.getElementById('product_price').value = product.product_price;
+							document.getElementById('product_stock').value = product.product_stock;
+							document.getElementById('board_content1').value = product.product_detail1;
+							document.getElementById('board_content2').value = product.product_detail2;
 						},
 						error : function() {
-							alert('상품 코드 중복 확인 중 오류가 발생했습니다.');
+							alert('상품을 찾을 수 없습니다.');
 						}
 					});
+				},
+				error : function() {
+					alert('상품 코드 중복 확인 중 오류가 발생했습니다.');
+				}
+			});
 		}
 
-		function resetForm() {
-			// 모든 입력 필드 초기화
-			document.getElementById('search_product_code').value = '';
-			document.getElementById('product_code').value = '';
-			document.getElementById('product_code_display').textContent = '';
-			document.getElementById('board_title').value = '';
-			document.getElementById('product_price').value = '';
-			document.getElementById('product_category').value = '';
-			document.getElementById('product_stock').value = '';
-			document.getElementById('board_content1').value = '';
-			document.getElementById('board_content2').value = '';
+		<!-- 이미지 미리보기 -->
+		function previewImages(input){
+			const previewContainer = document.getElementById('imagePreviewContainer');
+			previewContainer.innerHTML = '';
+			
+			if(input.files){
+				Array.from(input.files).forEach(file => {
+					const reader = new FileReader();
+					
+					reader.onload= function(e) {
+						const imgWrapper= document.createElement('div');
+						imgWrapper.style.display = 'inline-block';
+						imgWrapper.style.margin = '5px';
+						imgWrapper.style.position = 'relative';
+						
+						const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxWidth = '150px';
+                        img.style.maxHeight = '150px';
+                        img.style.objectFit = 'cover';
+
+                        const removeBtn = document.createElement('button');
+                        removeBtn.innerHTML = '&times;';
+                        removeBtn.style.position = 'absolute';
+                        removeBtn.style.top = '0';
+                        removeBtn.style.right = '0';
+                        removeBtn.style.backgroundColor = 'red';
+                        removeBtn.style.color = 'white';
+                        removeBtn.style.border = 'none';
+                        removeBtn.style.borderRadius = '50%';
+                        removeBtn.style.cursor = 'pointer';
+                        removeBtn.onclick = function() {
+                        	imgWrapper.remove();
+                        	
+                        	const fileInput = document.getElementById('productImages');
+                        	const fileList = Array.from(fileInput.files);
+                        	const index = fileList.findIndex(f => f.name === file.name);
+                        	if(index > -1) {
+                        		fileList.splice(index, 1);
+                        		const newFileList = new DataTransfer();
+                        		fileList.forEach(f => newFileList.items.add(f));
+                        		fileInput.files = newFileList.files;
+                        	}
+                        };
+                        
+                        imgWrapper.appendChild(img);
+                        imgWrapper.appendChild(removeBtn);
+                        previewContainer.appendChild(imgWrapper);
+					}
+					reader.readAsDataURL(file);
+
+				});
+			}
 		}
 	</script>
 </body>
