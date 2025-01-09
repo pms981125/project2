@@ -30,7 +30,7 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class AccountController {
 	private final AccountService accountService;
-
+	//asdasd
 	@GetMapping("/list")
 	public void list(PageRequestDTO pageRequestDTO, Model model) {
 		PageResponseDTO<AccountDTO> responseDTO = accountService.list(pageRequestDTO);
