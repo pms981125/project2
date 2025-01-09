@@ -32,7 +32,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Controller
-@RequestMapping("/protoshop")
+@RequestMapping("/shop")
 @RequiredArgsConstructor
 public class ShopController {
 
@@ -58,7 +58,7 @@ public class ShopController {
 			
 			if(responseDTO.getDtoList().isEmpty() && (keyword != null || category != null)) {
 				redirectAttributes.addFlashAttribute("searchError", "검색 결과가 없습니다. 다른 검색어를 입력해주세요");
-				return "redirect:/protoshop/list";
+				return "redirect:/shop/list";
 			}
 			
 			responseDTO.getDtoList().forEach(shopDTO -> {
@@ -76,10 +76,10 @@ public class ShopController {
 		} catch (Exception e) {
 			log.error("검색처리 중 오류 발생.....", e);
 			redirectAttributes.addFlashAttribute("searchError", "검색처리 중 오류가 발생했습니다. 다시 시도해주세요");
-			return "redirect:/protoshop/list";
+			return "redirect:/shop/list";
 		}
 
-		return "protoshop/list";
+		return "shop/list";
 	}
 
 	@GetMapping({ "/read", "/modify" })
@@ -109,38 +109,54 @@ public class ShopController {
 	}
 
 	@PreAuthorize("hasRole('MANAGER')")
-	@PostMapping("/regist") // 상품등록
-	public String registerPost(@Valid ShopDTO shopDTO // 폼에서 전송된 데이터를 검증
-			, @RequestParam(value = "productImages", required = false) List<MultipartFile> productImages,
-			BindingResult bindingResult // 검증 결과를 담는 객체
-			, RedirectAttributes redirectAttributes) { // 리다이렉트시 데이터 전달
-		log.info("regist.Post..........");
+	@PostMapping("/regist")
+	public String registerPost(@Valid ShopDTO shopDTO
+	        , BindingResult bindingResult
+	        , @RequestParam(value = "productImages", required = false) List<MultipartFile> productImages
+	        , RedirectAttributes redirectAttributes) {
+	    log.info("regist.Post..........");
+	    
+	    try {
+	        if (bindingResult.hasErrors()) {
+	            log.info("입력된 정보에 에러가 있습니다...........");
+	            redirectAttributes.addFlashAttribute("error", "필수 정보가 누락되었습니다. 상품을 먼저 조회해주세요.");
+	            return "redirect:/shop/regist";
+	        }
 
-		if (bindingResult.hasErrors()) {
-			log.info("입력된 정보에 에러가 있습니다...........");
-			redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
-			return "redirect:/protoshop/regist";
-		}
-		log.info("regist.........." + shopDTO);
+	        Long bno = shopService.register(shopDTO);
 
-		Long bno = shopService.register(shopDTO);
+	        // 이미지가 제공된 경우에만 이미지 처리 로직 실행
+	        if (productImages != null && !productImages.isEmpty() && !productImages.get(0).isEmpty()) {
+	            try {
+	                for (MultipartFile image : productImages) {
+	                    String originalFilename = image.getOriginalFilename();
+	                    if(originalFilename != null && !originalFilename.toLowerCase().endsWith(".jpg") 
+	                       && !originalFilename.toLowerCase().endsWith(".jpeg")
+	                       && !originalFilename.toLowerCase().endsWith(".png")
+	                       && !originalFilename.toLowerCase().endsWith(".gif")) {
+	                        redirectAttributes.addFlashAttribute("error", "이미지 파일만 업로드 가능합니다.");
+	                        return "redirect:/shop/regist";
+	                    }
+	                }
 
-		if (productImages != null && !productImages.isEmpty()) {
-			try {
-				for (int i = 0; i < productImages.size(); i++) {
-					MultipartFile productImage = productImages.get(i);
-					boolean isMainImage = (i == 0);
-				}
+	                productImageService.uploadMultipleProductImages(productImages, shopDTO.getProduct_code(), true);
+	            } catch (Exception e) {
+	                log.error("이미지 업로드 실패..........", e);
+	                redirectAttributes.addFlashAttribute("error", "이미지 업로드에 실패했습니다.");
+	            }
+	        }
+	        redirectAttributes.addFlashAttribute("result", bno);
+	    } catch(IllegalArgumentException e) {
+	        log.error("상품 등록 실패..........", e);
+	        redirectAttributes.addFlashAttribute("error", e.getMessage());
+	        return "redirect:/shop/regist";
+	    } catch (Exception e) {
+	        log.error("등록 중 오류 발생..........", e);
+	        redirectAttributes.addFlashAttribute("error", "등록 중 오류가 발생했습니다.");
+	        return "redirect:/shop/regist";
+	    }
 
-				productImageService.uploadMultipleProductImages(productImages, shopDTO.getProduct_code(), true);
-			} catch (Exception e) {
-				log.error("이미지 업로드 실패..........", e);
-				redirectAttributes.addFlashAttribute("imageError", "이미지 업로드에 실패했습니다.");
-			}
-		}
-		redirectAttributes.addFlashAttribute("result", bno);
-
-		return "redirect:/protoshop/list";
+	    return "redirect:/shop/list";
 	}
 
 	// 수정
@@ -155,10 +171,10 @@ public class ShopController {
 			if (bindingResult.hasErrors()) {
 				log.info("입력된 정보에 에러가 있습니다..........");
 
-				redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
+				redirectAttributes.addFlashAttribute("error", bindingResult.getAllErrors());
 				redirectAttributes.addFlashAttribute("bno", shopDTO.getBno());
 
-				return "redirect:/protoshop/modify?bno=" + shopDTO.getBno();
+				return "redirect:/shop/modify?bno=" + shopDTO.getBno();
 			}
 
 			shopService.modify(shopDTO);
@@ -186,21 +202,41 @@ public class ShopController {
 			redirectAttributes.addFlashAttribute("result", "게시글수정성공..........");
 			redirectAttributes.addFlashAttribute("bno", shopDTO.getBno());
 
-			return "redirect:/protoshop/read?bno=" + shopDTO.getBno();
+			return "redirect:/shop/read?bno=" + shopDTO.getBno();
 		} catch (IllegalArgumentException e) {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
-			return "redirect:/protoshop/modify?bno=" + shopDTO.getBno();
+			return "redirect:/shop/modify?bno=" + shopDTO.getBno();
 		}
 	}
 
 	@PreAuthorize("hasRole('MANAGER')")
 	@PostMapping("remove")
 	public String remove(@RequestParam("bno") Long bno, RedirectAttributes redirectAttributes) {
-		log.info("remove.Post..........");
+	    log.info("remove.Post..........");
 
-		shopService.remove(bno);
-		redirectAttributes.addFlashAttribute("result", "게시글삭제성공..........");
-		return "redirect:/protoshop/list";
+	    try {
+	        // 게시글 정보를 먼저 가져옴
+	        ShopDTO shopDTO = shopService.readOne(bno);
+	        if (shopDTO != null) {
+	            // 해당 상품의 모든 이미지를 삭제
+	            List<ProductImageDTO> images = productImageService.getProductImages(shopDTO.getProduct_code());
+	            if (images != null && !images.isEmpty()) {
+	                for (ProductImageDTO image : images) {
+	                    productImageService.deleteImage(image.getImg_id());
+	                }
+	            }
+	        }
+
+	        // 게시글 삭제
+	        shopService.remove(bno);
+	        redirectAttributes.addFlashAttribute("result", "게시글삭제성공..........");
+	        
+	    } catch (Exception e) {
+	        log.error("게시글 삭제 중 오류 발생", e);
+	        redirectAttributes.addFlashAttribute("error", "게시글 삭제 중 오류가 발생했습니다.");
+	    }
+	    
+	    return "redirect:/shop/list";
 	}
 	
 	@PreAuthorize("hasRole('MANAGER')")

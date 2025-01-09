@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 
 <head>
 <!-- Basic -->
@@ -38,184 +39,335 @@
 		<!-- header section strats -->
 		<header class="header_section long_section px-0">
 			<nav class="navbar navbar-expand-lg custom_nav-container ">
-				<a class="navbar-brand" href="index.html"> <span> Edgecut
-				</span>
-				</a> </a>
-				<button class="navbar-toggler" type="button" data-toggle="collapse"
+				<a class="navbar-brand" href="index.html">
+				<span> Edgecut	</span>
+				</a>
+				
+				<button class="navbar-toggler"
+					type="button"
+					data-toggle="collapse"
 					data-target="#navbarSupportedContent"
-					aria-controls="navbarSupportedContent" aria-expanded="false"
+					aria-controls="navbarSupportedContent"
+					aria-expanded="false"
 					aria-label="Toggle navigation">
 					<span class=""> </span>
 				</button>
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<div
-						class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+					<div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
 						<ul class="navbar-nav  ">
-							<li class="nav-item "><a class="nav-link" href="index.html">Home<span
-									class="sr-only">(current)</span></a></li>
-							<li class="nav-item"><a class="nav-link" href="about.html">About</a>
+							<li class="nav-item ">
+								<a class="nav-link" href="index.html">Home<span class="sr-only">(current)</span></a>
 							</li>
-							<li class="nav-item active"><a class="nav-link"
-								href="/shop/list">Shopping Mall</a></li>
-							<li class="nav-item"><a class="nav-link" href="hr_main.html">Human-Resources</a>
+							<li class="nav-item">
+								<a class="nav-link" href="about.html">About</a>
 							</li>
-							<li class="nav-item"><a class="nav-link" href="blog.html">Blog</a>
+							<li class="nav-item active">
+								<a class="nav-link"	href="/shop/list">Shopping Mall</a>
 							</li>
-							<li class="nav-item"><a class="nav-link" href="contact.html">Contact
-									Us</a></li>
+							<li class="nav-item">
+								<a class="nav-link" href="hr_main.html">Human-Resources</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="blog.html">Blog</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="contact.html">Contact Us</a>
+							</li>
 						</ul>
 					</div>
-					<div class="quote_btn-container">
-						<a href=""> <span> Login </span> <i class="fa fa-user"
-							aria-hidden="true"></i>
-						</a> <a href="/shop/register" class="btn btn-outline-light ml-2">
-							<i class="fa fa-plus" aria-hidden="true"></i> <span>상품등록</span>
-						</a>
-					</div>
+					
+				<div class="quote_btn-container">
+				    <span style="color: black; margin-right: 15px;">
+				        <i class="fa fa-user" aria-hidden="true"></i>
+				        <span sec:authentication="name"></span>
+				    </span>
+				    <div class="d-flex flex-column">
+				        <a th:href="@{/logout}" class="btn btn-outline-info mb-2" style="color: #6bb7be; border-color: #6bb7be;">
+				            <i class="fa fa-sign-out" aria-hidden="true"></i>
+				            <span>Logout</span>
+				        </a>
+				    </div>
 				</div>
 			</nav>
+				<div class="text-right" style="padding: 10px 20px;">
+				    <!-- 장바구니 버튼 - 모든 사용자에게 표시 -->
+				    <a href="/cart/list" class="btn btn-success text-white me-2">
+				        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+				        <span>장바구니</span>
+				    </a>
+				    
+				    <!-- 상품 등록 버튼 - 관리자에게만 표시 -->
+				    <a href="/shop/regist" class="btn btn-info text-white" sec:authorize="hasRole('MANAGER')">
+				        <i class="fa fa-plus" aria-hidden="true"></i> 
+				        <span>상품 등록</span>
+				    </a>
+				</div>
 		</header>
 		<!-- end header section -->
+	
 	</div>
-
 	<!-- shop_content section -->
-
 	<section class="shop_section layout_padding px-5">
 		<div class="container-fluid px-5">
 			<div class="heading_container">
 				<h2>2rd Project</h2>
 				<p>쇼핑몰 메인 페이지입니다.</p>
-
 				<!-- 검색 폼 추가 -->
 				<div class="search_container mt-5 mb-5 pr-5">
-					<div class="input-group">
-						<select class="form-control" name="type" style="width: 150px;">
-							<option value="t">제품명</option>
-							<option value="c">카테고리</option>
-							<option value="w">판매자</option>
-						</select> <input type="text" class="form-control" name="keyword"
-							style="width: 600px" placeholder="검색어를 입력하세요">
-						<div class="input-group-append">
-							<button class="btn btn-outline-secondary" type="submit">
-								<i class="fa fa-search"></i>
-							</button>
+					<form th:action="@{/shop/list}" method="get">
+						<div class="input-group">
+							<select class="form-control" name="category" style="width: 200px;">
+								<option value="">전체 카테고리</option>
+								<option value="category 000" th:selected="${category == 'category 000'}">category 000</option>
+								<option value="category 001" th:selected="${category == 'category 001'}">category 001</option>
+								<option value="category 002" th:selected="${category == 'category 002'}">category 002</option>
+								<option value="category 003" th:selected="${category == 'category 003'}">category 003</option>
+								<option value="category 004" th:selected="${category == 'category 004'}">category 004</option>
+							</select>
+							<input type="text" class="form-control" name="keyword" 
+									th:value="${keyword}" style="width: 600px" placeholder="검색어를 입력하세요">
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary" type="submit">
+									<i class="fa fa-search"></i>
+								</button>
+							</div>
 						</div>
-					</div>
 					</form>
+					
+					<!-- 검색 에러 메시지 표시 -->
+					<div th:if="${searchError}" class="alert alert-danger text-center mt-3" role="alert"> [[${searchError}]] </div>
 				</div>
 			</div>
 		</div>
+		
 		<div class="row">
-			        <div class="flex-container">
-            <!-- 동적으로 상품 추가/제거될 영역 -->
-            <!-- 상품이 없을 경우 빈 박스 표시 -->
-            <div class="box empty-box">
-                <div class="img-box">
-                    <p class="text-center text-muted">상품 준비 중입니다</p>
-                </div>
-                <div class="detail-box text-center">
-                    <h5>-</h5>
-                    <div class="price_box">
-                        <h6 class="price_heading">
-                            <span>$</span> 0.00
-                        </h6>
-                    </div>
-                </div>
-            </div>
-            <div class="box empty-box">
-                <div class="img-box">
-                    <p class="text-center text-muted">상품 준비 중입니다</p>
-                </div>
-                <div class="detail-box text-center">
-                    <h5>-</h5>
-                    <div class="price_box">
-                        <h6 class="price_heading">
-                            <span>$</span> 0.00
-                        </h6>
-                    </div>
-                </div>
-            </div>
-            <div class="box empty-box">
-                <div class="img-box">
-                    <p class="text-center text-muted">상품 준비 중입니다</p>
-                </div>
-                <div class="detail-box text-center">
-                    <h5>-</h5>
-                    <div class="price_box">
-                        <h6 class="price_heading">
-                            <span>$</span> 0.00
-                        </h6>
-                    </div>
-                </div>
-            </div>
-            <div class="box empty-box">
-                <div class="img-box">
-                    <p class="text-center text-muted">상품 준비 중입니다</p>
-                </div>
-                <div class="detail-box text-center">
-                    <h5>-</h5>
-                    <div class="price_box">
-                        <h6 class="price_heading">
-                            <span>$</span> 0.00
-                        </h6>
-                    </div>
-                </div>
-            </div>
-            <div class="box empty-box">
-                <div class="img-box">
-                    <p class="text-center text-muted">상품 준비 중입니다</p>
-                </div>
-                <div class="detail-box text-center">
-                    <h5>-</h5>
-                    <div class="price_box">
-                        <h6 class="price_heading">
-                            <span>$</span> 0.00
-                        </h6>
-                    </div>
-                </div>
-            </div>
-            <div class="box empty-box">
-                <div class="img-box">
-                    <p class="text-center text-muted">상품 준비 중입니다</p>
-                </div>
-                <div class="detail-box text-center">
-                    <h5>-</h5>
-                    <div class="price_box">
-                        <h6 class="price_heading">
-                            <span>$</span> 0.00
-                        </h6>
-                    </div>
-                </div>
-            </div>
-            <div class="box empty-box">
-                <div class="img-box">
-                    <p class="text-center text-muted">상품 준비 중입니다</p>
-                </div>
-                <div class="detail-box text-center">
-                    <h5>-</h5>
-                    <div class="price_box">
-                        <h6 class="price_heading">
-                            <span>$</span> 0.00
-                        </h6>
-                    </div>
-                </div>
-            </div>
-            <div class="box empty-box">
-                <div class="img-box">
-                    <p class="text-center text-muted">상품 준비 중입니다</p>
-                </div>
-                <div class="detail-box text-center">
-                    <h5>-</h5>
-                    <div class="price_box">
-                        <h6 class="price_heading">
-                            <span>$</span> 0.00
-                        </h6>
-                    </div>
-                </div>
-            </div>
+			<div class="flex-container">
+				<!-- 동적으로 상품 추가/제거될 영역 -->
+				<!-- 상품이 없을 경우 빈 박스 표시 -->
+				<th:block th:if="${responseDTO.dtoList.isEmpty()}">
+				<!-- 1 -->
+					<div class="box empty-box">
+						<div class="img-box">
+							<p class="text-center text-muted">상품 준비 중입니다</p>
+						</div>
+						<div class="detail-box text-center">
+							<h5>-</h5>
+							<div class="price_box">
+								<h6 class="price_heading">
+									<span>$</span> 0.00
+								</h6>
+							</div>
+						</div>
+					</div>
+					<!-- 2 -->
+					<div class="box empty-box">
+						<div class="img-box">
+							<p class="text-center text-muted">상품 준비 중입니다</p>
+						</div>
+						<div class="detail-box text-center">
+							<h5>-</h5>
+							<div class="price_box">
+								<h6 class="price_heading">
+									<span>$</span> 0.00
+								</h6>
+							</div>
+						</div>
+					</div>
+					<!-- 3 -->
+					<div class="box empty-box">
+						<div class="img-box">
+							<p class="text-center text-muted">상품 준비 중입니다</p>
+						</div>
+						<div class="detail-box text-center">
+							<h5>-</h5>
+							<div class="price_box">
+								<h6 class="price_heading">
+									<span>$</span> 0.00
+								</h6>
+							</div>
+						</div>
+					</div>
+					<!-- 4 -->
+					<div class="box empty-box">
+						<div class="img-box">
+							<p class="text-center text-muted">상품 준비 중입니다</p>
+						</div>
+						<div class="detail-box text-center">
+							<h5>-</h5>
+							<div class="price_box">
+								<h6 class="price_heading">
+									<span>$</span> 0.00
+								</h6>
+							</div>
+						</div>
+					</div>
+					<!-- 5 -->
+					<div class="box empty-box">
+						<div class="img-box">
+							<p class="text-center text-muted">상품 준비 중입니다</p>
+						</div>
+						<div class="detail-box text-center">
+							<h5>-</h5>
+							<div class="price_box">
+								<h6 class="price_heading">
+									<span>$</span> 0.00
+								</h6>
+							</div>
+						</div>
+					</div>
+					<!-- 6 -->
+					<div class="box empty-box">
+						<div class="img-box">
+							<p class="text-center text-muted">상품 준비 중입니다</p>
+						</div>
+						<div class="detail-box text-center">
+							<h5>-</h5>
+							<div class="price_box">
+								<h6 class="price_heading">
+									<span>$</span> 0.00
+								</h6>
+							</div>
+						</div>
+					</div>
+					<!-- 7 -->
+					<div class="box empty-box">
+						<div class="img-box">
+							<p class="text-center text-muted">상품 준비 중입니다</p>
+						</div>
+						<div class="detail-box text-center">
+							<h5>-</h5>
+							<div class="price_box">
+								<h6 class="price_heading">
+									<span>$</span> 0.00
+								</h6>
+							</div>
+						</div>
+					</div>
+					<!-- 8 -->
+					<div class="box empty-box">
+						<div class="img-box">
+							<p class="text-center text-muted">상품 준비 중입니다</p>
+						</div>
+						<div class="detail-box text-center">
+							<h5>-</h5>
+							<div class="price_box">
+								<h6 class="price_heading">
+									<span>$</span> 0.00
+								</h6>
+							</div>
+						</div>
+					</div>
+					<!-- 9 -->
+					<div class="box empty-box">
+						<div class="img-box">
+							<p class="text-center text-muted">상품 준비 중입니다</p>
+						</div>
+						<div class="detail-box text-center">
+							<h5>-</h5>
+							<div class="price_box">
+								<h6 class="price_heading">
+									<span>$</span> 0.00
+								</h6>
+							</div>
+						</div>
+					</div>
+					<!-- 10 -->
+					<div class="box empty-box">
+						<div class="img-box">
+							<p class="text-center text-muted">상품 준비 중입니다</p>
+						</div>
+						<div class="detail-box text-center">
+							<h5>-</h5>
+							<div class="price_box">
+								<h6 class="price_heading">
+									<span>$</span> 0.00
+								</h6>
+							</div>
+						</div>
+					</div>
+					<!-- 11 -->
+					<div class="box empty-box">
+						<div class="img-box">
+							<p class="text-center text-muted">상품 준비 중입니다</p>
+						</div>
+						<div class="detail-box text-center">
+							<h5>-</h5>
+							<div class="price_box">
+								<h6 class="price_heading">
+									<span>$</span> 0.00
+								</h6>
+							</div>
+						</div>
+					</div>
+					<!-- 12 -->
+					<div class="box empty-box">
+						<div class="img-box">
+							<p class="text-center text-muted">상품 준비 중입니다</p>
+						</div>
+						<div class="detail-box text-center">
+							<h5>-</h5>
+							<div class="price_box">
+								<h6 class="price_heading">
+									<span>$</span> 0.00
+								</h6>
+							</div>
+						</div>
+					</div>
+				</th:block>
+				
+
+				<th:block th:unless="${responseDTO.dtoList.isEmpty()}" th:each="shop : ${responseDTO.dtoList}">
+				    <a th:href="@{/shop/read(bno=${shop.bno})}" class="box-link">
+				        <div class="box">
+				            <div class="img-box">
+				                <img th:if="${shop.thumbnail_path}"
+				                    th:src="@{/display(filename=${shop.thumbnail_path})}"
+				                    alt="상품 이미지"
+				                    style="max-width: 100%; height: auto;">
+				                <p th:unless="${shop.thumbnail_path}" class="text-center text-muted">이미지 없음</p>
+				            </div>
+				            <div class="detail-box">
+				                <div class="title-container">
+				                    <span class="category">[[${shop.product_category}]]</span>
+				                    <h4 class="product-name">[[${shop.board_title}]]</h4>
+				                </div>
+				                <div class="price_box">
+				                    <h6 class="price_heading">
+				                        <span>￦</span> [[${#numbers.formatInteger(shop.product_price, 0, 'COMMA')}]]
+				                    </h6>
+				                </div>
+				                <p class="content1">[[${shop.board_content1}]]</p>
+				            </div>
+				        </div>
+				    </a>
+				</th:block>
+			</div>
+		</div>
+        <!-- 페이지네이션 -->
+        <div class="pagination-container">
+            <ul class="pagination justify-content-center" th:with="start=${responseDTO.start}, end=${responseDTO.end}">
+                <li class="page-item" th:if="${responseDTO.prev}">
+                    <a class="page-link" th:href="@{/shop/list(page=${start - 1}, category=${category}, keyword=${keyword})}">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                </li>
+                
+                <li th:each="num : ${#numbers.sequence(start, end)}" 
+                    th:class="${'page-item ' + (responseDTO.page == num ? 'active' : '')}">
+                    <a class="page-link" th:href="@{/shop/list(page=${num}, category=${category}, keyword=${keyword})}">
+                        [[${num}]]
+                    </a>
+                </li>
+                
+                <li class="page-item" th:if="${responseDTO.next}">
+                    <a class="page-link" th:href="@{/shop/list(page=${end + 1}, category=${category}, keyword=${keyword})}">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
-</section>
+	</section>
 
 	<!-- end shop_content section -->
 
@@ -226,25 +378,18 @@
 	<footer class="footer_section">
 		<div class="container">
 			<p>
-				&copy; <span id="displayYear"></span> All Rights Reserved By <a
-					href="https://html.design/">Free Html Templates</a>
+				&copy; <span id="displayYear"></span> All Rights Reserved By <a	href="https://html.design/">Free Html Templates</a>
 			</p>
 		</div>
 	</footer>
 	<!-- footer section -->
 
-
 	<!-- jQery -->
-	<script src="js/jquery-3.4.1.min.js"></script>
+	<script src="/js/jquery-3.4.1.min.js"></script>
 	<!-- bootstrap js -->
-	<script src="js/bootstrap.js"></script>
+	<script src="/js/bootstrap.js"></script>
 	<!-- custom js -->
-	<script src="js/custom.js"></script>
-	<!-- Google Map -->
-	<script
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap"></script>
-	<!-- End Google Map -->
-
+	<script src="/js/custom.js"></script>
 </body>
 
 </html>

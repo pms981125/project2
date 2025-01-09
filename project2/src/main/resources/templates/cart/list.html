@@ -1,89 +1,156 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-<meta charset="UTF-8">
-<title>Cart/list</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    <!-- Site Metas -->
+    <link rel="icon" href="images/fevicon.png" type="image/gif" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>Edgecut</title>
+
+    <!-- bootstrap core css -->
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+    <link href="/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="/css/style.css" rel="stylesheet" />
+    <link href="/css/responsive.css" rel="stylesheet" />
 </head>
-<body>
 
-	<h1>Cart/list</h1>
+<body class="sub_page">
+    <div class="hero_area">
+        <!-- header section strats -->
+        <header class="header_section long_section px-0">
+            <!-- 네비게이션 바 내용 -->
+        </header>
+    </div>
 
-	<div>
-		접속 ID: <strong th:text="${memberId}"></strong> 총 결제금액: <strong
-			th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')}">0</strong>원
-		<a th:href="@{/logout}"><button>로그아웃</button></a>
-	</div>
+    <!-- cart section -->
+    <section class="shop_section layout_padding px-5">
+        <div class="container-fluid px-5">
+            <div class="heading_container mb-4">
+                <h2>장바구니</h2>
+                <div class="d-flex justify-content-between align-items-center w-100 mt-4">
+                    <div>
+                        <span class="me-2">접속 ID:</span>
+                        <strong th:text="${memberId}"></strong>
+                    </div>
+                    <div>
+                        <span class="me-2">총 결제금액:</span>
+                        <strong class="text-primary" th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')}">0</strong>
+                        <span>원</span>
+                    </div>
+                </div>
+            </div>
 
-	<table border="1">
-		<thead>
-			<tr>
-				<th>썸네일</th>
-				<th>상품명</th>
-				<th>수량</th>
-				<th>가격</th>
-				<th>총 가격</th>
-				<th>상품 제거</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr th:each="item : ${responseDTO.dtoList}">
-				<!-- 썸네일 이미지 추가 -->
-				<td><img th:if="${item.thumbnail_path != null}"
-					th:src="@{/display(filename=${item.thumbnail_path})}"
-					style="max-width: 100px; height: auto;"> <span
-					th:if="${item.thumbnail_path == null}">No Image</span></td>
-				<input type="hidden" th:value="${item.id}" />
-				<input type="hidden" th:value="${item.product_code}" />
-				<td><a th:href="@{/cart/read(id=${item.id})}">[[${item.product_name}]]</a>
-				</td>
-				<td>
-    				<button type="button" onclick="updateQuantity(this, -1)">-</button>
-    				<input type="number" th:value="${item.count}" 
-           					th:data-price="${item.price}" th:data-id="${item.id}" 
-           					min="1" style="width: 50px;" 
-           					onchange="updateQuantity(this, 0)">
-    				<button type="button" onclick="updateQuantity(this, 1)">+</button>
-				</td>
-				<td>[[${#numbers.formatInteger(item.price, 0, 'COMMA')}]]원</td>
-				<td>[[${#numbers.formatInteger(item.total_price, 0,
-					'COMMA')}]]원</td>
-				<td>
-					<form th:action="@{/cart/remove}" method="post"
-						style="display: inline;">
-						<input type="hidden" name="id" th:value="${item.id}">
-						<button type="submit" onclick="return confirm('이 항목을 삭제하시겠습니까?')">삭제</button>
-					</form>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+            <!-- 장바구니 아이템 리스트 -->
+            <div class="cart-items">
+                <div th:each="item : ${responseDTO.dtoList}" class="cart-item card mb-3">
+                    <div class="card-body d-flex align-items-center p-3">
+                        <div class="item-image me-4" style="width: 120px;">
+                            <img th:if="${item.thumbnail_path != null}"
+                                 th:src="@{/display(filename=${item.thumbnail_path})}"
+                                 class="img-fluid rounded"
+                                 style="max-width: 100px; height: auto;">
+                            <span th:if="${item.thumbnail_path == null}" class="text-muted">No Image</span>
+                        </div>
+                        
+                        <div class="item-details flex-grow-1">
+                            <h5 class="card-title mb-2">
+                                <a th:href="@{/cart/read(id=${item.id})}" class="text-decoration-none">[[${item.product_name}]]</a>
+                            </h5>
+                            
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="quantity-control d-flex align-items-center">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateQuantity(this, -1)">-</button>
+                                    <input type="number" th:value="${item.count}" 
+                                           th:data-price="${item.price}" th:data-id="${item.id}" 
+                                           min="1" class="form-control mx-2" style="width: 60px;"
+                                           onchange="updateQuantity(this, 0)">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateQuantity(this, 1)">+</button>
+                                </div>
+                                
+                                <div class="price-info text-end">
+                                    <div class="unit-price text-muted small">
+                                        단가: [[${#numbers.formatInteger(item.price, 0, 'COMMA')}]]원
+                                    </div>
+                                    <div class="total-price">
+                                        합계: <strong>[[${#numbers.formatInteger(item.total_price, 0, 'COMMA')}]]원</strong>
+                                    </div>
+                                </div>
+                                
+                                <form th:action="@{/cart/remove}" method="post" class="ms-3">
+                                    <input type="hidden" name="id" th:value="${item.id}">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                            onclick="return confirm('이 항목을 삭제하시겠습니까?')">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-	<div>
-		<p>
-			장바구니 총액: <span th:text="${totalPrice}">0</span>원
-		</p>
-	</div>
+            <!-- 하단 버튼 영역 -->
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <div class="btn-group">
+                    <a th:href="@{/shop/list}" class="btn btn-outline-primary">
+                        <i class="fa fa-shopping-cart"></i> 쇼핑 계속하기
+                    </a>
+                    <button type="button" onclick="clearCart()" class="btn btn-outline-danger">
+                        <i class="fa fa-trash"></i> 장바구니 비우기
+                    </button>
+                </div>
+                
+                <div class="total-amount">
+                    <h4 class="mb-0">
+                        총 결제금액: <span class="text-primary" th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')}">0</span>원
+                    </h4>
+                </div>
+            </div>
 
-	<!-- 페이징 추가 -->
-	<div th:with="start=${responseDTO.start}, end=${responseDTO.end}">
-		<ul th:if="${start != null && end != null}">
-			<li th:if="${responseDTO.prev}"><a
-				th:href="@{/cart/list(page=${start - 1})}">이전</a></li>
+            <!-- 페이지네이션 -->
+            <div class="d-flex justify-content-center mt-4">
+                <nav th:if="${responseDTO.start != null && responseDTO.end != null}">
+                    <ul class="pagination">
+                        <li class="page-item" th:if="${responseDTO.prev}">
+                            <a class="page-link" th:href="@{/cart/list(page=${responseDTO.start - 1})}">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        </li>
 
-			<li th:each="num : ${#numbers.sequence(start, end)}"><a
-				th:href="@{/cart/list(page=${num})}" th:text="${num}"
-				th:class="${responseDTO.page == num} ? 'active' : ''"> </a></li>
+                        <li th:each="num : ${#numbers.sequence(responseDTO.start, responseDTO.end)}" 
+                            th:class="${'page-item ' + (responseDTO.page == num ? 'active' : '')}">
+                            <a class="page-link" th:href="@{/cart/list(page=${num})}">[[${num}]]</a>
+                        </li>
 
-			<li th:if="${responseDTO.next}"><a
-				th:href="@{/cart/list(page=${end + 1})}">다음</a></li>
-		</ul>
-	</div>
+                        <li class="page-item" th:if="${responseDTO.next}">
+                            <a class="page-link" th:href="@{/cart/list(page=${responseDTO.end + 1})}">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </section>
 
-	<div>
-		<a th:href="@{/protoshop/list}"><button type="button">쇼핑
-				계속하기</button></a>
-		<button type="button" onclick="clearCart()">장바구니 비우기</button>
-	</div>
+    <!-- footer section -->
+    <footer class="footer_section">
+        <div class="container">
+            <p>&copy; <span id="displayYear"></span> All Rights Reserved By <a href="https://html.design/">Free Html Templates</a></p>
+        </div>
+    </footer>
+
+    <!-- 필요한 스크립트들 -->
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/custom.js"></script>
 
 	<script>
 function clearCart() {

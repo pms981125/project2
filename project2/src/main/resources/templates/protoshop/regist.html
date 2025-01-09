@@ -9,7 +9,7 @@
 	<h1>Proto Shop/regist</h1>
 
 	<form id="registForm" action="/protoshop/regist" method="post" enctype="multipart/form-data">
-
+		
 		<div th:if="${error}" style="color: red; margin-bottom: 10px;">[[${error}]]</div>
 		<div>
 			<label>상품코드 조회</label> <input type="text" name="search_product_code"

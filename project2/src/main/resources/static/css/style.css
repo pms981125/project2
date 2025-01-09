@@ -1,4 +1,12 @@
 /* fonts import */
+
+@font-face {
+    font-family: 'Octin Sports';
+    src: url('/fonts/octin_sports_rg.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 @import url("../fonts/octin_sports_rg.ttf");
 body {
   font-family: "Poppins", sans-serif;
@@ -325,107 +333,38 @@ a:focus {
   background-color: #f89646;
 }
 
-.shop_section .box {
-  margin-top: 45px;
-  background-color: #f7fafa;
-  padding: 25px;
-  border-radius: 5px;
-}
-
-.shop_section .box .img-box {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  height: 275px;
-  padding: 25px;
-}
-
-.shop_section .box .img-box img {
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.shop_section .box .detail-box {
-  margin-top: 15px;
-}
-
-.shop_section .box .detail-box h5 {
-  text-transform: uppercase;
-  font-size: 18px;
-}
-
-.shop_section .box .detail-box .price_box {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-}
-
-.shop_section .box .detail-box .price_box .price_heading {
-  margin-bottom: 0;
-}
-
-.shop_section .box .detail-box .price_box .price_heading span {
-  color: #6bb7be;
-}
-
-.shop_section .box .detail-box .price_box a {
-  color: #6bb7be;
-  text-transform: uppercase;
-  font-size: 15px;
-}
-
-/* Shop Flex Layout - 4x5 Grid */
 .shop_section .container {
-    max-width: 1280px;  /* 전체 컨테이너 너비 제한 */
-    margin: 0 auto;     /* 중앙 정렬 */
-    padding: 0 30px;    /* 좌우 여백 */
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 30px;
 }
 
 .shop_section .flex-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 40px 24px;
+    gap: 24px;
     margin-top: 45px;
     background: #fff;
 }
 
+.shop_section .box-link {
+    text-decoration: none;
+    color: inherit;
+    flex: 0 0 calc(25% - 18px);
+    max-width: calc(25% - 18px);
+}
+
 .shop_section .box {
-    flex: 0 0 calc(25% - 18px); /* 4열: 25% - gap 조정값 */
-    margin-top: 0;
+    width: 100%;
     background-color: #f7fafa;
     padding: 20px;
     border-radius: 5px;
-    transition: transform 0.3s ease;
-    position: relative;
+    transition: all 0.3s ease;
 }
 
-.shop_section .box::before {
-    content: '';
-    position: absolute;
-    top: -20px;
-    left: 0;
-    right: 0;
-    height: 20px;
-    background: #fff;  /* 상단 여백 흰색 */
-}
-
-.shop_section .box::after {
-    content: '';
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-    right: 0;
-    height: 20px;
-    background: #fff;  /* 하단 여백 흰색 */
+.shop_section .box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .shop_section .box .img-box {
@@ -439,13 +378,173 @@ a:focus {
     margin-bottom: 15px;
 }
 
-.shop_section .box .detail-box {
-    padding-top: 10px;  /* 상세 정보 영역 상단 여백 추가 */
+.shop_section .box .img-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
-.shop_section .box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);		
+.shop_section .box .detail-box {
+    padding: 10px;
+}
+
+.shop_section .box .title-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.shop_section .box .category {
+    font-size: 0.9rem;
+    color: #6bb7be;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.shop_section .box .product-name {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+    flex: 1;
+    color: #272727;
+}
+
+.shop_section .box .price_box {
+    text-align: right;
+    margin: 15px 0;
+}
+
+.shop_section .box .price_heading {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+    font-weight: 600;
+}
+
+.shop_section .box .content1 {
+    text-align: right;
+    font-size: 0.9rem;
+    color: #555;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+/* Shop Pagination 스타일 */
+.shop_section .pagination {
+    margin: 40px 0;
+    padding: 0;
+}
+
+.shop_section .pagination .page-link {
+    color: #333;
+    padding: 8px 16px;
+    margin: 0 3px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.shop_section .pagination .page-link:hover {
+    background-color: #f8f9fa;
+    color: #6bb7be;
+    border-color: #6bb7be;
+}
+
+.shop_section .pagination .page-item.active .page-link {
+    background-color: #6bb7be;
+    border-color: #6bb7be;
+    color: white;
+}
+
+.shop_section .pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+/* Shop Read Page Styles */
+.shop_section .product-detail-container {
+    display: flex;
+    gap: 40px;
+    background: #fff;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.shop_section .product-image {
+    flex: 0 0 500px;
+    max-width: 500px;
+}
+
+.shop_section .product-info {
+    flex: 1;
+}
+
+.shop_section .action-buttons {
+    text-align: right;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.shop_section .action-buttons .btn {
+    margin-left: 10px;
+}
+
+.image-carousel {
+    background: #f7fafa;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.shop_section .title-section {
+    text-align: right;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.shop_section .category {
+    font-size: 0.9rem;
+    color: #6bb7be;
+}
+
+.shop_section .info-section {
+    text-align: right;
+}
+
+.shop_section .info-row {
+    text-align: right;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.shop_section .info-row strong {
+    margin-right: 15px;
+}
+
+.shop_section .price {
+    font-size: 1.2rem;
+    color: #6bb7be;
+    font-weight: 600;
+}
+
+.shop_section .content-section {
+     text-align: right;
+    margin-top: 20px;
+}
+
+.shop_section .content-section h4 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.shop_section .total-price {
+    font-size: 1.3rem;
+    color: #6bb7be;
+    font-weight: 600;
+    margin: 15px 0;
 }
 
 .pagination {
