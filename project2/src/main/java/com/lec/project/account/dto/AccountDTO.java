@@ -16,7 +16,6 @@ public class AccountDTO {
 	private Long accountId;
 	
 	
-	@NotEmpty
 	private LocalDateTime createDate;
 	
 	private int balance;

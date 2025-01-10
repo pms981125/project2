@@ -7,19 +7,29 @@
 */
 
 async function getList({accountId, page, size, goLast}) {
-	const result = await axios.get(`/accountHistory/list/${accountId}`, {params: {page, size, goLast}})
-	
-	if(goLast){
-	    const total = result.data.total
-	    const lastPage = parseInt(Math.ceil(total/size))
-	    return getList({accountId:accountId, page:lastPage, size:size})
-	}    	
-	
-	return result.data
+    try {
+        const result = await axios.get(`/accountHistory/list/${accountId}`, {
+            params: {
+                page, 
+                size
+            }
+        });
+        
+        if(goLast) {
+            const total = result.data.total;
+            const lastPage = parseInt(Math.ceil(total/size));
+            return getList({accountId:accountId, page:lastPage, size:size});
+        }    	
+        
+        return result.data;
+    } catch (error) {
+        console.error("Error fetching list:", error);
+        throw error;
+    }
 }
 
 async function addTransfer(transferObj) {
-	const response = await axios.post(`/accountHistory/`, transferObj)
+	const response = await axios.post(`/account/`, transferObj)
 	return response.data
 }
 

@@ -1,133 +1,135 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
->
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-	<meta charset="UTF-8">
-	<title>Edgecut</title>
-	<link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
-	<link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
-
-	<!-- Font Awesome style -->
-	<link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}" />
-	
-	<!-- Custom styles for this template -->
-	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
-	
-	<!-- Responsive style -->
-	<link rel="stylesheet" type="text/css" th:href="@{/css/responsive.css}" />
+<meta charset="UTF-8">
+<title>Edgecut - Bank Accounts</title>
+<link rel="icon" href="/images/fevicon.png" type="image/gif" />
+<link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+	rel="stylesheet" />
+<link rel="stylesheet" type="text/css"
+	th:href="@{/css/font-awesome.min.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{/css/responsive.css}" />
+<link rel="stylesheet" th:href="@{/css/account/list.css}" />
 </head>
 <body>
-<div layout:fragment="content">
-	<div class="row mt-3 justify-content-center">
-		<form action="/account/list" method="get">
-			<div class="col">
-				<input type="hidden" name="size" th:value="${pageRequestDTO.size}"/>
-				<div class="input-group">
-					<div class="input-group-prepend">
-						<select name="type" class="form-select">
-							<option value="">----</option>
-							<option value="accountId" th:selected="${pageRequestDTO.type == 'accountId'}">계좌번호</option>
-						</select>
-					</div>
-					<input type="text" class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}"/>
-					<div class="input-group-append">
-                        <button class="btn btn-outline-secondary searchBtn" type="submit">Search</button>
-                        <button class="btn btn-outline-secondary clearBtn" type="button">Clear</button>
-                       	<a th:href="@{/account/register}" class="btn btn-success clearBtn" type="button">Register</a>
-                    </div>
+	<header class="header_section long_section px-0">
+		<nav class="navbar navbar-expand-lg custom_nav-container ">
+			<a class="navbar-brand" href="index.html"> <span> Edgecut
+			</span>
+			</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarSupportedContent"
+				aria-controls="navbarSupportedContent" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class=""> </span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<div
+					class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+					<ul class="navbar-nav  ">
+						<li class="nav-item active"><a class="nav-link"
+							href="index.html">Home<span class="sr-only">(current)</span></a>
+						</li>
+						<li class="nav-item"><a href="/market/access"
+							class="nav-link">Region Market</a></li>
+						<li class="nav-item"><a class="nav-link"
+							href="/protoshop/list">Shopping Mall</a></li>
+						<li class="nav-item"><a class="nav-link" href="hr_main.html">Human-Resources</a>
+						</li>
+						<li class="nav-item"><a class="nav-link" href="blog.html">Blog</a>
+						</li>
+						<li class="nav-item"><a class="nav-link" href="contact.html">Contact
+								Us</a></li>
+						<li class="nav-item"><a class="nav-link" href="/account/list">Account</a>
+						</li>
+					</ul>
+				</div>
+				<div class="quote_btn-container">
+					<a href=""> <span> Login </span> <i class="fa fa-user"
+						aria-hidden="true"></i>
+					</a>
+					<form class="form-inline">
+						<button class="btn  my-2 my-sm-0 nav_search-btn" type="button">
+							<i class="fa fa-search" aria-hidden="true"></i>
+						</button>
+					</form>
 				</div>
 			</div>
-		</form>
-	</div>
-</div>
-	<div class="row mt-3">
-		<div class="col">
-			<div class="card">
-				<div class="card-header">
-					Account List
-				</div>
-				<div class="card-body">
-					<h5 class="card-title">Account List</h5>
-					<table class="table" style="text-align: center;">
-						<thead>
-							<tr>
-								<th scope="col">계좌번호</th>
-								<th scope="col">계좌개설일</th>
-								<th scope="col">잔액</th>
-							</tr>
-						</thead>
-						<tbody th:with="link = ${pageRequestDTO.getLink()}">
-							<tr th:each="dto:${responseDTO.dtoList}">
-								<th scope="row">
-									<a th:href="|@{/account/read(accountId =${dto.accountId})}&${link}|"> [[${dto.accountId}]] </a>
-								</th>
-								<td scope="row">[[${#temporals.format(dto.createDate, 'yyyy-MM-dd')}]]</td>
-								<td scope="row">[[${dto.balance}]]</td>
-							</tr>
-						</tbody>
-					</table>
-					<div class="float-end">
-						<ul class="pagination flex-wrap justify-content-center">
-							<li class="page-item" th:if="${responseDTO.prev}">
-								<a class="page-link" th:data-num="${responseDTO.start - 1}">Prev</a>
-							</li>
-							
-							<th:block th:each="i: ${#numbers.sequence(responseDTO.start, responseDTO.end)}">
-	                                <li th:class="${responseDTO.page == i}?'page-item active':'page-item'" >
-	                                    <a class="page-link"  th:data-num="${i}">[[${i}]]</a>
-	                                </li>
-	                        </th:block>
-							
-							
-							<li class="page-item" th:if="${responseDTO.next}">
-								<a class="page-link" th:data-num="${responseDTO.end + 1}">Next</a>
-							</li>
-						</ul>
+		</nav>
+	</header>
+
+	<main class="container my-5">
+		<div class="row justify-content-center">
+			<div class="col-md-10">
+				<div class="card">
+					<div
+						class="card-header d-flex justify-content-between align-items-center">
+						<span>계좌 목록</span> 
+						<a href="/account/register" class="btn btn-primary"> <i class="fa fa-plus-circle me-2"></i>
+							신규 계좌 개설
+						</a>
+					</div>
+
+					<div class="card-body">
+						<table class="table table-striped text-center">
+							<thead>
+								<tr>
+									<th scope="col">계좌번호</th>
+									<th scope="col">개설날짜</th>
+									<th scope="col">잔액</th>
+								</tr>
+							</thead>
+							<tbody th:with="link = ${pageRequestDTO.getLink()}">
+								<tr th:each="dto : ${responseDTO.dtoList}">
+									<td><a
+										th:href="|@{/account/read(accountId=${dto.accountId})}&${link}|">
+											[[${dto.accountId}]] </a></td>
+									<td>[[${#temporals.format(dto.createDate, 'yyyy-MM-dd')}]]</td>
+									<td>[[${#numbers.formatInteger(dto.balance, 1, 'COMMA')}]]
+										원</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<nav>
+							<ul class="pagination justify-content-center">
+								<li class="page-item" th:if="${responseDTO.prev}"><a
+									class="page-link" th:data-num="${responseDTO.start - 1}"
+									href="#">Prev</a></li>
+								<th:block
+									th:each="i : ${#numbers.sequence(responseDTO.start, responseDTO.end)}">
+									<li
+										th:class="${responseDTO.page == i} ? 'page-item active' : 'page-item'">
+										<a class="page-link" th:data-num="${i}" href="#">[[${i}]]</a>
+									</li>
+								</th:block>
+								<li class="page-item" th:if="${responseDTO.next}"><a
+									class="page-link" th:data-num="${responseDTO.end + 1}" href="#">Next</a>
+								</li>
+							</ul>
+						</nav>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</main>
+
+	<script th:inline="javascript">
+        document.querySelector(".pagination").addEventListener("click", function (e) {
+            e.preventDefault();
+            const target = e.target;
+            if (target.tagName !== 'A') return;
+
+            const num = target.getAttribute("data-num");
+            const formObj = document.querySelector("form");
+            formObj.innerHTML += `<input type='hidden' name='page' value='${num}'>`;
+            formObj.submit();
+        });
+    </script>
 </body>
-<script layout:fragment="script" th:inline="javascript">
-
-	document.querySelector(".pagination").addEventListener("click", function (e) {
-	    e.preventDefault()
-	    e.stopPropagation()
-
-		const target = e.target
-/* 		
-		console.log(e)
-		console.log(target)
-		console.log(target.tagName)
- */		
-		if(target.tagName != 'A') {
-			return
-		}
-		
-	    const num = target.getAttribute("data-num")
-	    const formObj = document.querySelector("form")
-	    
-	    formObj.innerHTML += `<input type='hidden' name='page' value='${num}'>`
-	    formObj.submit()  // localhost:8090/board/list?page=3
-	    		
-	}, false)
-	
-		document.querySelector(".clearBtn").addEventListener("click", function (e) {
-	    e.preventDefault()
-	    e.stopPropagation()
-	    
-	    self.location = '/account/list'
-	    
-	}, false)	
-
-</script>
 </html>
-
-
-
-
-
-
-

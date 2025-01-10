@@ -10,7 +10,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.lec.project.account.domain.Account;
 import com.lec.project.account.dto.AccountDTO;
 import com.lec.project.account.repository.AccountRepository;
 import com.lec.project.accountHistory.domain.AccountHistory;
@@ -52,11 +55,84 @@ public class AHServiceImpl implements AHService{
 				.build();
 	}
 
+	 @Override
+	    public PageResponseDTO<AccountHistoryDTO> getListOfBoard(Long accountId, PageRequestDTO pageRequestDTO) {
+	        Pageable pageable = PageRequest.of(
+	            pageRequestDTO.getPage() <= 0 ? 0 : pageRequestDTO.getPage() - 1,
+	            pageRequestDTO.getSize(),
+	            Sort.by("accountHistoryId").descending()
+	        );
+
+	        Page<AccountHistory> result = ahRepository.findByAccountAccountIdOrTransferTarget(accountId, accountId, pageable);
+	        
+	        List<AccountHistoryDTO> dtoList = result.getContent()
+	            .stream()
+	            .map(ah -> {
+	                AccountHistoryDTO dto = new AccountHistoryDTO();
+	                dto.setAccountHistoryId(ah.getAccountHistoryId());
+	                dto.setAccountId(ah.getAccount().getAccountId());  // 직접 accountId 설정
+	                dto.setTransferTarget(ah.getTransferTarget());
+	                dto.setTransferAmount(ah.getTransferAmount());
+	                dto.setTransferDate(ah.getTransferDate());
+
+	                // 거래 유형 및 금액 설정
+	                if (ah.getAccount().getAccountId().equals(accountId)) {
+	                    dto.setTransactionType("출금");
+	                    dto.setAmount(-ah.getTransferAmount());
+	                } else {
+	                    dto.setTransactionType("입금");
+	                    dto.setAmount(ah.getTransferAmount());
+	                }
+	                
+	                return dto;
+	            })
+	            .collect(Collectors.toList());
+
+	        return PageResponseDTO.<AccountHistoryDTO>withAll()
+	            .pageRequestDTO(pageRequestDTO)
+	            .dtoList(dtoList)
+	            .total((int) result.getTotalElements())
+	            .build();
+	    }
+	
 	@Override
-	public Long register(AccountHistoryDTO accountHistoryDTO) {
-		AccountHistory accountHistory = modelMapper.map(accountHistoryDTO, AccountHistory.class);
-		Long accountHistoryId = ahRepository.save(accountHistory).getAccountHistoryId();
-		return accountHistoryId;
+	public void register(@RequestParam("senderAccountId") Long senderAccountId,
+			 @RequestParam("receiverAccountId") Long receiverAccountId,
+			 @RequestParam("transferAmount") int transferAmount) {
+		if (transferAmount <= 0) {
+	        throw new IllegalArgumentException("Transfer amount must be greater than zero");
+	    }
+		
+		 // 송금 계좌 확인
+        Account senderAccount = accountRepository.findByAccountId(senderAccountId)
+                .orElseThrow(() -> new IllegalArgumentException("Sender account not found with ID: " + senderAccountId));
+
+        // 수신 계좌 확인
+        Account receiverAccount = accountRepository.findByAccountId(receiverAccountId)
+                .orElseThrow(() -> new IllegalArgumentException("Receiver account not found with ID: " + receiverAccountId));
+
+        // 송금 계좌 잔액 확인
+        if (senderAccount.getBalance() < transferAmount) {
+            throw new IllegalArgumentException("잔액이 부족합니다");
+        }
+
+        // 송금 계좌 잔액 차감
+        senderAccount.setBalance(senderAccount.getBalance() - transferAmount);
+
+        // 수신 계좌 잔액 추가
+        receiverAccount.setBalance(receiverAccount.getBalance() + transferAmount);
+
+        // 계좌 정보 저장
+        accountRepository.save(senderAccount);
+        accountRepository.save(receiverAccount);
+
+        // 이체 내역 저장
+        AccountHistory history = new AccountHistory();
+        history.setAccount(senderAccount);
+        history.setTransferTarget(receiverAccount.getAccountId());
+        history.setTransferAmount(transferAmount);
+
+        ahRepository.save(history);
 	}
 
 	@Override
@@ -74,5 +150,6 @@ public class AHServiceImpl implements AHService{
 	                .map(accountHistory -> modelMapper.map(accountHistory, AccountHistoryDTO.class))
 	                .toList();
 	}
+
 
 }

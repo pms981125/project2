@@ -16,6 +16,20 @@ public interface AHRepository extends JpaRepository<AccountHistory, Long>, AHSea
 	@Query("select ah from AccountHistory ah where ah.account.accountId = :accountId")
 	Page<AccountHistory> listOfBoard(@Param("accountId") Long accountId, Pageable pageable);
 
+	@Query("SELECT ah FROM AccountHistory ah " +
+	           "WHERE ah.account.accountId = :accountId " +
+	           "OR ah.transferTarget = :transferTarget " +
+	           "ORDER BY ah.transferDate DESC")
+	    Page<AccountHistory> findByAccountAccountIdOrTransferTarget(
+	        @Param("accountId") Long accountId, 
+	        @Param("transferTarget") Long transferTarget, 
+	        Pageable pageable
+	    );
 	
-
+	 @Query("SELECT ah FROM AccountHistory ah " +
+	           "WHERE ah.account.accountId = :accountId")
+	    Page<AccountHistory> findByAccountAccountId(
+	        @Param("accountId") Long accountId, 
+	        Pageable pageable
+	    );
 }

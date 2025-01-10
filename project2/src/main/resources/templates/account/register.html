@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Edgecut - Bank Accounts</title>
+    <link rel="icon" href="/images/fevicon.png" type="image/gif" />
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/responsive.css}" />
+	<link rel="stylesheet" th:href="@{/css/account/register.css}" />
+</head>
+<body>
+    <div class="wrapper">
+        <!-- 헤더 섹션 -->
+        <header class="header_section long_section px-0">
+            <nav class="navbar navbar-expand-lg custom_nav-container ">
+                <a class="navbar-brand" href="index.html">
+                    <span> Edgecut </span>
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class=""> </span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+                        <ul class="navbar-nav">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="index.html">Home<span class="sr-only">(current)</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/market/access" class="nav-link">Region Market</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/protoshop/list">Shopping Mall</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="hr_main.html">Human-Resources</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="blog.html">Blog</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="contact.html">Contact Us</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/account/list">Account</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="quote_btn-container">
+                        <a href="">
+                            <span> Login </span>
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                        </a>
+                        <form class="form-inline">
+                            <button class="btn my-2 my-sm-0 nav_search-btn" type="button">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <!-- 메인 컨텐츠 -->
+        <div class="content-container">
+            <div class="form-container">
+                <h2 class="form-title">Create New Account</h2>
+                <form action="/account/register" method="post">
+                    <div class="form-group">
+                        <label for="accountId" class="form-label">Account Number</label>
+                        <input type="text" id="accountId" name="accountId" 
+                               class="form-control" required pattern="\d{8,14}"
+                               placeholder="8~14자리 숫자를 입력하세요.">
+                    </div>
+                    <div class="form-group">
+                        <label for="balance" class="form-label">Initial Deposit Amount</label>
+                        <input type="number" id="balance" name="balance" 
+                               class="form-control" placeholder="Enter initial amount">
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn-primary">Create Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

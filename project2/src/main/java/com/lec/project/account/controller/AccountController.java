@@ -1,14 +1,19 @@
 package com.lec.project.account.controller;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +24,7 @@ import com.lec.project.account.dto.PageRequestDTO;
 import com.lec.project.account.dto.PageResponseDTO;
 import com.lec.project.account.service.AccountService;
 import com.lec.project.accountHistory.dto.AccountHistoryDTO;
+import com.lec.project.accountHistory.service.AHService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +36,8 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class AccountController {
 	private final AccountService accountService;
-	//asdasd
+	private final AHService ahService;
+
 	@GetMapping("/list")
 	public void list(PageRequestDTO pageRequestDTO, Model model) {
 		PageResponseDTO<AccountDTO> responseDTO = accountService.list(pageRequestDTO);
@@ -75,19 +82,40 @@ public class AccountController {
 
 	}
 
-	@PostMapping("/transfer")
-    public String transfer(
-    		@RequestParam("senderAccountId") Long senderAccountId,
-            @RequestParam("receiverAccountId") Long receiverAccountId,
-            @RequestParam("transferAmount") int transferAmount,
-            Model model) {
+	@PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addTransfer(@RequestBody Map<String, Object> transferObj) {
+        // Extract and validate input
+        Long senderAccountId;
+        Long receiverAccountId;
+        Integer transferAmount;
+
         try {
-            accountService.transfer(senderAccountId, receiverAccountId, transferAmount);
-            model.addAttribute("successMessage", "이체가 완료되었습니다!!");
+            senderAccountId = Long.valueOf(transferObj.get("senderAccountId").toString());
+            receiverAccountId = Long.valueOf(transferObj.get("receiverAccountId").toString());
+            transferAmount = Integer.valueOf(transferObj.get("transferAmount").toString());
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Error: " + e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(
+                "success", false,
+                "message", "Invalid input data: " + e.getMessage()
+            ));
         }
-        return "redirect:/account/list";
+
+        try {
+            // Perform the transfer
+            accountService.transfer(senderAccountId, receiverAccountId, transferAmount);
+
+            // Return success response
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Transfer completed successfully!"
+            ));
+        } catch (Exception e) {
+            // Handle errors and return error response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                "success", false,
+                "message", "Transfer failed: " + e.getMessage()
+            ));
+        }
     }
 	
 	

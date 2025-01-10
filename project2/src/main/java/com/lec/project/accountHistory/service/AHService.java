@@ -10,7 +10,7 @@ import com.lec.project.accountHistory.dto.PageResponseDTO;
 public interface AHService {
 
 
-	Long register(AccountHistoryDTO accountHistoryDTO);
+	void register(Long senderAccountId, Long receiverAccountId, int transferAmount);
 
 	AccountHistoryDTO readOne(Long accountHistoryId);
 
@@ -19,6 +19,7 @@ public interface AHService {
 	default AccountHistoryDTO entityToDTO(AccountHistory accountHistory) {
 		AccountHistoryDTO accountHistoryDTO = AccountHistoryDTO.builder()
 									.accountHistoryId(accountHistory.getAccountHistoryId())
+									.accountId(accountHistory.getAccount().getAccountId())
 									.transferTarget(accountHistory.getTransferTarget())
 									.transferDate(accountHistory.getTransferDate())
 									.transferAmount(accountHistory.getTransferAmount())
@@ -28,6 +29,8 @@ public interface AHService {
 	}
 
 	List<AccountHistoryDTO> getAllTransfers();
+
+	PageResponseDTO<AccountHistoryDTO> getListOfBoard(Long accountId, PageRequestDTO pageRequestDTO);
 
 
 }
