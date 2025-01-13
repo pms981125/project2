@@ -141,179 +141,63 @@
 		</div>
 		
 		<div class="row">
-			<div class="flex-container">
-				<!-- 동적으로 상품 추가/제거될 영역 -->
-				<!-- 상품이 없을 경우 빈 박스 표시 -->
-				<th:block th:if="${responseDTO.dtoList.isEmpty()}">
-				<!-- 1 -->
-					<div class="box empty-box">
-						<div class="img-box">
-							<p class="text-center text-muted">상품 준비 중입니다</p>
-						</div>
-						<div class="detail-box text-center">
-							<h5>-</h5>
-							<div class="price_box">
-								<h6 class="price_heading">
-									<span>$</span> 0.00
-								</h6>
-							</div>
-						</div>
-					</div>
-					<!-- 2 -->
-					<div class="box empty-box">
-						<div class="img-box">
-							<p class="text-center text-muted">상품 준비 중입니다</p>
-						</div>
-						<div class="detail-box text-center">
-							<h5>-</h5>
-							<div class="price_box">
-								<h6 class="price_heading">
-									<span>$</span> 0.00
-								</h6>
-							</div>
-						</div>
-					</div>
-					<!-- 3 -->
-					<div class="box empty-box">
-						<div class="img-box">
-							<p class="text-center text-muted">상품 준비 중입니다</p>
-						</div>
-						<div class="detail-box text-center">
-							<h5>-</h5>
-							<div class="price_box">
-								<h6 class="price_heading">
-									<span>$</span> 0.00
-								</h6>
-							</div>
-						</div>
-					</div>
-					<!-- 4 -->
-					<div class="box empty-box">
-						<div class="img-box">
-							<p class="text-center text-muted">상품 준비 중입니다</p>
-						</div>
-						<div class="detail-box text-center">
-							<h5>-</h5>
-							<div class="price_box">
-								<h6 class="price_heading">
-									<span>$</span> 0.00
-								</h6>
-							</div>
-						</div>
-					</div>
-					<!-- 5 -->
-					<div class="box empty-box">
-						<div class="img-box">
-							<p class="text-center text-muted">상품 준비 중입니다</p>
-						</div>
-						<div class="detail-box text-center">
-							<h5>-</h5>
-							<div class="price_box">
-								<h6 class="price_heading">
-									<span>$</span> 0.00
-								</h6>
-							</div>
-						</div>
-					</div>
-					<!-- 6 -->
-					<div class="box empty-box">
-						<div class="img-box">
-							<p class="text-center text-muted">상품 준비 중입니다</p>
-						</div>
-						<div class="detail-box text-center">
-							<h5>-</h5>
-							<div class="price_box">
-								<h6 class="price_heading">
-									<span>$</span> 0.00
-								</h6>
-							</div>
-						</div>
-					</div>
-					<!-- 7 -->
-					<div class="box empty-box">
-						<div class="img-box">
-							<p class="text-center text-muted">상품 준비 중입니다</p>
-						</div>
-						<div class="detail-box text-center">
-							<h5>-</h5>
-							<div class="price_box">
-								<h6 class="price_heading">
-									<span>$</span> 0.00
-								</h6>
-							</div>
-						</div>
-					</div>
-					<!-- 8 -->
-					<div class="box empty-box">
-						<div class="img-box">
-							<p class="text-center text-muted">상품 준비 중입니다</p>
-						</div>
-						<div class="detail-box text-center">
-							<h5>-</h5>
-							<div class="price_box">
-								<h6 class="price_heading">
-									<span>$</span> 0.00
-								</h6>
-							</div>
-						</div>
-					</div>
-					<!-- 9 -->
-					<div class="box empty-box">
-						<div class="img-box">
-							<p class="text-center text-muted">상품 준비 중입니다</p>
-						</div>
-						<div class="detail-box text-center">
-							<h5>-</h5>
-							<div class="price_box">
-								<h6 class="price_heading">
-									<span>$</span> 0.00
-								</h6>
-							</div>
-						</div>
-					</div>
-					<!-- 10 -->
-					<div class="box empty-box">
-						<div class="img-box">
-							<p class="text-center text-muted">상품 준비 중입니다</p>
-						</div>
-						<div class="detail-box text-center">
-							<h5>-</h5>
-							<div class="price_box">
-								<h6 class="price_heading">
-									<span>$</span> 0.00
-								</h6>
-							</div>
-						</div>
-					</div>
-					<!-- 11 -->
-					<div class="box empty-box">
-						<div class="img-box">
-							<p class="text-center text-muted">상품 준비 중입니다</p>
-						</div>
-						<div class="detail-box text-center">
-							<h5>-</h5>
-							<div class="price_box">
-								<h6 class="price_heading">
-									<span>$</span> 0.00
-								</h6>
-							</div>
-						</div>
-					</div>
-					<!-- 12 -->
-					<div class="box empty-box">
-						<div class="img-box">
-							<p class="text-center text-muted">상품 준비 중입니다</p>
-						</div>
-						<div class="detail-box text-center">
-							<h5>-</h5>
-							<div class="price_box">
-								<h6 class="price_heading">
-									<span>$</span> 0.00
-								</h6>
-							</div>
-						</div>
-					</div>
-				</th:block>
+		    <div class="flex-container">
+		        <!-- 12개의 박스를 항상 표시 -->
+		        <th:block th:each="index : ${#numbers.sequence(0, 11)}">
+		            <!-- 실제 상품이 있는 경우 -->
+		            <th:block th:if="${not responseDTO.dtoList.isEmpty() and index < responseDTO.dtoList.size()}">
+		                <a th:href="@{/shop/read(bno=${responseDTO.dtoList[index].bno})}" class="box-link">
+		                    <div class="box">
+		                        <div class="img-box">
+		                            <img th:if="${responseDTO.dtoList[index].thumbnail_path}"
+		                                th:src="@{/display(filename=${responseDTO.dtoList[index].thumbnail_path})}"
+		                                alt="상품 이미지"
+		                                style="max-width: 100%; height: auto;">
+		                            <p th:unless="${responseDTO.dtoList[index].thumbnail_path}" class="text-center text-muted">
+		                                이미지 없음
+		                            </p>
+		                        </div>
+		                        <div class="detail-box">
+		                            <div class="title-container">
+		                                <span class="category">[[${responseDTO.dtoList[index].product_category}]]</span>
+		                                <h4 class="product-name">[[${responseDTO.dtoList[index].board_title}]]</h4>
+		                            </div>
+		                            <div class="price_box">
+		                                <h6 class="price_heading">
+		                                    <span>￦</span> [[${#numbers.formatInteger(responseDTO.dtoList[index].product_price, 0, 'COMMA')}]]
+		                                </h6>
+		                            </div>
+		                            <p class="content1">[[${responseDTO.dtoList[index].board_content1}]]</p>
+		                        </div>
+		                    </div>
+		                </a>
+		            </th:block>
+		            <!-- 빈 박스 표시 (상품이 없는 경우) -->
+					<th:block th:unless="${not responseDTO.dtoList.isEmpty() and index < responseDTO.dtoList.size()}">
+					    <div class="box-link">
+					        <div class="box">
+					            <div class="img-box">
+					                <p class="text-center text-muted">상품 준비 중입니다</p>
+					            </div>
+					            <div class="detail-box">
+					                <div class="title-container">
+					                    <span class="category">-</span>
+					                    <h4 class="product-name">준비 중</h4>
+					                </div>
+					                <div class="price_box">
+					                    <h6 class="price_heading">
+					                        <span>￦</span> 0
+					                    </h6>
+					                </div>
+					                <p class="content1">-</p>
+					            </div>
+					        </div>
+					    </div>
+					</th:block>
+		        </th:block>
+		    </div>
+		</div>
+				
 				
 
 				<th:block th:unless="${responseDTO.dtoList.isEmpty()}" th:each="shop : ${responseDTO.dtoList}">
