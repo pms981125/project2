@@ -24,21 +24,24 @@ public class PageResponseDTO<E> {
 
 	@Builder(builderMethodName = "withAll")
 	public PageResponseDTO(PageRequestDTO pageRequestDTO, List<E> dtoList, int total) {
-		if (total <= 0) {
-			return;
-		}
-
+		
 		this.page = pageRequestDTO.getPage();
 		this.size = pageRequestDTO.getSize();
+		this.total= total;
+		this.dtoList = dtoList != null ? dtoList : List.of();
 
-		this.total = total;
-		this.dtoList = dtoList;
-
-		this.end = (int) (Math.ceil(this.page / 10.0)) * 10;
-		this.start = this.end - 9;
-		int last = (int)(Math.ceil((total / (double)size)));
-		this.end = end > last ? last : end;
-		this.prev = this.start > 1;
-		this.next = total > this.end * this.size;
+		if (total > 0) {
+	        this.end = (int) (Math.ceil(this.page / 10.0)) * 10;
+	        this.start = this.end - 9;
+	        int last = (int)(Math.ceil((total / (double)size)));
+	        this.end = end > last ? last : end;
+	        this.prev = this.start > 1;
+	        this.next = total > this.end * this.size;
+	    } else {
+	        this.start = 1;
+	        this.end = 1;
+	        this.prev = false;
+	        this.next = false;
+	    }
 	}
 }
