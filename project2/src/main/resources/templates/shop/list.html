@@ -191,35 +191,7 @@
 		        </th:block>
 		    </div>
 		</div>
-				
-				
-
-				<th:block th:unless="${responseDTO.dtoList.isEmpty()}" th:each="shop : ${responseDTO.dtoList}">
-				    <a th:href="@{/shop/read(bno=${shop.bno})}" class="box-link">
-				        <div class="box">
-				            <div class="img-box">
-				                <img th:if="${shop.thumbnail_path}"
-				                    th:src="@{/display(filename=${shop.thumbnail_path})}"
-				                    alt="상품 이미지"
-				                    style="max-width: 100%; height: auto;">
-				                <p th:unless="${shop.thumbnail_path}" class="text-center text-muted">이미지 없음</p>
-				            </div>
-				            <div class="detail-box">
-				                <div class="title-container">
-				                    <span class="category">[[${shop.product_category}]]</span>
-				                    <h4 class="product-name">[[${shop.board_title}]]</h4>
-				                </div>
-				                <div class="price_box">
-				                    <h6 class="price_heading">
-				                        <span>￦</span> [[${#numbers.formatInteger(shop.product_price, 0, 'COMMA')}]]
-				                    </h6>
-				                </div>
-				                <p class="content1">[[${shop.board_content1}]]</p>
-				            </div>
-				        </div>
-				    </a>
-				</th:block>
-			</div>
+	</div>
 		</div>
         <!-- 페이지네이션 -->
         <div class="pagination-container">
