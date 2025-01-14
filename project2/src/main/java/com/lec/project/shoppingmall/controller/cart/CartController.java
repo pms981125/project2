@@ -82,6 +82,27 @@ public class CartController {
 	    return "redirect:/cart/list";
 	}
 	
+    @GetMapping("/order")
+    public String order(PageRequestDTO pageRequestDTO
+            , @AuthenticationPrincipal UserDetails userDetails
+            , Model model) {
+        String memberId = userDetails.getUsername();
+        model.addAttribute("memberId", memberId);
+        
+        PageResponseDTO<CartListDTO> responseDTO = cartService.list(pageRequestDTO, memberId);
+        int totalPrice = cartService.getTotalPrice(memberId);
+
+        // 장바구니가 비어있는 경우
+        if (responseDTO.getDtoList().isEmpty()) {
+            return "redirect:/cart/list";
+        }
+
+        model.addAttribute("responseDTO", responseDTO);
+        model.addAttribute("totalPrice", totalPrice);
+        
+        return "cart/order";
+    }
+	
 	@GetMapping("/logout")
 	public String logout() {
 		return "redirect:/logout";
