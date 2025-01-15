@@ -33,7 +33,7 @@ public class Member {
 	private String ssn;
 	private String phone;
 	private String email;
-	private String location;
+	private String location; // region https://github.com/pms981125/project2.git
 	private String address;
 	private int totalSpent;
 	
