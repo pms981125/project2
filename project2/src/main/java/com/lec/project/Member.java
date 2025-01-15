@@ -29,6 +29,14 @@ public class Member {
 	
 	private String cartId;
 	
+	private String name;
+	private String ssn;
+	private String phone;
+	private String email;
+	private String location;
+	private String address;
+	private int totalSpent;
+	
 	@Enumerated(EnumType.STRING)
 	@ElementCollection(fetch = FetchType.LAZY)
 	@Builder.Default

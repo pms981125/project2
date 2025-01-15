@@ -54,10 +54,22 @@ public class UserController {
 	
 	@PostMapping("/register")
 	public String Register(@RequestParam("id") String id, @RequestParam("password") String password, @RequestParam("name") String name, @RequestParam("ssn1") String ssn1, @RequestParam("ssn2") String ssn2, 
-						   @RequestParam("location") String location) {
-		log.info(id + "\n" + password + "\n" + location);
+						   @RequestParam("phone1") String phone1, @RequestParam("phone2") String phone2, @RequestParam("email") String email, @RequestParam("location") String location, @RequestParam("address") String address) {
+		String ssn = ssn1 + "-" + ssn2;
+		String phone = "010-" + phone1 + "-" + phone2;
 		
-		return "redirect:/user/logout"; // 수정 필요
+		log.info(id);
+		log.info(password);
+		log.info(name);
+		log.info(ssn);
+		log.info(phone);
+		log.info(email);
+		log.info(location);
+		log.info(address);
+		
+		hrService.addMember(id, password, name, ssn, phone, email, location, address); // 중복 체크
+		
+		return "redirect:/user/logout"; // 수정 필요?
 	}
 	
 	@GetMapping("/logout")

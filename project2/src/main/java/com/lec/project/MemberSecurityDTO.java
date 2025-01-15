@@ -21,12 +21,42 @@ import lombok.extern.log4j.Log4j2;
 public class MemberSecurityDTO extends User{
 	private String id;
 	private String password;
+	private String name;
+	private String ssn;
+	private String phone;
+	private String email;
+	private String location;
+	private String address;
+	private int totalSpent;
+	private MemberRank memberRank;
 	
 	public MemberSecurityDTO(String username, String password, Collection<? extends GrantedAuthority> authorities) {
 		super(username, password, authorities);
 		
 		this.id = username;
 		this.password = password;
+	}
+	
+	public MemberSecurityDTO(String username, String password, Collection<? extends GrantedAuthority> authorities,
+							 String name, String ssn, String phone, String email, String location, String address, int totalSpent) {
+		super(username, password, authorities);
+		this.id = username;
+		this.password = password;
+		this.name = name;
+		this.ssn = ssn;
+		this.phone = phone;
+		this.email = email;
+		this.location = location;
+		this.address = address;
+		this.totalSpent = totalSpent;
+
+		if (this.totalSpent >= 2000000) {
+			this.memberRank = MemberRank.VVIP;
+		} else if (this.totalSpent >= 1000000) {
+			this.memberRank = MemberRank.VIP;
+		} else {
+			this.memberRank = MemberRank.NORMAL;
+		}
 	}
 	
 	public boolean isAdmin() {

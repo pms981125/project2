@@ -1,9 +1,7 @@
 package com.lec.project.human_resources.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -59,10 +57,18 @@ public class HRServiceImpl implements HRService {
 		Optional<Member> result = memberRepository.findById(id);
 		Member member = result.orElseThrow();
 
-		MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(), member.getPassword(),
-				member.getRoleSet().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
-						.collect(Collectors.toList()));
-
+		MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(), 
+																	member.getPassword(),
+																	member.getRoleSet().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+																	.collect(Collectors.toList()),
+																	member.getName(),
+																	member.getSsn(),
+																	member.getPhone(),
+																	member.getEmail(),
+																	member.getLocation(),
+																	member.getAddress(),
+																	member.getTotalSpent());
+		
 		return memberSecurityDTO;
 	}
 
@@ -76,9 +82,18 @@ public class HRServiceImpl implements HRService {
 			roleSet = member.getRoleSet();
 
 			if (!roleSet.contains(MemberRole.ADMIN) && !roleSet.contains(MemberRole.SUPER_ADMIN)) {
-				MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(), member.getPassword(),
-						member.getRoleSet().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
-								.collect(Collectors.toList()));
+				MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(), 
+																			member.getPassword(),
+																			member.getRoleSet().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+																			.collect(Collectors.toList()),
+																			member.getName(),
+																			member.getSsn(),
+																			member.getPhone(),
+																			member.getEmail(),
+																			member.getLocation(),
+																			member.getAddress(),
+																			member.getTotalSpent());
+				
 				memberSecurityDTOList.add(memberSecurityDTO);
 			}
 		}
@@ -92,13 +107,20 @@ public class HRServiceImpl implements HRService {
 		List<MemberSecurityDTO> memberSecurityDTOList = new ArrayList<>();
 
 		for (Member member : memberList) {
-			MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(), member.getPassword(),
-					member.getRoleSet().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
-							.collect(Collectors.toList()));
+			MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(member.getId(), 
+																		member.getPassword(),
+																		member.getRoleSet().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+																		.collect(Collectors.toList()),
+																		member.getName(),
+																		member.getSsn(),
+																		member.getPhone(),
+																		member.getEmail(),
+																		member.getLocation(),
+																		member.getAddress(),
+																		member.getTotalSpent());
+			
 			memberSecurityDTOList.add(memberSecurityDTO);
 		}
-
-		log.info(memberSecurityDTOList);
 
 		return memberSecurityDTOList;
 	}
@@ -116,18 +138,6 @@ public class HRServiceImpl implements HRService {
 		memberRepository.save(member);
 	}
 
-	/*
-		private boolean isUniqueId(String newId) { 사용 X
-			try {
-				Optional<Member> result = memberRepository.findById(newId);
-				Member member = result.orElseThrow();
-				
-				return false;
-			} catch (Exception e) {
-				return true;
-			}
-		}
-	*/
 	@Override
 	public void remove(String id) {
 		memberRepository.deleteById(id);
@@ -182,10 +192,17 @@ public class HRServiceImpl implements HRService {
 		Page<Member> pages = memberRepository.findAll(PageRequest.of(page, limit));
 		Page<MemberSecurityDTO> DTOPages = new PageImpl<>(
 				pages.getContent().stream().filter(member -> member.getRoleSet().contains(MemberRole.USER))
-						.map(member -> new MemberSecurityDTO(member.getId(), member.getPassword(),
-								member.getRoleSet().stream()
-										.map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
-										.collect(Collectors.toList())))
+						.map(member -> new MemberSecurityDTO(member.getId(), 
+ 															 member.getPassword(),
+															 member.getRoleSet().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+															 .collect(Collectors.toList()),
+															 member.getName(),
+															 member.getSsn(),
+															 member.getPhone(),
+															 member.getEmail(),
+															 member.getLocation(),
+															 member.getAddress(),
+															 member.getTotalSpent()))
 						.collect(Collectors.toList()),
 				pages.getPageable(), // 기존 Pageable 유지
 				pages.getTotalElements() // 원래의 총 요소 개수
@@ -200,9 +217,17 @@ public class HRServiceImpl implements HRService {
 		int limit = size;
 
 		Page<Member> pages = memberRepository.findAll(PageRequest.of(page, limit));
-		Page<MemberSecurityDTO> DTOPages = pages
-				.map(p -> new MemberSecurityDTO(p.getId(), p.getPassword(), p.getRoleSet().stream()
-						.map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())).collect(Collectors.toList())));
+		Page<MemberSecurityDTO> DTOPages = pages.map(member -> new MemberSecurityDTO(member.getId(), 
+												  	 member.getPassword(),
+													 member.getRoleSet().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+													 .collect(Collectors.toList()),
+													 member.getName(),
+													 member.getSsn(),
+													 member.getPhone(),
+													 member.getEmail(),
+													 member.getLocation(),
+													 member.getAddress(),
+													 member.getTotalSpent()));
 		
 		return DTOPages;
 	}
@@ -284,5 +309,22 @@ public class HRServiceImpl implements HRService {
 		}
 		
 		return string;
+	}
+
+	@Override
+	public void addMember(String id, String password, String name, String ssn, String phone, String email, String location, String address) {
+		Member member = Member.builder().id(id)
+										.password(passwordEncoder.encode(password))
+										.name(name)
+										.ssn(ssn)
+										.phone(phone)
+										.email(email)
+										.location(location)
+										.address(address)
+										.build();
+		
+		member.addRole(MemberRole.USER);
+		
+		memberRepository.save(member);
 	}
 }
