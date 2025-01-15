@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.lec.project.Member;
+import com.lec.project.MemberRepository;
 import com.lec.project.shoppingmall.dto.PageRequestDTO;
 import com.lec.project.shoppingmall.dto.PageResponseDTO;
 import com.lec.project.shoppingmall.dto.cart.CartListDTO;
@@ -25,6 +27,7 @@ import lombok.extern.log4j.Log4j2;
 public class CartController {
 
 	private final CartService cartService;
+	private final MemberRepository memberRepository;
 
 	@GetMapping("/list")
 	public void list(PageRequestDTO pageRequestDTO
@@ -82,29 +85,9 @@ public class CartController {
 	    return "redirect:/cart/list";
 	}
 	
-    @GetMapping("/order")
-    public String order(PageRequestDTO pageRequestDTO
-            , @AuthenticationPrincipal UserDetails userDetails
-            , Model model) {
-        String memberId = userDetails.getUsername();
-        model.addAttribute("memberId", memberId);
-        
-        PageResponseDTO<CartListDTO> responseDTO = cartService.list(pageRequestDTO, memberId);
-        int totalPrice = cartService.getTotalPrice(memberId);
-
-        // 장바구니가 비어있는 경우
-        if (responseDTO.getDtoList().isEmpty()) {
-            return "redirect:/cart/list";
-        }
-
-        model.addAttribute("responseDTO", responseDTO);
-        model.addAttribute("totalPrice", totalPrice);
-        
-        return "cart/order";
-    }
-	
 	@GetMapping("/logout")
 	public String logout() {
 		return "redirect:/logout";
 	}
+	
 }

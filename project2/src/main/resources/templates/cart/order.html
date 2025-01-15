@@ -33,6 +33,11 @@
     <!-- payment section -->
     <section class="shop_section layout_padding px-5">
         <div class="container-fluid px-5">
+        
+         <form th:action="@{/cart/order/submit}" method="post" onsubmit="return validateForm()">
+            <!-- 총 금액을 hidden으로 전달 -->
+            <input type="hidden" name="total_amount" th:value="${totalPrice}">         
+         
             <div class="heading_container mb-4">
                 <h2>주문하기</h2>
             </div>
@@ -47,19 +52,21 @@
                             <!-- Customer ID from Cart -->
                             <div class="mb-3">
                                 <label class="form-label">주문자 ID</label>
-                                <input type="text" class="form-control" th:value="${memberId}" readonly>
+                                <input type="text" class="form-control" th:value="${member.id}" readonly>
                             </div>
 
                             <!-- Name Input -->
                             <div class="mb-3">
                                 <label class="form-label">이름</label>
-                                <input type="text" class="form-control" name="customerName" required>
+                                <input type="text" class="form-control" name="customerName"
+                                		th:value="${member.name}" required>
                             </div>
 
                             <!-- Phone Number Input -->
                             <div class="mb-3">
                                 <label class="form-label">연락처</label>
-                                <input type="tel" class="form-control" name="phoneNumber" 
+                                <input type="tel" class="form-control" name="phoneNumber"
+										th:value="${member.phone}" 
                                        pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" 
                                        placeholder="000-0000-0000" required>
                             </div>
@@ -67,8 +74,10 @@
                             <!-- Address Input -->
                             <div class="mb-3">
                                 <label class="form-label">배송 주소</label>
-                                <input type="text" class="form-control mb-2" name="address1" placeholder="기본주소" required>
-                                <input type="text" class="form-control" name="address2" placeholder="상세주소" required>
+                                <input type="text" class="form-control mb-2" name="address1" 
+                                		th:value="${member.location}"placeholder="기본주소" required>
+                                <input type="text" class="form-control" name="address2" 
+                                		th:value="${member.address}"placeholder="상세주소" required>
                             </div>
 
                             <!-- Special Requests -->
@@ -123,11 +132,11 @@
 				            </div>
 				
 				            <!-- Order Buttons -->
-				            <div class="d-flex justify-content-between mt-4">
-				                <a th:href="@{/cart/list}" class="btn btn-outline-secondary btn-lg">
-				                    <i class="fa fa-arrow-left"></i> 장바구니로 돌아가기
-				                </a>
-				                <button type="button" onclick="submitOrder()" class="btn btn-primary btn-lg">
+						    <div class="d-flex justify-content-between mt-4">
+						        <a th:href="@{/cart/list}" class="btn btn-outline-secondary btn-lg">
+						            <i class="fa fa-arrow-left"></i> 장바구니로 돌아가기
+						        </a>
+				                <button type="submit" class="btn btn-primary btn-lg">
 				                    <i class="fa fa-check-circle"></i> 주문 완료하기
 				                </button>
 				            </div>
@@ -135,6 +144,7 @@
 				    </div>
 				</div>
             </div>
+            </form>
         </div>
     </section>
 
@@ -151,21 +161,11 @@
     <script src="/js/custom.js"></script>
 
 <script>
-function submitOrder() {
-    // 필수 입력값 검증
-    const name = document.querySelector('input[name="customerName"]').value;
-    const phone = document.querySelector('input[name="phoneNumber"]').value;
-    const address1 = document.querySelector('input[name="address1"]').value;
-
-    if (!name || !phone || !address1) {
-        alert('필수 정보를 모두 입력해주세요.');
-        return;
-    }
-
+function validateForm() {
     if (confirm('입력하신 정보로 주문하시겠습니까?')) {
-        alert('주문이 완료되었습니다.');
-        window.location.href = '/shop/list';  // 쇼핑몰 메인으로 이동
+        return true;
     }
+    return false;
 }
 </script>
 </body>
