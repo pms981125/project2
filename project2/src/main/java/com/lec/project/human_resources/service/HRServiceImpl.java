@@ -65,8 +65,8 @@ public class HRServiceImpl implements HRService {
 																	member.getSsn(),
 																	member.getPhone(),
 																	member.getEmail(),
-																	member.getLocation(),
-																	member.getAddress(),
+																	member.getRegion(),
+																	member.getDetailedAddress(),
 																	member.getTotalSpent());
 		
 		return memberSecurityDTO;
@@ -90,8 +90,8 @@ public class HRServiceImpl implements HRService {
 																			member.getSsn(),
 																			member.getPhone(),
 																			member.getEmail(),
-																			member.getLocation(),
-																			member.getAddress(),
+																			member.getRegion(),
+																			member.getDetailedAddress(),
 																			member.getTotalSpent());
 				
 				memberSecurityDTOList.add(memberSecurityDTO);
@@ -115,8 +115,8 @@ public class HRServiceImpl implements HRService {
 																		member.getSsn(),
 																		member.getPhone(),
 																		member.getEmail(),
-																		member.getLocation(),
-																		member.getAddress(),
+																		member.getRegion(),
+																		member.getDetailedAddress(),
 																		member.getTotalSpent());
 			
 			memberSecurityDTOList.add(memberSecurityDTO);
@@ -200,8 +200,8 @@ public class HRServiceImpl implements HRService {
 															 member.getSsn(),
 															 member.getPhone(),
 															 member.getEmail(),
-															 member.getLocation(),
-															 member.getAddress(),
+															 member.getRegion(),
+															 member.getDetailedAddress(),
 															 member.getTotalSpent()))
 						.collect(Collectors.toList()),
 				pages.getPageable(), // 기존 Pageable 유지
@@ -225,8 +225,8 @@ public class HRServiceImpl implements HRService {
 													 member.getSsn(),
 													 member.getPhone(),
 													 member.getEmail(),
-													 member.getLocation(),
-													 member.getAddress(),
+													 member.getRegion(),
+													 member.getDetailedAddress(),
 													 member.getTotalSpent()));
 		
 		return DTOPages;
@@ -319,8 +319,8 @@ public class HRServiceImpl implements HRService {
 										.ssn(ssn)
 										.phone(phone)
 										.email(email)
-										.location(location)
-										.address(address)
+										.region(location)
+										.detailedAddress(address)
 										.build();
 		
 		member.addRole(MemberRole.USER);
