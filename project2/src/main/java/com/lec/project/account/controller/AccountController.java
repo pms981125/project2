@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -53,29 +54,43 @@ public class AccountController {
 		model.addAttribute("accountDTO", accountDTO);
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/register")
 	public void registerGet() {
 		log.info("register.GET....................");
 	}
 
-	@PostMapping("/register")
-	public String registerPost(AccountDTO accountDTO, BindingResult bindingResult,
-			RedirectAttributes redirectAttributes) {
-		log.info("register.Post....................");
+	@GetMapping("/checkAccountId")
+    @ResponseBody
+    public ResponseEntity<Map<String, Boolean>> checkAccountId(@RequestParam("accountId") Long accountId) {
+        boolean isDuplicate = accountService.isAccountIdExists(accountId);
+        return ResponseEntity.ok(Map.of("isDuplicate", isDuplicate));
+    }
 
-		if (bindingResult.hasErrors()) {
-			log.info("입력된 정보에 에러가 있습니다..........");
-			redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
-			return "redirect:/account/register";
-		}
+    @PostMapping("/register")
+    public String registerPost(AccountDTO accountDTO, BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
+        log.info("register.Post....................");
 
-		log.info("register......... " + accountDTO);
+        if (bindingResult.hasErrors()) {
+            log.info("입력된 정보에 에러가 있습니다..........");
+            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
+            return "redirect:/account/register";
+        }
 
-		Long accountId = accountService.register(accountDTO);
-		redirectAttributes.addFlashAttribute("result", accountId);
+        // Check for duplicate account ID
+        if (accountService.isAccountIdExists(accountDTO.getAccountId())) {
+            redirectAttributes.addFlashAttribute("error", "이미 존재하는 계좌번호입니다.");
+            return "redirect:/account/register";
+        }
 
-		return "redirect:/account/list";
-	}
+        log.info("register......... " + accountDTO);
+
+        Long accountId = accountService.register(accountDTO);
+        redirectAttributes.addFlashAttribute("result", accountId);
+
+        return "redirect:/account/list";
+    }
 
 	@GetMapping("/transfer")
 	public void transferGet() {
@@ -83,40 +98,28 @@ public class AccountController {
 	}
 
 	@PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addTransfer(@RequestBody Map<String, Object> transferObj) {
-        // Extract and validate input
-        Long senderAccountId;
-        Long receiverAccountId;
-        Integer transferAmount;
+	public ResponseEntity<?> addTransfer(@RequestBody Map<String, Object> transferObj) {
+		Long senderAccountId;
+		Long receiverAccountId;
+		Integer transferAmount;
 
-        try {
-            senderAccountId = Long.valueOf(transferObj.get("senderAccountId").toString());
-            receiverAccountId = Long.valueOf(transferObj.get("receiverAccountId").toString());
-            transferAmount = Integer.valueOf(transferObj.get("transferAmount").toString());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                "success", false,
-                "message", "Invalid input data: " + e.getMessage()
-            ));
-        }
+		try {
+			senderAccountId = Long.valueOf(transferObj.get("senderAccountId").toString());
+			receiverAccountId = Long.valueOf(transferObj.get("receiverAccountId").toString());
+			transferAmount = Integer.valueOf(transferObj.get("transferAmount").toString());
+		} catch (Exception e) {
+			return ResponseEntity.badRequest()
+					.body(Map.of("success", false, "message", "Invalid input data: " + e.getMessage()));
+		}
 
-        try {
-            // Perform the transfer
-            accountService.transfer(senderAccountId, receiverAccountId, transferAmount);
+		try {
+			accountService.transfer(senderAccountId, receiverAccountId, transferAmount);
 
-            // Return success response
-            return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "Transfer completed successfully!"
-            ));
-        } catch (Exception e) {
-            // Handle errors and return error response
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                "success", false,
-                "message", "Transfer failed: " + e.getMessage()
-            ));
-        }
-    }
-	
-	
+			return ResponseEntity.ok(Map.of("success", true, "message", "Transfer completed successfully!"));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("success", false, "message", "Transfer failed: " + e.getMessage()));
+		}
+	}
+
 }

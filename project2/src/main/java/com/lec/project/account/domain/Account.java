@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 import com.lec.project.Member;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,5 +32,9 @@ public class Account extends BaseEntity{
     private Long accountId;
 
     private int balance;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
 }

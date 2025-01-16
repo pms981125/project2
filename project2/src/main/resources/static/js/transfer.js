@@ -29,8 +29,12 @@ async function getList({accountId, page, size, goLast}) {
 }
 
 async function addTransfer(transferObj) {
-	const response = await axios.post(`/account/`, transferObj)
-	return response.data
+    try {
+        const response = await axios.post('/account/', transferObj)
+        return response.data
+    } catch (error) {
+        throw error
+    }
 }
 
 

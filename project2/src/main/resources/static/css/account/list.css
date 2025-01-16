@@ -1,135 +1,204 @@
 @charset "UTF-8";
 
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import
+	url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap')
+	;
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #ffffff;
-            margin: 0;
-            padding: 0;
-        }
+body {
+	font-family: 'Poppins', sans-serif;
+	background-color: #ffffff;
+	margin: 0;
+	padding: 0;
+}
 
-        main.container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
+main.container {
+	max-width: 1200px;
+	margin: 2rem auto;
+	padding: 0 1rem;
+}
 
-        .card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-        }
+.card {
+	background: white;
+	border-radius: 16px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+	overflow: hidden;
+}
 
-        .card-header {
-            background: linear-gradient(135deg, #1e88e5, #1565c0);
-            color: white;
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.card-header {
+	background: linear-gradient(135deg, #1e88e5, #1565c0);
+	color: white;
+	padding: 1.5rem 2rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
 
-        .card-header span {
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
+.card-header span {
+	font-size: 1.25rem;
+	font-weight: 600;
+}
 
-        .btn-primary {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-            text-decoration: none;
-        }
+.btn-primary {
+	background-color: rgba(255, 255, 255, 0.2);
+	color: white;
+	border: 2px solid white;
+	padding: 0.75rem 1.5rem;
+	border-radius: 8px;
+	font-weight: 500;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	transition: all 0.3s ease;
+	text-decoration: none;
+}
 
-        .btn-primary:hover {
-            border-color: white;
-            background-color: #50C2FF;
-        }
+.btn-primary:hover {
+	border-color: white;
+	background-color: #50C2FF;
+}
 
-        .card-body {
-            padding: 2rem;
-        }
+.card-body {
+	padding: 2rem;
+}
 
-        .table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-        }
+.account-card {
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	transition: transform 0.2s;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
 
-        .table th {
-            background-color: #f8fafc;
-            color: #64748b;
-            font-weight: 600;
-            padding: 1rem;
-            text-transform: uppercase;
-            font-size: 0.875rem;
-            letter-spacing: 0.05em;
-        }
+.account-card .card-body {
+	flex: 1;
+	padding: 1.25rem;
+}
 
-        .table td {
-            padding: 1rem;
-            color: #334155;
-            border-top: 1px solid #e2e8f0;
-        }
+.row-cols-1 {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 1rem;
+}
 
-        .table tr:hover {
-            background-color: #f8fafc;
-        }
+.col {
+	width: 100%;
+	height: 100%;
+}
 
-        .table a {
-            color: #1e88e5;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
+.account-number {
+	font-size: 1.2rem;
+	font-weight: bold;
+	margin-bottom: 1rem;
+}
 
-        .table a:hover {
-            color: #1565c0;
-        }
+.account-info {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
 
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 2rem;
-            list-style: none;
-            padding: 0;
-        }
+.info-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	white-space: nowrap;
+	padding: 0.25rem 0;
+}
 
-        .page-item .page-link {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            color: #64748b;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
+.info-label {
+	color: #666;
+	font-size: 0.9rem;
+}
 
-        .page-item.active .page-link {
-            background: linear-gradient(135deg, #1e88e5, #1565c0);
-            color: white;
-            border: none;
-        }
+.info-value {
+	font-weight: 500;
+}
 
-        .page-item .page-link:hover {
-            background-color: #f8fafc;
-            color: #1e88e5;
-        }
+.balance-value {
+	color: #2c3e50;
+	font-weight: bold;
+}
 
-        .page-item.active .page-link:hover {
-            background: linear-gradient(135deg, #1e88e5, #1565c0);
-            color: white;
-        }
+.detail-btn {
+	width: 100%;
+}
+
+.detail-btn:hover {
+	background-color: #3498db;
+	color: white;
+}
+
+.table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+.table th {
+	background-color: #f8fafc;
+	color: #64748b;
+	font-weight: 600;
+	padding: 1rem;
+	text-transform: uppercase;
+	font-size: 0.875rem;
+	letter-spacing: 0.05em;
+}
+
+.table td {
+	padding: 1rem;
+	color: #334155;
+	border-top: 1px solid #e2e8f0;
+}
+
+.table tr:hover {
+	background-color: #f8fafc;
+}
+
+.table a {
+	color: #1e88e5;
+	text-decoration: none;
+	font-weight: 500;
+	transition: color 0.2s ease;
+}
+
+.table a:hover {
+	color: #1565c0;
+}
+
+.pagination {
+	display: flex;
+	justify-content: center;
+	gap: 0.5rem;
+	margin-top: 2rem;
+	list-style: none;
+	padding: 0;
+}
+
+.page-item .page-link {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 8px;
+	border: 1px solid #e2e8f0;
+	color: #64748b;
+	text-decoration: none;
+	transition: all 0.2s ease;
+}
+
+.page-item.active .page-link {
+	background: linear-gradient(135deg, #1e88e5, #1565c0);
+	color: white;
+	border: none;
+}
+
+.page-item .page-link:hover {
+	background-color: #f8fafc;
+	color: #1e88e5;
+}
+
+.page-item.active .page-link:hover {
+	background: linear-gradient(135deg, #1e88e5, #1565c0);
+	color: white;
+}

@@ -17,14 +17,17 @@ public interface AccountService {
 
 	default AccountDTO entityToDTO(Account account) {
 		AccountDTO accountDTO = AccountDTO.builder()
-						.accountId(account.getAccountId())
-						.createDate(account.getCreateDate())
-						.balance(0)
-						.build();
+				.accountId(account.getAccountId())
+                .memberId(account.getMember().getId())
+                .createDate(account.getCreateDate())
+                .balance(account.getBalance())
+                .build();
 		
 		return accountDTO;
 						
 	}
 
 	void transfer(Long senderAccountId, Long receiverAccountId, int transferAmount);
+	
+	public boolean isAccountIdExists(Long accountId);
 }

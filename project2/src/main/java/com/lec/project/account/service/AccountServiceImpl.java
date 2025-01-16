@@ -8,9 +8,12 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.lec.project.Member;
 import com.lec.project.account.domain.Account;
 import com.lec.project.account.dto.AccountDTO;
 import com.lec.project.account.dto.PageRequestDTO;
@@ -35,21 +38,25 @@ public class AccountServiceImpl implements AccountService{
 
 	@Override
 	public PageResponseDTO<AccountDTO> list(PageRequestDTO pageRequestDTO) {
-		String[] types = pageRequestDTO.getTypes();
-		String keyword = pageRequestDTO.getKeyword();
-		Pageable pageable = pageRequestDTO.getPageable("createDate");
-		
-		Page<Account> result = accountRepository.searchAllImpl(types, keyword, pageable);
-		List<AccountDTO> dtoList = result.getContent()
-										.stream()
-										.map(account -> modelMapper.map(account, AccountDTO.class))
-										.collect(Collectors.toList());
-		
-		return PageResponseDTO.<AccountDTO>withAll()
-				.pageRequestDTO(pageRequestDTO)
-				.dtoList(dtoList)
-				.total((int) result.getTotalElements())
-				.build();
+	    // 현재 로그인한 사용자의 정보 가져오기
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    String currentMemberId = authentication.getName();
+	    
+	    Pageable pageable = pageRequestDTO.getPageable("createDate");
+	    
+	    // 현재 사용자의 계좌만 조회
+	    Page<Account> result = accountRepository.findByMemberId(currentMemberId, pageable);
+	    
+	    List<AccountDTO> dtoList = result.getContent()
+	            .stream()
+	            .map(account -> modelMapper.map(account, AccountDTO.class))
+	            .collect(Collectors.toList());
+	    
+	    return PageResponseDTO.<AccountDTO>withAll()
+	            .pageRequestDTO(pageRequestDTO)
+	            .dtoList(dtoList)
+	            .total((int) result.getTotalElements())
+	            .build();
 	}
 
 	@Override
@@ -61,11 +68,21 @@ public class AccountServiceImpl implements AccountService{
 	}
 
 	@Override
-	public Long register(AccountDTO accountDTO) {
-		Account account = modelMapper.map(accountDTO, Account.class);
-		Long accountId = accountRepository.save(account).getAccountId();
-		return accountId;
-	}
+    public Long register(AccountDTO accountDTO) {
+        // 현재 로그인한 사용자의 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentMemberId = authentication.getName();  // 현재 로그인한 사용자의 ID
+        
+        Account account = modelMapper.map(accountDTO, Account.class);
+        
+        // Member 객체 생성 및 설정
+        Member member = Member.builder()
+                            .id(currentMemberId)
+                            .build();
+        account.setMember(member);
+        
+        return accountRepository.save(account).getAccountId();
+    }
 	
 	@Override
 	@Transactional
@@ -109,5 +126,8 @@ public class AccountServiceImpl implements AccountService{
 		
 	}
 
-	
+	@Override
+    public boolean isAccountIdExists(Long accountId) {
+        return accountRepository.findByAccountId(accountId).isPresent();
+    }
 }
