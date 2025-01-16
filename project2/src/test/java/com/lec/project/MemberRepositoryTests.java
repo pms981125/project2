@@ -48,7 +48,7 @@ public class MemberRepositoryTests {
 	
 	@Test
 	public void addUser30() {
-		String[] region = { "Seoul", "Incheon", "Busan", "jeju" };
+		String[] region = { "Seoul", "Incheon", "Busan", "Jeju" };
 		String[] detailedAddress = { "서울시 서초구 만이빌딩 5층 505호", "인천시 미추홀구 301-2", "부산시 서면구 123-78", "제주시 서귀포구 76-93" };
 		
 		IntStream.rangeClosed(1, 30).forEach(i -> {

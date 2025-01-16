@@ -11,8 +11,35 @@
 			<!-- [[${member.getId()}]] -->
 			<div class="form-group input-group">
 				<div class="input-group-prepend"><span class="input-group-text">ID</span></div>
-				<input type="text" name="newId" class="form-control" th:value="${member.id}"> <!--  -->
+				<input type="text" name="id" class="form-control" th:value="${member.id}" readonly>
 			</div>
+			<div class="form-group input-group">
+				<div class="input-group-prepend"><span class="input-group-text">name</span></div>
+				<input type="text" name="name" class="form-control" th:value="${member.name}">
+			</div>
+			<div class="form-group input-group">
+				<div class="input-group-prepend"><span class="input-group-text">주민등록번호</span></div>
+				<input type="text" name="ssn" class="form-control" th:value="${member.ssn}">
+			</div>
+			<div class="form-group input-group">
+				<div class="input-group-prepend"><span class="input-group-text">핸드폰 번호</span></div>
+				<input type="text" name="phone" class="form-control" th:value="${member.phone}">
+			</div>
+			<div class="form-group input-group">
+				<div class="input-group-prepend"><span class="input-group-text">이메일</span></div>
+				<input type="email" name="email" class="form-control" th:value="${member.email}">
+			</div>
+			<div class="form-group input-group">
+				<div class="input-group-prepend"><span class="input-group-text">주소</span></div>
+				<input type="text" name="address" class="form-control" th:value="${member.address}">
+			</div>
+			<th:block th:if="${member.annualSalary > 0}">
+				<div class="form-group input-group">
+					<div class="input-group-prepend"><span class="input-group-text">연봉</span></div>
+					<input type="text" name="annualSalary" class="form-control" th:value="${member.annualSalary}">
+				</div>
+			</th:block>
+			
 			<!-- <input type="text" name="password" class="form-control" th:value="${member.password}" > -->
 			<div class="form-group input-group mt-sm-1 justify-content-center">
 				<button class="btn btn-primary memUpdateBtn">정보 수정</button>
@@ -31,19 +58,10 @@
 
 <script layout:fragment="script" th:inline="javascript">
 	const form = document.querySelector("#form")
-	const originalId = /*[[${member.id}]]*/'';
 
 	document.querySelector(".memUpdateBtn").addEventListener("click", function(e) {
 	    e.preventDefault()
 	    e.stopPropagation()
-	    
-		let input1 = document.createElement('input')
-
-	    input1.type = 'hidden'
-	    input1.name = 'originalId'
-	    input1.value = originalId
-	    
-	    form.appendChild(input1)
 	    
 	    form.action = `/sudo/update`
 	    form.method = 'post'
@@ -63,16 +81,6 @@
 	    e.preventDefault()
 	    e.stopPropagation()
 	    
-	    const mem = /*[[${member.id}]]*/""
-	    
-	    let input1 = document.createElement('input')
-
-	    input1.type = 'hidden'
-	    input1.name = 'memberId'
-	    input1.value = mem
-	    
-	    form.appendChild(input1)
-	    
 		form.action = `/sudo/initializePassword`
 		form.method = 'post'
 		form.submit()
@@ -83,20 +91,14 @@
 	    e.stopPropagation()
 	    
 	    const auth = /*[[${#authentication.name}]]*/""
-	    const mem = /*[[${member.id}]]*/""
 	    
 	    let input1 = document.createElement('input')
-	    let input2 = document.createElement('input')
 
 	    input1.type = 'hidden'
 	    input1.name = 'superAdminId'
 	    input1.value = auth
-	    input2.type = 'hidden'
-	    input2.name = 'adminId'
-	    input2.value = mem
 	    
 	    form.appendChild(input1)
-	    form.appendChild(input2)
 	    
 		form.action = `/sudo/delegate`
 		form.method = 'post'

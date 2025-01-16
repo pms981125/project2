@@ -71,11 +71,13 @@ public class SuperHRController {
 		return "admin/allUserInfo";
 	}
 	
-	@PostMapping("/update") // 유저 정보 수정 - 틀
-	public String update(@RequestParam(name = "originalId") String originalId, @RequestParam(name = "newId") String newId) {
-		hrService.update(originalId, newId);
+	@PostMapping("/update") // 유저 정보 수정 /*123*/
+	public String update(@RequestParam(name = "id") String id, @RequestParam(name = "name") String name, @RequestParam(name = "ssn") String ssn, @RequestParam(name = "phone") String phone,
+						 @RequestParam(name = "email") String email, @RequestParam(name = "address") String address, @RequestParam(name = "annualSalary", defaultValue = "0") String annualSalary) {
 		
-		return "redirect:/sudo/userInfo?id=" + originalId;
+		// hrService.update(originalId, newId);
+		
+		return "redirect:/sudo/userInfo?id=" + id;
 	}
 	
 	@PostMapping("/remove") // 유저 삭제
@@ -105,21 +107,21 @@ public class SuperHRController {
 	}
 	
 	@PostMapping("/delegate") // SuperAdmin 위임
-	public String delegateAuthority(@RequestParam("superAdminId") String superAdminId, @RequestParam("adminId") String adminId) {
+	public String delegateAuthority(@RequestParam("superAdminId") String superAdminId, @RequestParam("id") String id) {
 		// log.info(superAdminId + "234124-013" + adminId);
-		hrService.delagateAuthority(superAdminId, adminId); 
+		hrService.delagateAuthority(superAdminId, id); 
 		
 		// return "redirect:/sudo/userInfo?id=" + adminId;
 		return "redirect:/sudo/logout";
 	}
 	
 	@PostMapping("/initializePassword") // 비밀번호 초기화(재발급)
-	public String initializePassword(@RequestParam("memberId") String memberId) throws AddressException, MessagingException {
+	public String initializePassword(@RequestParam("id") String id) throws AddressException, MessagingException {
 		// log.info(memberId + " dhbahswk");
 
-		hrService.initializePassword(memberId);
+		hrService.initializePassword(id);
 		
-		return "redirect:/sudo/userInfo?id=" + memberId;
+		return "redirect:/sudo/userInfo?id=" + id;
 		// return "redirect:/sudo/allUserList";
 	}
 	

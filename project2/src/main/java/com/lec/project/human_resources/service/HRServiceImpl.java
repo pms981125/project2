@@ -67,6 +67,7 @@ public class HRServiceImpl implements HRService {
 																	member.getEmail(),
 																	member.getRegion(),
 																	member.getDetailedAddress(),
+																	member.getAnnualSalary(),
 																	member.getTotalSpent());
 		
 		return memberSecurityDTO;
@@ -92,6 +93,7 @@ public class HRServiceImpl implements HRService {
 																			member.getEmail(),
 																			member.getRegion(),
 																			member.getDetailedAddress(),
+																			member.getAnnualSalary(),
 																			member.getTotalSpent());
 				
 				memberSecurityDTOList.add(memberSecurityDTO);
@@ -117,6 +119,7 @@ public class HRServiceImpl implements HRService {
 																		member.getEmail(),
 																		member.getRegion(),
 																		member.getDetailedAddress(),
+																		member.getAnnualSalary(),
 																		member.getTotalSpent());
 			
 			memberSecurityDTOList.add(memberSecurityDTO);
@@ -202,6 +205,7 @@ public class HRServiceImpl implements HRService {
 															 member.getEmail(),
 															 member.getRegion(),
 															 member.getDetailedAddress(),
+															 member.getAnnualSalary(),
 															 member.getTotalSpent()))
 						.collect(Collectors.toList()),
 				pages.getPageable(), // 기존 Pageable 유지
@@ -227,6 +231,7 @@ public class HRServiceImpl implements HRService {
 													 member.getEmail(),
 													 member.getRegion(),
 													 member.getDetailedAddress(),
+													 member.getAnnualSalary(),
 													 member.getTotalSpent()));
 		
 		return DTOPages;
