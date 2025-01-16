@@ -1,5 +1,6 @@
 package com.lec.project.shoppingmall.controller.cart.order;
 
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.lec.project.Member;
 import com.lec.project.MemberRepository;
+import com.lec.project.account.domain.Account;
+import com.lec.project.account.repository.AccountRepository;
 import com.lec.project.shoppingmall.dto.PageRequestDTO;
 import com.lec.project.shoppingmall.dto.PageResponseDTO;
 import com.lec.project.shoppingmall.dto.cart.CartListDTO;
@@ -29,6 +32,7 @@ public class OrderController {
 
 	private final OrderService orderService;
 	private final MemberRepository memberRepository;
+	private final AccountRepository accountRepository;
 	private final CartService cartService;
 	
 	@GetMapping("/order")
@@ -39,7 +43,24 @@ public class OrderController {
         
         Member member = memberRepository.findById(memberId)
         		.orElseThrow(() -> new RuntimeException("Member not found"));
+        
+        // 회원의 계좌 정보 조회 - 첫 번째 계좌 가져오기
+        Page<Account> accountPage = accountRepository.findByMemberId(memberId, pageRequestDTO.getPageable("accountId"));
+        Account account = accountPage.getContent()
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        
+        // manager의 계좌 정보 조회
+        Page<Account> managerAccountPage = accountRepository.findByMemberId("manager", pageRequestDTO.getPageable("accountId"));
+        Account managerAccount = managerAccountPage.getContent()
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Manager account not found"));
+        
         model.addAttribute("member", member);
+        model.addAttribute("account", account);
+        model.addAttribute("managerAccount", managerAccount);
         
         PageResponseDTO<CartListDTO> responseDTO = cartService.list(pageRequestDTO, memberId);
         int totalPrice = cartService.getTotalPrice(memberId);

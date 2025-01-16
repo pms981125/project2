@@ -223,7 +223,7 @@ function clearCart() {
 }
 
 function updateQuantity(element, change) {
-    const cartItem = element.closest('.cart-item');  // tr 대신 .cart-item으로 변경
+    const cartItem = element.closest('.cart-item');
     const input = cartItem.querySelector('input[type="number"]');
     const id = input.dataset.id;
     let newQuantity;
