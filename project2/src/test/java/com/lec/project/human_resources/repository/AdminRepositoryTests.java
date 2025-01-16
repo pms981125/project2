@@ -25,7 +25,7 @@ public class AdminRepositoryTests {
 	PasswordEncoder passwordEncoder;
 	
 	@Test
-	public void addAdmin() {
+	public void addAdmin() { // 사용 X
 		String[] nums = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
 		String numberString = "";
 		
@@ -100,18 +100,27 @@ public class AdminRepositoryTests {
 		int no = 1;
 		
 		Admin admin = Admin.builder().id(id)
-				.password(password)
-				.no(no)
-				.name("superAdmin")
-				.ssn("777777-7777777")
-				.email("superAdmin@gmail.com")
-				.build();
+									 .password(password)
+									 .no(no)
+									 .name("superAdmin")
+									 .ssn("777777-7777777")
+									 .phone("010-1111-1111")
+									 .email("superAdmin@gmail.com")
+									 .detailedAddress("서울시 용산구 이태원로 372-5")
+									 .build();
 		
 		adminRepository.save(admin);
 		
 		Member member = Member.builder().id(id)
-				.password(password)
-				.build();
+										.password(password)
+										.name("superAdmin")
+										.ssn("777777-7777777")
+										.phone("010-1111-1111")
+										.email("superAdmin@gmail.com")
+										.region("Seoul")
+										.detailedAddress("서울시 용산구 이태원로 372-5")
+										.annualSalary(0)
+										.build();
 		
 		member.addRole(MemberRole.SUPER_ADMIN);
 		// member.addRole(MemberRole.ADMIN);

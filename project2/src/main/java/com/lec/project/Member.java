@@ -35,6 +35,7 @@ public class Member {
 	private String email;
 	private String region; 
 	private String detailedAddress;
+	private int annualSalary;
 	private int totalSpent;
 	
 	@Enumerated(EnumType.STRING)

@@ -22,7 +22,15 @@ public class MemberRepositoryTests {
 	public void addUser() {
 		Member member = Member.builder().id("user")
 				.password(passwordEncoder.encode("u"))
+				.name("user")
+				.ssn("123456-1234567")
+				.phone("010-1234-4321")
+				.email("user@gmail.com")
+				.region("Seoul")
+				.detailedAddress("서울시 서초구 만이빌딩 5층 505호")
+				.annualSalary(0)
 				.build();
+		
 		member.addRole(MemberRole.USER);
 		
 		memberRepository.save(member);
@@ -40,10 +48,21 @@ public class MemberRepositoryTests {
 	
 	@Test
 	public void addUser30() {
+		String[] region = { "Seoul", "Incheon", "Busan", "jeju" };
+		String[] detailedAddress = { "서울시 서초구 만이빌딩 5층 505호", "인천시 미추홀구 301-2", "부산시 서면구 123-78", "제주시 서귀포구 76-93" };
+		
 		IntStream.rangeClosed(1, 30).forEach(i -> {
 			Member member = Member.builder().id(String.format("user%02d", i))
-					.password(passwordEncoder.encode("u"))
-					.build();
+											.password(passwordEncoder.encode("u"))
+											.name(String.format("user%02d", i))
+											.ssn(String.format("123456-12345%02d", i))
+											.phone(String.format("010-1234-43%02d", i))
+											.email(String.format("user%02d@gmail.com", i))
+											.region(region[i % 4])
+											.detailedAddress(detailedAddress[i % 4])
+											.annualSalary(0)
+											.build();
+			
 			member.addRole(MemberRole.USER);
 			
 			memberRepository.save(member);

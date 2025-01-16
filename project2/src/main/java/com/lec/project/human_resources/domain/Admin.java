@@ -29,5 +29,14 @@ public class Admin {
 	private String ssn;
 	
 	@Column(nullable = false)
+	private String phone;
+	
+	@Column(nullable = false)
 	private String email;
+	
+	@Column(nullable = false)
+	private String detailedAddress;
+	
+	@Column(nullable = false)
+	private int annualSalary;
 }

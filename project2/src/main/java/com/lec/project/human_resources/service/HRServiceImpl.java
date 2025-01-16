@@ -144,7 +144,7 @@ public class HRServiceImpl implements HRService {
 	}
 
 	@Override
-	public void addAdmin(String id, String password, String name, String ssnFront, String ssnEnd, String email) {
+	public void addAdmin(String id, String password, String name, String ssn, String phone, String email, String location, String address, int annualSalary) {
 		String[] nums = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
 		String numberString = "";
 
@@ -155,17 +155,17 @@ public class HRServiceImpl implements HRService {
 		}
 
 		int no = Integer.parseInt(numberString);
-		String ssn = ssnFront + "-" + ssnEnd;
 
 		password = passwordEncoder.encode(password);
 
-		Admin admin = Admin.builder().id(id).password(password).name(name).no(no).ssn(ssn).email(email).build();
+		Admin admin = Admin.builder().id(id).password(password).no(no).name(name).ssn(ssn).phone(phone).email(email).detailedAddress(address).annualSalary(annualSalary).build();
 
 		adminRepository.save(admin);
 
-		Member member = Member.builder().id(id).password(password).build();
+		Member member = Member.builder().id(id).password(password).name(name).email(email).ssn(ssn).phone(phone).region(location).detailedAddress(address).annualSalary(annualSalary).build();
 
 		member.addRole(MemberRole.ADMIN);
+		
 		memberRepository.save(member);
 	}
 
