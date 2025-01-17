@@ -201,27 +201,6 @@
     <script src="/js/custom.js"></script>
 
 <script th:inline="javascript">
-function validateOrder() {
-    const cartIsEmpty = /*[[${responseDTO.dtoList.isEmpty()}]]*/'';
-    if (cartIsEmpty) {
-        alert('장바구니가 비어있습니다. 상품을 먼저 담아주세요.');
-        return false;
-    }
-    return true;
-}
-function clearCart() {
-    if(confirm('장바구니를 비우시겠습니까?')) {
-        // AJAX call to clear cart
-        fetch('/api/cart/clear', {
-            method: 'POST'
-        }).then(response => {
-            if(response.ok) {
-                location.reload();
-            }
-        });
-    }
-}
-
 function updateQuantity(element, change) {
     const cartItem = element.closest('.cart-item');
     const input = cartItem.querySelector('input[type="number"]');
@@ -234,11 +213,15 @@ function updateQuantity(element, change) {
         newQuantity = parseInt(input.value) + change;
     }
 
+    //최소 수량 체크
     if (newQuantity < 1) {
-        newQuantity = 1;
+		alert('수량은 1개 이상이어야 합니다.....');
+        input.value = 1;
         return;
     }
-
+    
+    input.value = newQuantity;
+    
     fetch('/api/cart/updateQuantity', {
         method: 'POST',
         headers: {
@@ -247,37 +230,69 @@ function updateQuantity(element, change) {
         body: `id=${id}&quantity=${newQuantity}`
     })
     .then(response => {
-        if(response.ok) {
-            input.value = newQuantity;
-            const price = parseInt(input.dataset.price);
-            const totalPrice = price * newQuantity;
-            cartItem.querySelector('.total-price strong').textContent = 
-                new Intl.NumberFormat('ko-KR').format(totalPrice) + '원';
-            // location.reload() 대신 특정 요소만 업데이트하는 것이 좋습니다
-            updateTotalAmount(); // 총액을 업데이트하는 새로운 함수 필요
+		if(!response.ok){
+			throw new Error('Network response was not ok');
+		}
+		return response.json();
+    })
+    .then(data => {
+		if(data.success) {
+			
+			// 개별 상품 총액 업데이트
+			const price = parseInt(input.dataset.price);
+			const itemTotalPrice = price * newQuantity;
+			cartItem.querySelector('.total-price strong').textContent =
+				new Intl.NumberFormat('ko-KR').format(itemTotalPrice) + '원';
+			
+			// 총 액 업데이트
+			const formattedTotalPrice = new Intl.NumberFormat('ko-KR').format(data.totalPrice);
+            // 상단 총액 업데이트
+            document.querySelector('.heading_container .text-primary').textContent = formattedTotalPrice;
+            // 하단 총액 업데이트
+            document.querySelector('.total-amount .text-primary').textContent = formattedTotalPrice;
         } else {
-            alert('수량 업데이트에 실패했습니다.');
+			throw new Error(data.message || '수량 업데이트에 실패했습니다.....');
         }
     })
     .catch(error => {
         console.error('Error:', error);
         alert('수량 업데이트 중 오류가 발생했습니다.');
+        // 오류 발생시 원래 수량으로 되돌리기
+        location.reload();
     });
 }
 
-//총액 업데이트를 위한 새로운 함수
-function updateTotalAmount() {
-    fetch('/api/cart/getTotalPrice', {
-        method: 'GET'
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.querySelectorAll('.total-amount .text-primary').forEach(element => {
-            element.textContent = new Intl.NumberFormat('ko-KR').format(data.totalPrice);
-        });
-    });
+function clearCart() {
+    if(!confirm('장바구니를 비우시겠습니까?')) {
+		return;
+    }
+    
+    fetch('/api/cart/clear', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	})
+	.then(response => {
+		if(!response.ok) {
+			throw new Error('장바구니 비우기 실패...');
+		}
+		alert('장바구니가 비워졌습니다.');
+		location.reload();
+	})
+	.catch(error => {
+		console.error('Error:', error);
+		alert('장바구니 비우기 중 오류가 발생했습니다.');
+	});
 }
+
+function validateOrder() {
+    const cartIsEmpty = /*[[${responseDTO.dtoList.isEmpty()}]]*/'';
+    if (cartIsEmpty) {
+        alert('장바구니가 비어있습니다. 상품을 먼저 담아주세요.');
+        return false;
+    }
+    return true;
+}
+
 </script>
-
-</body>
-</html>

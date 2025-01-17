@@ -151,6 +151,7 @@
 				            <div class="cart-items">
 				                <div th:each="item : ${responseDTO.dtoList}" class="cart-item card mb-3">
 				                    <div class="card-body d-flex align-items-center p-3">
+				                    	<!-- 상품 이미지 -->
 				                        <div class="item-image me-4" style="width: 80px;">
 				                            <img th:if="${item.thumbnail_path != null}"
 				                                 th:src="@{/display(filename=${item.thumbnail_path})}"
@@ -159,12 +160,21 @@
 				                            <span th:if="${item.thumbnail_path == null}" class="text-muted">No Image</span>
 				                        </div>
 				                        
+				                        <!-- 상품 정보 -->
 				                        <div class="item-details flex-grow-1">
-				                            <h6 class="card-title mb-1">[[${item.product_name}]]</h6>
-				                            <div class="d-flex justify-content-between">
-				                                <span class="text-muted small">수량: [[${item.count}]]개</span>
-				                                <span class="fw-bold">[[${#numbers.formatInteger(item.total_price, 0, 'COMMA')}]]원</span>
-				                            </div>
+				                        <div class="d-flex justify-content-between align-items-center">
+				                        	<div>
+						                        <h6 class="card-title mb-1">[[${item.product_name}]] 
+						                            <span class="text-muted ms-3">수량: [[${item.count}]]개</span>
+						                        </h6>
+						                    </div>
+						                    <!-- 오른쪽: 가격 정보 -->
+						                    <div class="text-end">
+						                        <div class="text-muted small">단가: [[${#numbers.formatInteger(item.price, 0, 'COMMA')}]]원</div>
+						                        <div class="fw-bold">합계: [[${#numbers.formatInteger(item.total_price, 0, 'COMMA')}]]원</div>
+						                    </div>
+				                        
+				                         
 				                        </div>
 				                    </div>
 				                </div>
@@ -218,7 +228,8 @@
 					    <span class="input-group-text">입금계좌(쇼핑몰)</span>
 					    <input type="text" class="form-control receiverAccountId" 
 					           id="receiverAccountId" name="receiverAccountId" 
-					           th:value="${managerAccount.accountId}" readonly/>
+					           th:attr="data-account=${managerAccount.accountId}"
+					           value="EdgeCut ShopMall" readonly/>
 					</div>
                     <div class="input-group mb-3">
                         <span class="input-group-text">결제금액</span>
@@ -279,7 +290,7 @@
 	        
 	        const transferObj = {
 	            senderAccountId: senderAccountId.value,
-	            receiverAccountId: receiverAccountId.value,
+	            receiverAccountId: receiverAccountId.dataset.account,
 	            transferAmount: transferAmount.value
 	        }
 	        
