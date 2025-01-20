@@ -137,9 +137,8 @@
 		
 		<div class="row">
 		    <div class="flex-container">
-		        <!-- 12개의 박스를 항상 표시 -->
 		        <th:block th:each="index : ${#numbers.sequence(0, 11)}">
-		            <!-- 실제 상품이 있는 경우 -->
+		            <!-- 실제 상품이 있는 경우만 표시 -->
 		            <th:block th:if="${not responseDTO.dtoList.isEmpty() and index < responseDTO.dtoList.size()}">
 		                <a th:href="@{/shop/read(bno=${responseDTO.dtoList[index].bno})}" class="box-link">
 		                    <div class="box">
@@ -153,42 +152,20 @@
 		                            </p>
 		                        </div>
 		                        <div class="detail-box">
-		                            <div class="title-container">
+		                            <div class="info-container text-right">
 		                                <span class="category">[[${responseDTO.dtoList[index].product_category}]]</span>
 		                                <h4 class="product-name">[[${responseDTO.dtoList[index].board_title}]]</h4>
+		                                <div class="price_box">
+		                                    <h6 class="price_heading">
+		                                        <span>￦</span> [[${#numbers.formatInteger(responseDTO.dtoList[index].product_price, 0, 'COMMA')}]]
+		                                    </h6>
+		                                </div>
+		                                <p class="content1">[[${responseDTO.dtoList[index].board_content1}]]</p>
 		                            </div>
-		                            <div class="price_box">
-		                                <h6 class="price_heading">
-		                                    <span>￦</span> [[${#numbers.formatInteger(responseDTO.dtoList[index].product_price, 0, 'COMMA')}]]
-		                                </h6>
-		                            </div>
-		                            <p class="content1">[[${responseDTO.dtoList[index].board_content1}]]</p>
 		                        </div>
 		                    </div>
 		                </a>
 		            </th:block>
-		            <!-- 빈 박스 표시 (상품이 없는 경우) -->
-					<th:block th:unless="${not responseDTO.dtoList.isEmpty() and index < responseDTO.dtoList.size()}">
-					    <div class="box-link">
-					        <div class="box">
-					            <div class="img-box">
-					                <p class="text-center text-muted">상품 준비 중입니다</p>
-					            </div>
-					            <div class="detail-box">
-					                <div class="title-container">
-					                    <span class="category">-</span>
-					                    <h4 class="product-name">준비 중</h4>
-					                </div>
-					                <div class="price_box">
-					                    <h6 class="price_heading">
-					                        <span>￦</span> 0
-					                    </h6>
-					                </div>
-					                <p class="content1">-</p>
-					            </div>
-					        </div>
-					    </div>
-					</th:block>
 		        </th:block>
 		    </div>
 		</div>

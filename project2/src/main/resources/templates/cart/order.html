@@ -109,14 +109,14 @@
                             <!-- Name Input -->
                             <div class="mb-3">
                                 <label class="form-label">이름</label>
-                                <input type="text" class="form-control" name="customerName"
+                                <input type="text" class="form-control" name="customer_name"
                                 		th:value="${member.name}" required>
                             </div>
 
                             <!-- Phone Number Input -->
                             <div class="mb-3">
                                 <label class="form-label">연락처</label>
-                                <input type="tel" class="form-control" name="phoneNumber"
+                                <input type="tel" class="form-control" name="phone_number"
 										th:value="${member.phone}" 
                                        pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" 
                                        placeholder="000-0000-0000" required>
@@ -125,16 +125,16 @@
                             <!-- Address Input -->
                             <div class="mb-3">
                                 <label class="form-label">배송 주소</label>
-                                <input type="text" class="form-control mb-2" name="region" 
+                                <input type="text" class="form-control mb-2" name="location" 
                                 		th:value="${member.region}"placeholder="기본주소" required>
-                                <input type="text" class="form-control" name="detailedAddress" 
+                                <input type="text" class="form-control" name="address" 
                                 		th:value="${member.detailedAddress}"placeholder="상세주소" required>
                             </div>
 
                             <!-- Special Requests -->
                             <div class="mb-3">
                                 <label class="form-label">배송 요청사항</label>
-                                <textarea class="form-control" name="specialRequests" rows="3" 
+                                <textarea class="form-control" name="special_requests" rows="3" 
                                           placeholder="배송 시 요청사항을 입력해주세요"></textarea>
                             </div>
                         </div>

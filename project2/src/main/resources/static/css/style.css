@@ -328,227 +328,244 @@ a:focus {
 }
 
 .slider_section .carousel-indicators li.active {
-  width: 17px;
-  height: 17px;
-  background-color: #f89646;
+	width: 17px;
+	height: 17px;
+	background-color: #f89646;
 }
 
 .shop_section .container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 30px;
+	max-width: 1280px;
+	margin: 0 auto;
+	padding: 0 30px;
 }
 
 .shop_section .flex-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    margin-top: 45px;
-    background: #fff;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 24px;
+	margin-top: 45px;
+	background: #fff;
 }
 
 .shop_section .box-link {
-    text-decoration: none;
-    color: inherit;
-    flex: 0 0 calc(25% - 18px);
-    max-width: calc(25% - 18px);
+	text-decoration: none;
+	color: inherit;
+	flex: 0 0 calc(25% - 18px);
+	max-width: calc(25% - 18px);
 }
 
 .shop_section .box {
-    width: 100%;
-    background-color: #f7fafa;
-    padding: 20px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
+	width: 100%;
+	background-color: #f7fafa;
+	padding: 20px;
+	border-radius: 5px;
+	transition: all 0.3s ease;
 }
 
 .shop_section .box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+	transform: translateY(-5px);
+	box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .shop_section .box .img-box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
-    padding: 15px;
-    background: #fff;
-    border-radius: 3px;
-    margin-bottom: 15px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 200px;
+	padding: 15px;
+	background: #fff;
+	border-radius: 3px;
+	margin-bottom: 15px;
 }
 
 .shop_section .box .img-box img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
 }
 
 .shop_section .box .detail-box {
-    padding: 10px;
+	padding: 15px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }
 
-.shop_section .box .title-container {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 15px;
+.shop_section .box .info-container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
 }
 
 .shop_section .box .category {
-    font-size: 0.9rem;
-    color: #6bb7be;
-    white-space: nowrap;
-    font-weight: 500;
+	display: inline-block;
+	font-size: 0.85rem;
+	color: #f89646;
+	padding: 4px 8px;
+	background-color: rgba(248, 150, 70, 0.1);
+	border-radius: 4px;
+	font-weight: 500;
+	margin-bottom: 5px;
+	text-align: right;
 }
 
 .shop_section .box .product-name {
-    font-size: 1.3rem;
-    font-weight: 600;
-    margin: 0;
-    flex: 1;
-    color: #272727;
+	font-size: 1.4rem;
+	font-weight: 600;
+	color: #272727;
+	line-height: 1.3;
+	margin: 0;
+	min-height: 2.8rem;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-align: right;
 }
 
 .shop_section .box .price_box {
-    text-align: right;
-    margin: 15px 0;
+	text-align: right;
+	margin: 15px 0;
+	background-color: rgba(107, 183, 190, 0.1);
+	padding: 8px 12px;
+	border-radius: 4px;
 }
 
 .shop_section .box .price_heading {
-    margin: 0;
-    font-size: 1.2rem;
-    color: #333;
-    font-weight: 600;
+	margin: 0;
+	font-size: 1.2rem;
+	color: #6bb7be;
+	font-weight: 600;
 }
 
 .shop_section .box .content1 {
-    text-align: right;
-    font-size: 0.9rem;
-    color: #555;
-    padding-top: 10px;
-    border-top: 1px solid #eee;
+	text-align: right;
+	font-size: 0.9rem;
+	color: #555;
+	padding-top: 10px;
+	border-top: 1px solid #eee;
 }
 
 /* Shop Pagination 스타일 */
 .shop_section .pagination {
-    margin: 40px 0;
-    padding: 0;
+	margin: 40px 0;
+	padding: 0;
 }
 
 .shop_section .pagination .page-link {
-    color: #333;
-    padding: 8px 16px;
-    margin: 0 3px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    transition: all 0.3s ease;
+	color: #333;
+	padding: 8px 16px;
+	margin: 0 3px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	transition: all 0.3s ease;
 }
 
 .shop_section .pagination .page-link:hover {
-    background-color: #f8f9fa;
-    color: #6bb7be;
-    border-color: #6bb7be;
+	background-color: #f8f9fa;
+	color: #6bb7be;
+	border-color: #6bb7be;
 }
 
 .shop_section .pagination .page-item.active .page-link {
-    background-color: #6bb7be;
-    border-color: #6bb7be;
-    color: white;
+	background-color: #6bb7be;
+	border-color: #6bb7be;
+	color: white;
 }
 
 .shop_section .pagination .page-item.disabled .page-link {
-    color: #6c757d;
-    pointer-events: none;
-    background-color: #fff;
-    border-color: #dee2e6;
+	color: #6c757d;
+	pointer-events: none;
+	background-color: #fff;
+	border-color: #dee2e6;
 }
 
 /* Shop Read Page Styles */
 .shop_section .product-detail-container {
-    display: flex;
-    gap: 40px;
-    background: #fff;
-    padding: 30px;
-    margin-bottom: 30px;
+	display: flex;
+	gap: 40px;
+	background: #fff;
+	padding: 30px;
+	margin-bottom: 30px;
 }
 
 .shop_section .product-image {
-    flex: 0 0 500px;
-    max-width: 500px;
+	flex: 0 0 500px;
+	max-width: 500px;
 }
 
 .shop_section .product-info {
-    flex: 1;
+	flex: 1;
 }
 
 .shop_section .action-buttons {
-    text-align: right;
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
+	text-align: right;
+	margin-top: 30px;
+	padding-top: 20px;
+	border-top: 1px solid #eee;
 }
 
 .shop_section .action-buttons .btn {
-    margin-left: 10px;
+	margin-left: 10px;
 }
 
 .image-carousel {
-    background: #f7fafa;
-    padding: 20px;
-    border-radius: 5px;
+	background: #f7fafa;
+	padding: 20px;
+	border-radius: 5px;
 }
 
 .shop_section .title-section {
-    text-align: right;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #eee;
+	text-align: right;
+	padding-bottom: 20px;
+	border-bottom: 1px solid #eee;
 }
 
 .shop_section .category {
-    font-size: 0.9rem;
-    color: #6bb7be;
+	font-size: 0.9rem;
+	color: #6bb7be;
 }
 
 .shop_section .info-section {
-    text-align: right;
+	text-align: right;
 }
 
 .shop_section .info-row {
-    text-align: right;
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
+	text-align: right;
+	padding: 10px 0;
+	border-bottom: 1px solid #eee;
 }
 
 .shop_section .info-row strong {
-    margin-right: 15px;
+	margin-right: 15px;
 }
 
 .shop_section .price {
-    font-size: 1.2rem;
-    color: #6bb7be;
-    font-weight: 600;
+	font-size: 1.2rem;
+	color: #6bb7be;
+	font-weight: 600;
 }
 
 .shop_section .content-section {
-     text-align: right;
-    margin-top: 20px;
+	text-align: right;
+	margin-top: 20px;
 }
 
 .shop_section .content-section h4 {
-    margin-bottom: 15px;
-    color: #333;
+	margin-bottom: 15px;
+	color: #333;
 }
 
 .shop_section .total-price {
-    font-size: 1.3rem;
-    color: #6bb7be;
-    font-weight: 600;
-    margin: 15px 0;
+	font-size: 1.3rem;
+	color: #6bb7be;
+	font-weight: 600;
+	margin: 15px 0;
 }
 
 .pagination {
-    margin-top: 60px;
+	margin-top: 60px;
 }
 
 
