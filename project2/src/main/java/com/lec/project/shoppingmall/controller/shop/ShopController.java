@@ -83,9 +83,20 @@ public class ShopController {
 	}
 
 	@GetMapping({ "/read", "/modify" })
-	public void read(@RequestParam("bno") Long bno, Model model) {
+	public void read(
+			@RequestParam(value = "bno", required = false) Long bno,
+			@RequestParam(value = "product_code", required = false) String productCode,
+			Model model) {
 		log.info("read or modify..........");
-		ShopDTO shopDTO = shopService.readOne(bno);
+		ShopDTO shopDTO;
+		
+		if(bno != null) {
+			shopDTO = shopService.readOne(bno);
+		} else if (productCode != null) {
+			shopDTO = shopService.readByProductCode(productCode);
+		} else {
+			throw new IllegalArgumentException("bno 또는 productCode가 필요합니다.");
+		}
 
 		// 이미지 경로 로깅
 		log.info("Shop DTO - Thumbnail Path: {}", shopDTO.getThumbnail_path());

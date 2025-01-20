@@ -109,6 +109,12 @@ public class ShopServiceImpl implements ShopService {
 		}
 		return shopDTO;
 	}
+	
+	public ShopDTO readByProductCode(String productCode) {
+		Shop shop = shopRepository.findByProduct_code(productCode)
+				.orElseThrow(()-> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
+		return modelMapper.map(shop, ShopDTO.class);
+	}
 
 	// 수정
 	@Override

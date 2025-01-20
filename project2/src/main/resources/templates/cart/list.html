@@ -102,7 +102,7 @@
                         
                         <div class="item-details flex-grow-1">
                             <h5 class="card-title mb-2">
-                                <a th:href="@{/cart/read(id=${item.id})}" class="text-decoration-none">[[${item.product_name}]]</a>
+                                <a th:href="@{/shop/read(product_code=${item.product_code})}" class="text-decoration-none">[[${item.product_name}]]</a>
                             </h5>
                             
                             <div class="d-flex align-items-center justify-content-between">

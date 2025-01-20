@@ -8,9 +8,10 @@
 	<h1>Cart/read</h1>
 
 	<div style="margin: 20px 0;">
-		<img th:if="${dto.img_path}"
-			  th:src="@{/display(filename=${shop.thumbnail_path})}"
-			style="max-width: 500px; height: auto;">
+	    <img th:if="${dto.thumbnail_path != null}"
+	         th:src="@{/display(filename=${dto.thumbnail_path})}"
+	         style="max-width: 500px; height: auto;">
+	    <span th:if="${dto.thumbnail_path == null}" class="text-muted">No Image</span>
 	</div>
 
 	<table border="1">
