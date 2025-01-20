@@ -47,6 +47,9 @@
 				<th:block th:if="${member.isAdmin()}"> <br />
 					<button class="btn btn-warning delegateAuthorityBtn ml-2">권한 위임</button>
 				</th:block>
+				<th:block th:unless="${member.isAdmin() || member.authorities[0].authority.equals('ROLE_SUPER_ADMIN')}"> <br />
+					<button class="btn btn-warning exaltationToAdminBtn ml-2">관리자 승격</button>
+				</th:block>
 				<button class="btn btn-danger memRemoveBtn ml-2">회원 삭제</button>
 				<a th:href="|@{/sudo/allUserList}|" class="text-decoration-none">
 					<button type="button" class="btn btn-success ml-2">목록으로</button>
@@ -58,7 +61,7 @@
 
 <script layout:fragment="script" th:inline="javascript">
 	const form = document.querySelector("#form")
-
+	
 	document.querySelector(".memUpdateBtn").addEventListener("click", function(e) {
 	    e.preventDefault()
 	    e.stopPropagation()
@@ -85,23 +88,52 @@
 		form.method = 'post'
 		form.submit()
 	}, false)
+		
+	const member = /*[[${member}]]*/""
 	
-	document.querySelector(".delegateAuthorityBtn").addEventListener("click", function(e) {
-	    e.preventDefault()
-	    e.stopPropagation()
-	    
-	    const auth = /*[[${#authentication.name}]]*/""
-	    
-	    let input1 = document.createElement('input')
-
-	    input1.type = 'hidden'
-	    input1.name = 'superAdminId'
-	    input1.value = auth
-	    
-	    form.appendChild(input1)
-	    
-		form.action = `/sudo/delegate`
-		form.method = 'post'
-		form.submit()
-	}, false)
+	console.log(member)
+	
+	if(member.admin) {
+		document.querySelector(".delegateAuthorityBtn").addEventListener("click", function(e) {
+		    e.preventDefault()
+		    e.stopPropagation()
+		    
+		    const auth = /*[[${#authentication.name}]]*/""
+		    
+		    let input1 = document.createElement('input')
+	
+		    input1.type = 'hidden'
+		    input1.name = 'superAdminId'
+		    input1.value = auth
+		    
+		    form.appendChild(input1)
+		    
+			form.action = `/sudo/delegate`
+			form.method = 'post'
+			form.submit()
+		}, false)
+	}
+	
+	if(!member.admin && !(member.authorities[0].authority == "ROLE_SUPER_ADMIN")) {
+		document.querySelector(".exaltationToAdminBtn").addEventListener("click", function(e) {
+		    e.preventDefault()
+		    e.stopPropagation()
+		    
+		    /* 연봉 입력 받기 추가 */
+		    const sal = prompt("연봉 입력")
+		    
+		    let input1 = document.createElement('input')
+	
+		    input1.type = 'hidden'
+		    input1.name = 'annualSalary'
+		    // input1.value = 10000 /* 임시 숫자 */
+		    input1.value = sal
+		    
+		    form.appendChild(input1)
+		    
+			form.action = `/sudo/exaltation`
+			form.method = 'post'
+			form.submit()
+		}, false)
+	}
 </script>
