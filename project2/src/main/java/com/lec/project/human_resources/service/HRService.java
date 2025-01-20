@@ -19,9 +19,9 @@ public interface HRService {
 	List<MemberSecurityDTO> getAllUserList();
 	Page<MemberSecurityDTO> getAllUserListWithPaging(Pageable pageable, int size);
 	Page<MemberSecurityDTO> getAdminListWithPaging(int p, Pageable pageable, int size);
-	void update(String originalId, String newId);
+	void update(String id, String name, String ssn, String phone, String email, String address, int annualSalary);
 	void remove(String id);
-	void addAdmin(String id, String password, String name, String ssn, String phone, String email, String location, String address, int annualSalary);
+	void addAdmin(String id, String password, String name, String ssn, String phone, String email, String location, String address, int salary);
 	void delagateAuthority(String superAdminId, String adminId);
 	void initializePassword(String memberId) throws AddressException, MessagingException;
 	void addMember(String id, String password, String name, String ssn, String phone, String email, String location, String address);

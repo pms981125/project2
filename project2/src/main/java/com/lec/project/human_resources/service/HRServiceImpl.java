@@ -129,14 +129,18 @@ public class HRServiceImpl implements HRService {
 	}
 
 	@Override
-	public void update(String originalId, String newId) {
-		log.info(originalId + " fvf " + newId);
-
-		Optional<Member> result = memberRepository.findById(originalId);
+	public void update(String id, String name, String ssn, String phone, String email, String address, int annualSalary) {
+		Optional<Member> result = memberRepository.findById(id);
 		Member member = result.orElseThrow();
 
 		// member.setId(newId); // 기본키는 수정하지 않는다.
 		// member.setPassword(password); // password 수정, 암호화 도입으로 수행 X
+		member.setName(name);
+		member.setSsn(ssn);
+		member.setPhone(phone);
+		member.setEmail(email);
+		member.setDetailedAddress(address);
+		member.setAnnualSalary(annualSalary);
 
 		memberRepository.save(member);
 	}

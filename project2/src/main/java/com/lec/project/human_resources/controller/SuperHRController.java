@@ -71,11 +71,12 @@ public class SuperHRController {
 		return "admin/allUserInfo";
 	}
 	
-	@PostMapping("/update") // 유저 정보 수정 /*123*/
+	@PostMapping("/update") // 유저 정보 수정
 	public String update(@RequestParam(name = "id") String id, @RequestParam(name = "name") String name, @RequestParam(name = "ssn") String ssn, @RequestParam(name = "phone") String phone,
 						 @RequestParam(name = "email") String email, @RequestParam(name = "address") String address, @RequestParam(name = "annualSalary", defaultValue = "0") String annualSalary) {
+		int salary = Integer.parseInt(annualSalary);
 		
-		// hrService.update(originalId, newId);
+		hrService.update(id, name, ssn, phone, email, address, salary);
 		
 		return "redirect:/sudo/userInfo?id=" + id;
 	}

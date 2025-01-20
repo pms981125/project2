@@ -57,12 +57,16 @@ public class HRController {
 		return "admin/userList";
 	}
 	
-	@PostMapping("/update") // 유저 정보 수정 - 틀
-	public String update(@RequestParam(name = "originalId") String originalId, @RequestParam(name = "newId") String newId) {
-		hrService.update(originalId, newId);
+	@PostMapping("/update") // 유저 정보 수정
+	public String update(@RequestParam(name = "id") String id, @RequestParam(name = "name") String name, @RequestParam(name = "ssn") String ssn, @RequestParam(name = "phone") String phone,
+						 @RequestParam(name = "email") String email, @RequestParam(name = "address") String address, @RequestParam(name = "annualSalary", defaultValue = "0") String annualSalary) {
+		int salary = Integer.parseInt(annualSalary);
 		
-		return "redirect:/hr/userInfo?id=" + originalId;
+		hrService.update(id, name, ssn, phone, email, address, salary);
+		
+		return "redirect:/hr/userInfo?id=" + id;
 	}
+	
 	
 	@PostMapping("/remove") // 유저 삭제
 	public String remove(@RequestParam(name = "id") String id) {
