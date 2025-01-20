@@ -36,61 +36,76 @@ public class OrderController {
 	private final CartService cartService;
 	
 	@GetMapping("/order")
-    public String order(PageRequestDTO pageRequestDTO
-            , @AuthenticationPrincipal UserDetails userDetails
-            , Model model) {
-        String memberId = userDetails.getUsername();
-        
-        Member member = memberRepository.findById(memberId)
-        		.orElseThrow(() -> new RuntimeException("Member not found"));
-        
-        // 회원의 계좌 정보 조회 - 첫 번째 계좌 가져오기
-        Page<Account> accountPage = accountRepository.findByMemberId(memberId, pageRequestDTO.getPageable("accountId"));
-        Account account = accountPage.getContent()
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Account not found"));
-        
-        // manager의 계좌 정보 조회
-        Page<Account> managerAccountPage = accountRepository.findByMemberId("manager", pageRequestDTO.getPageable("accountId"));
-        Account managerAccount = managerAccountPage.getContent()
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Manager account not found"));
-        
-        model.addAttribute("member", member);
-        model.addAttribute("account", account);
-        model.addAttribute("managerAccount", managerAccount);
-        
-        PageResponseDTO<CartListDTO> responseDTO = cartService.list(pageRequestDTO, memberId);
-        int totalPrice = cartService.getTotalPrice(memberId);
-
-        // 장바구니가 비어있는 경우
-        if (responseDTO.getDtoList().isEmpty()) {
-            return "redirect:/cart/list";
-        }
-
-        model.addAttribute("responseDTO", responseDTO);
-        model.addAttribute("totalPrice", totalPrice);
-        
-        return "cart/order";
-    }
+	public String order(PageRequestDTO pageRequestDTO
+			, @AuthenticationPrincipal UserDetails userDetails
+			, Model model
+			, RedirectAttributes redirectAttributes) {
+		String memberId = userDetails.getUsername();
+        try {
+			Member member = memberRepository.findById(memberId)
+					.orElseThrow(() -> new RuntimeException("Member not found"));
+	        
+			// 회원의 계좌 정보 조회 - 첫 번째 계좌 가져오기
+			Page<Account> accountPage = accountRepository.findByMemberId(memberId, pageRequestDTO.getPageable("accountId"));
+			if(accountPage.isEmpty()) {
+				//계좌가 없는 경우 account/list로 redirect
+				redirectAttributes.addFlashAttribute("error", "결제를 위한 계좌가 필요합니다. 계좌를 먼저 등록해주세요.");
+				return "redirect:/account/list";
+			}
+	        
+			Account account = accountPage.getContent().get(0);
+	        
+			// manager의 계좌 정보 조회
+			Page<Account> managerAccountPage = accountRepository.findByMemberId("manager", pageRequestDTO.getPageable("accountId"));
+			if(managerAccountPage.isEmpty()) {
+				// 관리자 계좌가 없는 경우 cart/list로 redirect
+				redirectAttributes.addFlashAttribute("error", "현재 결제 시스템에 문제가 있습니다. 관리자에게 문의해주세요.");
+				return "redirect:/cart/list";
+				}
+	        
+			Account managerAccount = managerAccountPage.getContent().get(0);
+	        
+			model.addAttribute("member", member);
+			model.addAttribute("account", account);
+			model.addAttribute("managerAccount", managerAccount);
+	        
+			PageResponseDTO<CartListDTO> responseDTO = cartService.list(pageRequestDTO, memberId);
+			int totalPrice = cartService.getTotalPrice(memberId);
+	
+			// 장바구니가 비어있는 경우
+			if (responseDTO.getDtoList().isEmpty()) {
+				redirectAttributes.addFlashAttribute("error", "장바구니가 비어있습니다.");
+				return "redirect:/cart/list";
+				}
+	
+			model.addAttribute("responseDTO", responseDTO);
+			model.addAttribute("totalPrice", totalPrice);
+	        
+			return "cart/order";
+			
+	    } catch (Exception e) {
+	        log.error("주문 페이지 로딩 중 오류 발생", e);
+	        redirectAttributes.addFlashAttribute("error", "주문 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
+	        return "redirect:/cart/list";
+	   }
+}
 	
 	@PostMapping("/order/submit")
-	public String submitOrder(@AuthenticationPrincipal UserDetails userDetails
-			, OrderSubmitDTO orderSubmitDTO
-			, RedirectAttributes redirectAttributes) {
+	public String submitOrder(
+			@AuthenticationPrincipal UserDetails userDetails,
+			OrderSubmitDTO orderSubmitDTO,
+			RedirectAttributes redirectAttributes) {
 		try {
-			 // OrderService를 통한 주문 처리
-            orderService.createOrder(userDetails.getUsername(), orderSubmitDTO);
+			// OrderService를 통한 주문 처리
+			orderService.createOrder(userDetails.getUsername(), orderSubmitDTO);
 			 
-            redirectAttributes.addFlashAttribute("message", "주문이 완료되었습니다.");
-            return "redirect:/shop/list";
+			redirectAttributes.addFlashAttribute("message", "주문이 완료되었습니다.");
+			return "redirect:/shop/list";
 			 
-        } catch (Exception e) {
-        	log.error("주문 처리 중 오류 발생", e);
-            redirectAttributes.addFlashAttribute("error", "주문 처리 중 오류가 발생했습니다.");
-            return "redirect:/cart/order";
-        }
-    }
+		} catch (Exception e) {
+			log.error("주문 처리 중 오류 발생", e);
+			redirectAttributes.addFlashAttribute("error", "주문 처리 중 오류가 발생했습니다.");
+			return "redirect:/cart/order";
+		}
+	}
 }

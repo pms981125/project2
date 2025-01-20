@@ -154,13 +154,13 @@
 			                총 결제금액: <span class="text-primary" th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')}">0</span>원
 			            </h4>
 			        </div>
-			        <a th:href="@{/cart/order}" 
-			           th:class="${responseDTO.dtoList.isEmpty() ? 'btn btn-primary btn-lg disabled' : 'btn btn-primary btn-lg'}"
-			           onclick="return validateOrder()">
-			            <i class="fa fa-check-circle"></i> 주문하기
-			        </a>
-			    </div>
-			</div>
+						<a href="javascript:void(0);" 
+						   th:class="${responseDTO.dtoList.isEmpty() ? 'btn btn-primary btn-lg disabled' : 'btn btn-primary btn-lg'}"
+						   onclick="validateOrder()">
+						    <i class="fa fa-check-circle"></i> 주문하기
+						</a>
+				    </div>
+				</div>
 
             <!-- 페이지네이션 -->
             <div class="d-flex justify-content-center mt-4">
@@ -287,12 +287,34 @@ function clearCart() {
 }
 
 function validateOrder() {
-    const cartIsEmpty = /*[[${responseDTO.dtoList.isEmpty()}]]*/'';
-    if (cartIsEmpty) {
-        alert('장바구니가 비어있습니다. 상품을 먼저 담아주세요.');
-        return false;
-    }
-    return true;
+	const cartIsEmpty = /*[[${responseDTO.dtoList.isEmpty()}]]*/'';
+	if (cartIsEmpty) {
+		alert('장바구니가 비어있습니다. 상품을 먼저 담아주세요.');
+		return false;
+	}
+	
+	// 계좌 확인
+	fetch('/api/account/check')
+		.then(response => response.json())
+		.then(data => {
+			if (!data.hasAccount) {
+				if(confirm('결제를 위해서는 계좌 등록이 필요합니다.\n계좌 등록 페이지로 이동하시겠습니까?')) {
+					window.location.href = '/account/list';
+				}
+				return false;
+			} 
+			
+			// 계좌가 있는 경우
+			if(confirm('주문 페이지로 이동하시겠습니까?')) {
+				window.location.href = '/cart/order';
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+			alert('계좌 확인 중 오류가 발생했습니다. 다시 시도해주세요.');
+		});
+	    
+	return false;
 }
 
 </script>
