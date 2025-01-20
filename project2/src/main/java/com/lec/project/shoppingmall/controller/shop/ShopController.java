@@ -1,5 +1,6 @@
 package com.lec.project.shoppingmall.controller.shop;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -10,15 +11,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.lec.project.shoppingmall.domain.product.Product;
 import com.lec.project.shoppingmall.dto.PageRequestDTO;
 import com.lec.project.shoppingmall.dto.PageResponseDTO;
 import com.lec.project.shoppingmall.dto.product.image.ProductImageDTO;
@@ -40,11 +38,12 @@ public class ShopController {
 	private final ProductImageService productImageService;
 
 	@GetMapping("/list")
-	public String list(PageRequestDTO pageRequestDTO, @AuthenticationPrincipal UserDetails userDetails,
+	public String list(
+			PageRequestDTO pageRequestDTO, 
+			@AuthenticationPrincipal UserDetails userDetails,
 			@RequestParam(name = "keyword", required = false) String keyword,
 			@RequestParam(name = "category", required = false) String category,
-			Model model,
-			RedirectAttributes redirectAttributes) {
+			Model model) {
 
 		log.info("category: " + category);
 		log.info("keyword: " + keyword);
@@ -53,32 +52,42 @@ public class ShopController {
 			model.addAttribute("memberId", userDetails.getUsername());
 		}
 		
+		PageResponseDTO<ShopDTO> responseDTO = null;
+		
 		try {
-			PageResponseDTO<ShopDTO> responseDTO = shopService.list(pageRequestDTO, keyword, category);
-			
-			if(responseDTO.getDtoList().isEmpty() && (keyword != null || category != null)) {
-				redirectAttributes.addFlashAttribute("searchError", "검색 결과가 없습니다. 다른 검색어를 입력해주세요");
-				return "redirect:/shop/list";
+			if(category != null && !category.isEmpty() && (keyword == null || keyword.isEmpty())) {
+				//카테고리만 선택된경우 keyword를 null로..
+				responseDTO = shopService.list(pageRequestDTO, null, category);
+			} else {
+				responseDTO = shopService.list(pageRequestDTO, keyword, category);
 			}
 			
-			responseDTO.getDtoList().forEach(shopDTO -> {
-				ProductImageDTO mainImage = productImageService.getMainImage(shopDTO.getProduct_code());
-				if (mainImage != null) {
-					shopDTO.setImg_path(mainImage.getImg_path());
-					shopDTO.setThumbnail_path(mainImage.getThumbnail_path());
-				}
-			});
-			
-			model.addAttribute("responseDTO", responseDTO);
-			model.addAttribute("keyword", keyword);
-			model.addAttribute("category", category);
-			
+			if(responseDTO != null && responseDTO.getDtoList() != null) {
+				responseDTO.getDtoList().forEach(shopDTO -> {
+					ProductImageDTO mainImage = productImageService.getMainImage(shopDTO.getProduct_code());
+					if(mainImage != null) {
+						shopDTO.setImg_path(mainImage.getImg_path());
+						shopDTO.setThumbnail_path(mainImage.getThumbnail_path());
+					}
+				});
+			}
 		} catch (Exception e) {
 			log.error("검색처리 중 오류 발생.....", e);
-			redirectAttributes.addFlashAttribute("searchError", "검색처리 중 오류가 발생했습니다. 다시 시도해주세요");
-			return "redirect:/shop/list";
+			model.addAttribute("searchError", "검색처리 중 오류가 발생헀습니다. 다시 시도해주세요");
+		} finally {
+			// responseDTO가 null이어도 빈 데이터로 처리
+			if(responseDTO == null) {
+				responseDTO = PageResponseDTO.<ShopDTO>withAll()
+						.pageRequestDTO(pageRequestDTO)
+						.dtoList(new ArrayList<>())
+						.total(0)
+						.build();
+			}
 		}
 
+		model.addAttribute("responseDTO", responseDTO);
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("category", category);
 		return "shop/list";
 	}
 
