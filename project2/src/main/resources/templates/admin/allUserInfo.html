@@ -120,12 +120,14 @@
 		    e.stopPropagation()
 		    
 		    /* 연봉 입력 받기 추가 */
+		    const sal = prompt("연봉 입력")
 		    
 		    let input1 = document.createElement('input')
 	
 		    input1.type = 'hidden'
 		    input1.name = 'annualSalary'
-		    input1.value = 10000 /* 임시 숫자 */
+		    // input1.value = 10000 /* 임시 숫자 */
+		    input1.value = sal
 		    
 		    form.appendChild(input1)
 		    
