@@ -20,9 +20,9 @@ public class MemberRepositoryTests {
 	
 	@Test
 	public void addUser() {
-		Member member = Member.builder().id("user")
+		Member member = Member.builder().id("user01")
 				.password(passwordEncoder.encode("u"))
-				.name("user")
+				.name("user01")
 				.ssn("123456-1234567")
 				.phone("010-1234-4321")
 				.email("user@gmail.com")

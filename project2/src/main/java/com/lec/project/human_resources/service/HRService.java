@@ -25,4 +25,5 @@ public interface HRService {
 	void delagateAuthority(String superAdminId, String adminId);
 	void initializePassword(String memberId) throws AddressException, MessagingException;
 	void addMember(String id, String password, String name, String ssn, String phone, String email, String location, String address);
+	void exaltation(String id, int salary);
 }

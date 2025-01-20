@@ -336,4 +336,13 @@ public class HRServiceImpl implements HRService {
 		
 		memberRepository.save(member);
 	}
+
+	@Override
+	public void exaltation(String id, int annualSalary) {
+		Optional<Member> result = memberRepository.findById(id);
+		Member member = result.orElseThrow();
+		
+		remove(id);
+		addAdmin(id, member.getPassword(), member.getName(), member.getSsn(), member.getPhone(), member.getEmail(), member.getRegion(), member.getDetailedAddress(), annualSalary);
+	}
 }

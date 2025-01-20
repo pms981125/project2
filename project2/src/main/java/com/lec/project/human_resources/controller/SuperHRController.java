@@ -126,6 +126,16 @@ public class SuperHRController {
 		// return "redirect:/sudo/allUserList";
 	}
 	
+	@PostMapping("/exaltation") // 관리자 승격
+	public String exaltation(@RequestParam("id") String id, @RequestParam("annualSalary") String annualSalary) {
+		int salary = Integer.parseInt(annualSalary);
+		
+		hrService.exaltation(id, salary);
+		
+		return "redirect:/sudo/userInfo?id=" + id;
+		// return "redirect:/sudo/allUserList";
+	}
+	
 	@GetMapping("/logout")
 	public String logout() {
 		return "redirect:/logout";
