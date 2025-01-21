@@ -7,8 +7,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import com.lec.project.human_resources.LoginFailureHandler;
 import com.lec.project.human_resources.LoginSuccessHandler;
 
 import lombok.RequiredArgsConstructor;
@@ -41,10 +43,12 @@ public class WebSecurityConfig {
         									   // .requestMatchers("/user/**").hasRole("USER") // 없애도 될듯?
         								       // .requestMatchers("/login.html").permitAll()
         								       .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // 정적 리소스 접근 허용
-        								       .requestMatchers("/user/register", "user/goRegisterForm").permitAll() //123
+        								       .requestMatchers("user/register", "user/goRegisterForm").permitAll() //123
         									   .anyRequest().authenticated())
-        	.formLogin(form -> form.loginPage("/login.html")
+        	// .formLogin(form -> form.loginPage("/login.html")
+        	.formLogin(form -> form.loginPage("/user/login")
         						   .loginProcessingUrl("/loginProcess")
+        						   .failureHandler(failureHandler())
         						   .permitAll()
         						   .successHandler(successHandler()))
         	.logout(out -> out.logoutUrl("/logout")
@@ -58,5 +62,10 @@ public class WebSecurityConfig {
 	@Bean
 	AuthenticationSuccessHandler successHandler() {
 		return new LoginSuccessHandler();
+	}
+	
+	@Bean
+	AuthenticationFailureHandler failureHandler() {
+		return new LoginFailureHandler();
 	}
 }

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.lec.project.regionboard.model.MemberRegion;
+
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -26,7 +28,6 @@ public class MemberRepositoryTests {
 				.ssn("123456-1234567")
 				.phone("010-1234-4321")
 				.email("user@gmail.com")
-				.region("Seoul")
 				.detailedAddress("서울시 서초구 만이빌딩 5층 505호")
 				.annualSalary(0)
 				.build();
@@ -48,7 +49,6 @@ public class MemberRepositoryTests {
 	
 	@Test
 	public void addUser30() {
-		String[] region = { "Seoul", "Incheon", "Busan", "Jeju" };
 		String[] detailedAddress = { "서울시 서초구 만이빌딩 5층 505호", "인천시 미추홀구 301-2", "부산시 서면구 123-78", "제주시 서귀포구 76-93" };
 		
 		IntStream.rangeClosed(1, 30).forEach(i -> {
@@ -58,7 +58,6 @@ public class MemberRepositoryTests {
 											.ssn(String.format("123456-12345%02d", i))
 											.phone(String.format("010-1234-43%02d", i))
 											.email(String.format("user%02d@gmail.com", i))
-											.region(region[i % 4])
 											.detailedAddress(detailedAddress[i % 4])
 											.annualSalary(0)
 											.build();

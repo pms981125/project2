@@ -102,7 +102,7 @@ public class SuperHRController {
 		String ssn = ssnFront + "-" + ssnEnd;
 		String phone = "010-" + phone1 + "-" + phone2;
 		
-		hrService.addAdmin(id, password, name, ssn, phone, email, location, address, annualSalary);
+		hrService.addAdmin(id, password, name, ssn, phone, email, address, annualSalary);
 		
 		return "redirect:/sudo/allUserList";
 	}

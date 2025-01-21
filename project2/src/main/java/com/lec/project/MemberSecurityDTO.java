@@ -25,7 +25,6 @@ public class MemberSecurityDTO extends User{
 	private String ssn;
 	private String phone;
 	private String email;
-	private String location;
 	private String address;
 	private int annualSalary;
 	private int totalSpent;
@@ -39,7 +38,7 @@ public class MemberSecurityDTO extends User{
 	}
 	
 	public MemberSecurityDTO(String username, String password, Collection<? extends GrantedAuthority> authorities,
-							 String name, String ssn, String phone, String email, String location, String address, int annualSalary, int totalSpent) {
+							 String name, String ssn, String phone, String email, String address, int annualSalary, int totalSpent) {
 		super(username, password, authorities);
 		this.id = username;
 		this.password = password;
@@ -47,7 +46,6 @@ public class MemberSecurityDTO extends User{
 		this.ssn = ssn;
 		this.phone = phone;
 		this.email = email;
-		this.location = location;
 		this.address = address;
 		this.annualSalary = annualSalary;
 		this.totalSpent = totalSpent;

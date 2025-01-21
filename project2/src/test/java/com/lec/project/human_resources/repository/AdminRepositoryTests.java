@@ -117,7 +117,6 @@ public class AdminRepositoryTests {
 										.ssn("777777-7777777")
 										.phone("010-1111-1111")
 										.email("superAdmin@gmail.com")
-										.region("Seoul")
 										.detailedAddress("서울시 용산구 이태원로 372-5")
 										.annualSalary(0)
 										.build();

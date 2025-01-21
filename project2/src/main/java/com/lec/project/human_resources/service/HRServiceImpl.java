@@ -65,7 +65,6 @@ public class HRServiceImpl implements HRService {
 																	member.getSsn(),
 																	member.getPhone(),
 																	member.getEmail(),
-																	member.getRegion(),
 																	member.getDetailedAddress(),
 																	member.getAnnualSalary(),
 																	member.getTotalSpent());
@@ -91,7 +90,6 @@ public class HRServiceImpl implements HRService {
 																			member.getSsn(),
 																			member.getPhone(),
 																			member.getEmail(),
-																			member.getRegion(),
 																			member.getDetailedAddress(),
 																			member.getAnnualSalary(),
 																			member.getTotalSpent());
@@ -117,7 +115,6 @@ public class HRServiceImpl implements HRService {
 																		member.getSsn(),
 																		member.getPhone(),
 																		member.getEmail(),
-																		member.getRegion(),
 																		member.getDetailedAddress(),
 																		member.getAnnualSalary(),
 																		member.getTotalSpent());
@@ -151,7 +148,7 @@ public class HRServiceImpl implements HRService {
 	}
 
 	@Override
-	public void addAdmin(String id, String password, String name, String ssn, String phone, String email, String location, String address, int annualSalary) {
+	public void addAdmin(String id, String password, String name, String ssn, String phone, String email, String address, int annualSalary) {
 		String[] nums = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
 		String numberString = "";
 
@@ -169,7 +166,7 @@ public class HRServiceImpl implements HRService {
 
 		adminRepository.save(admin);
 
-		Member member = Member.builder().id(id).password(password).name(name).email(email).ssn(ssn).phone(phone).region(location).detailedAddress(address).annualSalary(annualSalary).build();
+		Member member = Member.builder().id(id).password(password).name(name).email(email).ssn(ssn).phone(phone).detailedAddress(address).annualSalary(annualSalary).build();
 
 		member.addRole(MemberRole.ADMIN);
 		
@@ -207,7 +204,6 @@ public class HRServiceImpl implements HRService {
 															 member.getSsn(),
 															 member.getPhone(),
 															 member.getEmail(),
-															 member.getRegion(),
 															 member.getDetailedAddress(),
 															 member.getAnnualSalary(),
 															 member.getTotalSpent()))
@@ -233,7 +229,6 @@ public class HRServiceImpl implements HRService {
 													 member.getSsn(),
 													 member.getPhone(),
 													 member.getEmail(),
-													 member.getRegion(),
 													 member.getDetailedAddress(),
 													 member.getAnnualSalary(),
 													 member.getTotalSpent()));
@@ -321,14 +316,13 @@ public class HRServiceImpl implements HRService {
 	}
 
 	@Override
-	public void addMember(String id, String password, String name, String ssn, String phone, String email, String location, String address) {
+	public void addMember(String id, String password, String name, String ssn, String phone, String email, String address) {
 		Member member = Member.builder().id(id)
 										.password(passwordEncoder.encode(password))
 										.name(name)
 										.ssn(ssn)
 										.phone(phone)
 										.email(email)
-										.region(location)
 										.detailedAddress(address)
 										.build();
 		
@@ -343,6 +337,6 @@ public class HRServiceImpl implements HRService {
 		Member member = result.orElseThrow();
 		
 		remove(id);
-		addAdmin(id, member.getPassword(), member.getName(), member.getSsn(), member.getPhone(), member.getEmail(), member.getRegion(), member.getDetailedAddress(), annualSalary);
+		addAdmin(id, member.getPassword(), member.getName(), member.getSsn(), member.getPhone(), member.getEmail(), member.getDetailedAddress(), annualSalary);
 	}
 }

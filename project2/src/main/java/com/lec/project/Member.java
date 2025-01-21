@@ -33,7 +33,6 @@ public class Member {
 	private String ssn;
 	private String phone;
 	private String email;
-	private String region; 
 	private String detailedAddress;
 	private int annualSalary;
 	private int totalSpent;
