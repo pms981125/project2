@@ -11,7 +11,7 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <title>Edgecut - Payment</title>
+    <title>order</title>
 
     <!-- bootstrap core css -->
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
@@ -39,7 +39,7 @@
         <header class="header_section long_section px-0">
 		   <nav class="navbar navbar-expand-lg custom_nav-container ">
 		        <a class="navbar-brand" href="index.html">
-		            <span> Edgecut </span>
+		            <span> Green Project </span>
 		        </a>
 		        
 		        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -71,13 +71,20 @@
 		                </span>
 		                <div class="d-flex flex-column">
 		                    <a th:href="@{/logout}" class="btn btn-outline-info mb-2" style="color: #6bb7be; border-color: #6bb7be;">
-		                        <i class="fa fa-sign-out" aria-hidden="true"></i>
-		                        <span>Logout</span>
+		                        <i class="fa fa-unlock" aria-hidden="true"></i>
 		                    </a>
 		                </div>
 		            </div>
 		        </div>
 		    </nav>
+			<div class="text-right" style="padding: 10px 20px;">
+				<a href="/shop/list" class="btn btn-secondary">
+					<i class="fa fa-list"></i>
+				</a>
+		        <a href="/cart/list" class="btn btn-outline-success" style="color: #28a745; border-color: #28a745;">
+		            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+		        </a>
+		    </div>
         </header>
     </div>
 
@@ -245,13 +252,16 @@
     		</div>
     	</div>
     </div>
-
-    <!-- footer section -->
-    <footer class="footer_section">
-        <div class="container">
-            <p>&copy; <span id="displayYear"></span> All Rights Reserved By <a href="https://html.design/">Free Html Templates</a></p>
-        </div>
-    </footer>
+    
+	<!-- footer section -->
+	<footer class="footer_section">
+		<div class="container">
+			<p>
+				&copy; <span id="displayYear"></span> All Rights Reserved By <a	href="https://html.design/">Free Html Templates</a>
+			</p>
+		</div>
+	</footer>
+	<!-- footer section -->
 
     <!-- Scripts -->
     <script src="/js/jquery-3.4.1.min.js"></script>

@@ -11,7 +11,7 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <title>Edgecut</title>
+    <title>shop</title>
 
     <!-- bootstrap core css -->
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
@@ -36,9 +36,11 @@
             <div class="text-right mb-4">
                 <div th:if="${error}" class="alert alert-danger">[[${error}]]</div>
                 <div>
-                    <label class="me-2">상품 코드:</label>
+                    <label class="me-2">상품 코드를 입력하세요</label></br>
                     <input type="text" id="search_product_code" placeholder="상품 코드" class="form-control d-inline-block" style="width: 200px;">
-                    <button type="button" class="btn btn-primary" onclick="searchProduct()">상품 조회</button>
+                    <button type="button" class="btn btn-primary" onclick="searchProduct()">
+                    	<i class="fa fa-search" aria-hidden="true">  상품 조회</i>
+                    </button>
                 </div>
             </div>
 
