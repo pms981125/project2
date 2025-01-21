@@ -1,5 +1,8 @@
 package com.lec.project.human_resources.controller;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.lec.project.MemberSecurityDTO;
 import com.lec.project.human_resources.service.HRService;
 
 import lombok.RequiredArgsConstructor;
@@ -19,13 +23,31 @@ import lombok.extern.log4j.Log4j2;
 public class UserController {
 	private final HRService hrService;
 	
+	@GetMapping("/login")
+	public String login(Model model, @RequestParam(value = "error", defaultValue = "") String error, @RequestParam(value = "exception", defaultValue = "") String exception) {
+		log.info(error); /**/
+		log.info(exception);
+		
+		model.addAttribute("error", error);
+		model.addAttribute("exception", exception);
+		
+		return "user/login";
+	}
+	
 	@GetMapping("/home")
 	public String goHome() {
-		return "user/index";
+		return "./index.html";
 	}
 	
 	@GetMapping("/userInfo")
 	public String getInfo(Model model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		String username = userDetails.getUsername();
+		MemberSecurityDTO member = hrService.getUser(username);
+		
+		model.addAttribute("member", member);
+		
 		return "user/userInfo";
 	}
 	
@@ -40,8 +62,6 @@ public class UserController {
 	
 	@PostMapping("/withdrawal")
 	public String remove(@RequestParam(name = "id") String id) {
-		log.info("-=- withdrawal");
-		
 		hrService.remove(id);
 		
 		return "redirect:/user/logout";
@@ -58,16 +78,7 @@ public class UserController {
 		String ssn = ssn1 + "-" + ssn2;
 		String phone = "010-" + phone1 + "-" + phone2;
 		
-		log.info(id);
-		log.info(password);
-		log.info(name);
-		log.info(ssn);
-		log.info(phone);
-		log.info(email);
-		log.info(location);
-		log.info(address);
-		
-		hrService.addMember(id, password, name, ssn, phone, email, location, address); // 중복 체크
+		hrService.addMember(id, password, name, ssn, phone, email, address); // 중복 체크
 		
 		return "redirect:/user/logout"; // 수정 필요?
 	}
