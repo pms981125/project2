@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Cart/read</title>
+</head>
+<body class="sub_page">
+    <!-- 스크롤 시 네비게이션 바 고정을 위한 스크립트 -->
+    <script>
+    window.addEventListener('DOMContentLoaded', function() {
+        var header = document.querySelector('.header_section');
+        var content = document.querySelector('.shop_section');
+        var lastScroll = 0;
+        
+        function handleScroll() {
+            var currentScroll = window.pageYOffset;
+            
+            // 스크롤 방향 감지
+            if (currentScroll > lastScroll) {
+                // 아래로 스크롤
+                if (currentScroll > 100) {  // 특정 위치 이후부터 고정
+                    header.classList.add('fixed-top');
+                    content.classList.add('header-padding');
+                }
+            } else {
+                // 위로 스크롤
+                if (currentScroll < 10) {  // 최상단 근처에서 고정 해제
+                    header.classList.remove('fixed-top');
+                    content.classList.remove('header-padding');
+                }
+            }
+            
+            lastScroll = currentScroll;
+        }
+        
+        // 스크롤 이벤트 리스너 등록
+        window.addEventListener('scroll', handleScroll);
+        
+        // 초기 로드시 한번 체크
+        handleScroll();
+    });
+    </script>
+<body>
+	<h1>Cart/read</h1>
+
+	<div style="margin: 20px 0;">
+	    <img th:if="${dto.thumbnail_path != null}"
+	         th:src="@{/display(filename=${dto.thumbnail_path})}"
+	         style="max-width: 500px; height: auto;">
+	    <span th:if="${dto.thumbnail_path == null}" class="text-muted">No Image</span>
+	</div>
+
+	<table border="1">
+		<tr>
+			<th>번호</th>
+			<td>[[${dto.id}]]</td>
+		</tr>
+		<tr>
+			<th>상품명</th>
+			<td>[[${dto.product_name}]]</td>
+		</tr>
+		<tr>
+			<th>상품코드</th>
+			<td>[[${dto.product_code}]]</td>
+		</tr>
+		<tr>
+			<th>수량</th>
+			<td>[[${dto.count}]]</td>
+		</tr>
+		<tr>
+			<th>개당 가격</th>
+			<td>[[${dto.price}]]</td>
+		</tr>
+		<tr>
+			<th>총 가격</th>
+			<td>[[${dto.total_price}]]</td>
+		</tr>
+	</table>
+
+	<!-- 버튼 그룹 -->
+	<div>
+		<a th:href="@{/cart/modify(id=${dto.id})}">
+			<button type="button">수정</button>
+		</a>
+
+		<form action="/cart/remove" method="post" style="display: inline;">
+			<input type="hidden" name="id" th:value="${dto.id}">
+			<button type="submit">삭제</button>
+		</form>
+
+		<a th:href="@{/cart/list}">
+			<button type="button">목록</button>
+		</a>
+	</div>
+
+</body>
+</html>

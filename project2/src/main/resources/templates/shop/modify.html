@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    <!-- Site Metas -->
+    <link rel="icon" href="images/fevicon.png" type="image/gif" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>shop</title>
+
+    <!-- 기존 CSS links -->
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+    <link href="/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="/css/style.css" rel="stylesheet" />
+    <link href="/css/responsive.css" rel="stylesheet" />
+</head>
+
+<body class="sub_page">
+    <div class="hero_area">
+        <!-- header section -->
+        <header class="header_section long_section px-0">
+            <!-- 네비게이션 바 내용 -->
+        </header>
+    </div>
+
+    <!-- shop modify section -->
+    <section class="shop_section layout_padding px-5">
+        <div class="container-fluid px-5">
+            <!-- 상품 조회 영역 -->
+            <div class="text-right mb-4">
+                <div>
+                    <label class="me-2">상품 코드를 입력하세요</label></br>
+                    <input type="text" id="search_product_code" placeholder="상품 코드" class="form-control d-inline-block" style="width: 200px;">
+                    <button type="button" class="btn btn-primary" onclick="searchProduct()">
+                    	<i class="fa fa-search" aria-hidden="true">  상품 조회</i>
+                    </button>
+                </div>
+            </div>
+
+		<form id="modifyForm" action="/shop/modify" method="post" enctype="multipart/form-data" onreset="resetForm()">
+            <!-- 상품 수정 폼 -->
+            <div class="product-detail-container">
+                <!-- 왼쪽: 이미지 영역 -->
+                <div class="product-image">
+		            <div style="width: 100%; height: 500px; background: #fff; display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+		                <img th:if="${productImages != null and !productImages.isEmpty()}"
+		                     th:src="@{/display(filename=${productImages[0].thumbnail_path})}"
+		                     alt="메인 이미지"
+		                     style="max-width: 100%; max-height: 100%; object-fit: contain;">
+		                <p th:unless="${productImages != null and !productImages.isEmpty()}" 
+		                   class="text-center text-muted">이미지 없음</p>
+		            </div>
+                    
+		            <!-- 썸네일 이미지들 -->
+		            <div style="display: flex; gap: 10px; margin-bottom: 30px; justify-content: center; flex-wrap: wrap;">
+		                <div th:each="image : ${productImages}" style="position: relative;">
+		                    <img th:src="@{/display(filename=${image.thumbnail_path})}"
+		                         style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
+		                    <button type="button"
+		                            th:data-image-id="${image.img_id}"
+		                            onclick="removeExistingImage(this, this.getAttribute('data-image-id'))"
+		                            style="position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; 
+		                                   background-color: #ff4444; color: white; border: none; 
+		                                   border-radius: 50%; cursor: pointer; font-size: 16px; 
+		                                   display: flex; align-items: center; justify-content: center; 
+		                                   box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+		                        ×
+		                    </button>
+		                </div>
+		            </div>
+		
+		            <!-- 파일 선택 영역 -->
+		            <div class="mb-4" style="text-align: center;">
+		                <label for="productImages" class="btn btn-outline-primary" style="cursor: pointer; position: relative; overflow: hidden;">
+		                    <i class="fa fa-upload me-2"></i>이미지 추가
+		                    <input type="file" id="productImages" name="productImages" 
+		                           multiple accept="image/*" onchange="previewImages(this)"
+		                           style="position: absolute; left: -9999px;">
+		                </label>
+		                <p class="text-muted small mt-2">* 첫 번째 업로드되는 이미지가 대표 이미지로 설정됩니다.</p>
+		            </div>
+		                    
+                    <!-- 이미지 미리보기 -->
+                    <div id="imagePreviewContainer" class="mt-3"></div>
+                </div>
+
+                <!-- 오른쪽: 상품 정보 폼 -->
+                <div class="product-info">
+                    
+                        <input type="hidden" name="bno" th:value="${dto.bno}">
+            			<input type="hidden" name="product_code" id="product_code" th:value="${dto.product_code}">
+                        
+                        <div class="info-section">
+                            <div class="title-section text-right mb-4">
+                                <span class="category">
+                                    <input type="text" name="product_category" id="product_category" 
+                                           th:value="${dto.product_category}" readonly 
+                                           class="form-control text-right">
+                                </span>
+                                <h2 class="product-name">
+                                    <input type="text" name="board_title" id="board_title" 
+                                           th:value="${dto.board_title}" readonly 
+                                           class="form-control text-right">
+                                </h2>
+                            </div>
+
+                            <div class="info-row text-right">
+                                <strong>상품 코드:</strong>
+                                <span id="product_code_display">[[${dto.product_code}]]</span>
+                            </div>
+                            
+                            <div class="info-row text-right">
+                                <strong>가격:</strong>
+                                <input type="number" name="product_price" id="product_price" 
+                                       th:value="${dto.product_price}" class="form-control text-right">
+                            </div>
+
+                            <div class="content-section text-right">
+                                <h4>상세 설명</h4>
+                                <textarea name="board_content1" id="board_content1" 
+                                          class="form-control text-right mb-3" rows="4">[[${dto.board_content1}]]</textarea>
+                                <textarea name="board_content2" id="board_content2" 
+                                          class="form-control text-right" rows="4">[[${dto.board_content2}]]</textarea>
+                            </div>
+
+                            <!-- 버튼 영역 -->
+					    <div class="action-buttons text-right mt-4">
+					        <button type="submit" class="btn btn-primary me-2">수정 완료</button>
+					        <a th:href="@{/shop/read(bno=${dto.bno})}" class="btn btn-secondary me-2">취소</a>
+					        <a th:href="@{/shop/list}" class="btn btn-secondary">목록</a>
+					    </div>
+					</form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- footer section -->
+    <footer class="footer_section">
+        <div class="container">
+            <p>&copy; <span id="displayYear"></span> All Rights Reserved By <a href="https://html.design/">Free Html Templates</a></p>
+        </div>
+    </footer>
+
+    <!-- 필요한 스크립트들 -->
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/custom.js"></script>
+
+	<script>
+		// 페이지 로드 시 에러 메시지 확인
+		document.addEventListener('DOMContentLoaded', function() {
+			// Thymeleaf로 전달된 에러 메시지 확인
+			const errorMessage = '[[${error}]]';
+			if (errorMessage && errorMessage.trim() !== '') {
+				alert(errorMessage);
+			}
+		});
+		function searchProduct() {
+			const productCode = document.getElementById('search_product_code').value;
+
+			$.ajax({
+				url : '/api/product/' + productCode,
+				method : 'GET',
+				success : function(product) {
+					document.getElementById('product_code').value = product.product_code;
+					document.getElementById('product_code_display').textContent = product.product_code;
+					document.getElementById('board_title').value = product.product_name;
+					document.getElementById('product_price').value = product.product_price;
+					document.getElementById('product_category').value = product.product_category;
+					document.getElementById('product_stock').value = product.product_stock;
+					document.getElementById('board_content1').value = product.product_detail1;
+					document.getElementById('board_content2').value = product.product_detail2;
+				},
+				error : function() {
+					alert('상품을 찾을 수 없습니다.');
+				}
+			});
+		}
+		
+		// 이미지 미리보기 함수
+		function previewImages(input) {
+		    const previewContainer = document.getElementById('imagePreviewContainer');
+		    previewContainer.innerHTML = '';
+		
+		    if (input.files) {
+		        Array.from(input.files).forEach(file => {
+		            const reader = new FileReader();
+		            
+		            reader.onload = function(e) {
+		                const imgWrapper = document.createElement('div');
+		                imgWrapper.style.position = 'relative';
+		                imgWrapper.style.margin = '5px';
+		
+		                const img = document.createElement('img');
+		                img.src = e.target.result;
+		                img.style.width = '100px';
+		                img.style.height = '100px';
+		                img.style.objectFit = 'cover';
+		                img.style.borderRadius = '4px';
+		
+		                const removeBtn = document.createElement('button');
+		                removeBtn.innerHTML = '×';
+		                removeBtn.style.position = 'absolute';
+		                removeBtn.style.top = '-8px';
+		                removeBtn.style.right = '-8px';
+		                removeBtn.style.width = '24px';
+		                removeBtn.style.height = '24px';
+		                removeBtn.style.backgroundColor = '#ff4444';
+		                removeBtn.style.color = 'white';
+		                removeBtn.style.border = 'none';
+		                removeBtn.style.borderRadius = '50%';
+		                removeBtn.style.cursor = 'pointer';
+		                removeBtn.style.fontSize = '16px';
+		                removeBtn.style.display = 'flex';
+		                removeBtn.style.alignItems = 'center';
+		                removeBtn.style.justifyContent = 'center';
+		                removeBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+		
+		                removeBtn.onclick = function() {
+		                    imgWrapper.remove();
+		                    const fileInput = document.getElementById('productImages');
+		                    const fileList = Array.from(fileInput.files);
+		                    const index = fileList.findIndex(f => f.name === file.name);
+		                    if (index > -1) {
+		                        fileList.splice(index, 1);
+		                        const newFileList = new DataTransfer();
+		                        fileList.forEach(f => newFileList.items.add(f));
+		                        fileInput.files = newFileList.files;
+		                    }
+		                };
+		
+		                imgWrapper.appendChild(img);
+		                imgWrapper.appendChild(removeBtn);
+		                previewContainer.appendChild(imgWrapper);
+		            }
+		
+		            reader.readAsDataURL(file);
+		        });
+		    }
+		}
+
+		// 기존 이미지 삭제 함수
+		function removeExistingImage(btn, imageId) {
+			console.log('#########################################Attempting to delete image:', imageId); // 콘솔 로그 추가
+			
+			if(confirm('이 이미지를 삭제하겠습니까?')){
+				const productCode = document.getElementById('product_code').value;
+				
+				fetch('/shop/deleteImage', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+					body: `imageId=${imageId}&productCode=${productCode}`
+				})
+				.then(response => {
+					console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$Delete response:', response); // 응답 로그 추가
+					
+					if (response.ok){
+						btn.closest('div').remove();
+						alert('이미지가 삭제되었습니다.');
+					} else {
+						console.error('Delete failed'); // 에러 로그 추가
+						alert('이미지 삭제에 실패했습니다.');
+					}
+				})
+				.catch(error => {
+					console.error('Error', error);
+					alert('이미지 삭제 중 오류가 발생했습니다.');
+				})
+			}
+		}
+		
+	</script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+<link th:href="@{/css/ms/userList.css}" rel="stylesheet" />
+
+<div layout:fragment="content">
+	<div class="container mt-4">
+		<div class="input-group">
+			<div class="input-group-prepend">
+				<select class="form-select mr-3" name="size" id="size">
+					<option value="10" th:selected="${size == 10}">10개씩 보기</option>
+					<option value="20" th:selected="${size == 20}">20개씩 보기</option>
+					<option value="50" th:selected="${size == 50}">50개씩 보기</option>
+				</select>
+				관리자만 보기 <input type="checkbox" class="ml-2" value="관리자만 보기" name="onlyAdmin" id="onlyAdmin" th:checked="${onlyAdmin}"/> <!-- css 수정 -->
+			</div>
+		</div>
+		<table class="table table-hover mt-3">
+			<thead>
+				<tr>
+					<th>회원 ID</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="page:${pages}">
+					<td><a th:href="|@{/sudo/userInfo(id=${page.getId()})}|">[[${page.getId()}]]</a></td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<div class="paging">
+			<span th:if="${!pages.first}" >
+				<a th:href="@{/sudo/allUserList(page=1, size=${size}, onlyAdmin=${onlyAdmin})}">첫 페이지</a>
+				<a th:href="${pages.first} ? '#' : @{/sudo/allUserList(page=${pages.number}, size=${size}, onlyAdmin=${onlyAdmin})}">이전</a>
+			</span>
+			<span th:each="page:${#numbers.sequence(startPage, endPage)}">
+				<span th:if="${page == pages.number + 1}" th:text="${page}" class="selected"></span>
+				<span th:unless="${page == pages.number + 1}">
+					<a th:href="@{/sudo/allUserList(page=${page}, size=${size}, onlyAdmin=${onlyAdmin})}" th:text="${page}"></a>
+				</span>
+			</span>
+			<span th:if="${!pages.last}" >
+				<a th:href="${pages.last} ? '#' : @{/sudo/allUserList(page=${pages.number+2}, size=${size}, onlyAdmin=${onlyAdmin})}">다음</a>
+				<a th:href="@{/sudo/allUserList(page=${pages.totalPages}, size=${size}, onlyAdmin=${onlyAdmin})}">마지막 페이지</a>
+			</span>
+		</div>
+		
+		<hr />	
+		<div class="button">
+			<a th:href="|@{/sudo/addAdmin}|" class="text-decoration-none">
+				<button type="button" class="btn btn-primary">관리자 추가</button>
+			</a>
+			<a th:href="|@{/sudo/logout}|" class="text-decoration-none">
+				<button type="button" class="btn btn-secondary">로그 아웃</button>
+			</a>
+		</div>
+	</div>
+</div>
+<script layout:fragment="script" th:inline="javascript">
+	const selectSize = document.querySelector("#size")
+	const onlyAdmin = document.querySelector("#onlyAdmin")
+	const page = /*[[${pages.number + 1}]]*/''
+	
+	const pages = /*[[${pages}]]*/''
+	
+	console.log(page)
+	console.log(pages)
+	
+	selectSize.addEventListener('change', function(e) {
+		const form = document.createElement('form')
+		const size = selectSize.value
+		const checkBox = onlyAdmin.checked
+		
+		let input1 = document.createElement('input')
+		let input2 = document.createElement('input')
+		let input3 = document.createElement('input')
+
+		input1.type = 'hidden'
+	    input1.name = 'page'
+	    input1.value = page
+		input2.type = 'hidden'
+	    input2.name = 'size'
+	    input2.value = size
+		input3.type = 'hidden'
+		input3.name = 'onlyAdmin'
+		input3.value = checkBox
+	    
+	    form.appendChild(input1)
+	    form.appendChild(input2)
+	    form.appendChild(input3)
+		
+		form.action = `/sudo/allUserList`
+		form.method = 'get'
+		document.body.appendChild(form)
+		form.submit()
+	}, false)
+	
+	onlyAdmin.addEventListener('change', function(e) {
+		const form = document.createElement('form')
+		const size = selectSize.value
+		const checkBox = onlyAdmin.checked
+		
+		let input1 = document.createElement('input')
+		let input2 = document.createElement('input')
+
+		input1.type = 'hidden'
+	    input1.name = 'size'
+	    input1.value = size
+		input2.type = 'hidden'
+	    input2.name = 'onlyAdmin'
+	    input2.value = checkBox
+	    
+	    form.appendChild(input1)
+	    form.appendChild(input2)
+		
+		form.action = `/sudo/allUserList`
+		form.method = 'get'
+		document.body.appendChild(form)
+		form.submit()
+	}, false)
+</script>
+<!-- <div th:text="${#authentication.name}">Username</div> -->

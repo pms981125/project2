@@ -1,0 +1,258 @@
+<!-- shop list -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head>
+<!-- Basic -->
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- Site Metas -->
+<link rel="icon" href="images/fevicon.png" type="image/gif" />
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+
+<title>shop</title>
+
+<!-- bootstrap core css -->
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+
+<!-- fonts style -->
+<link
+	href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap"
+	rel="stylesheet" />
+
+<!-- font awesome style -->
+<link href="/css/font-awesome.min.css" rel="stylesheet" />
+
+<!-- Custom styles for this template -->
+<link href="/css/style.css" rel="stylesheet" />
+
+<!-- responsive style -->
+<link href="/css/responsive.css" rel="stylesheet" />
+
+</head>
+<body class="sub_page">
+	<div class="hero_area">
+		<!-- header section strats -->
+		<header class="header_section long_section px-0">
+			<nav class="navbar navbar-expand-lg custom_nav-container ">
+				<a class="navbar-brand" href="index.html">
+				<span> Green Project </span>
+				</a>
+				
+				<button class="navbar-toggler"
+					type="button"
+					data-toggle="collapse"
+					data-target="#navbarSupportedContent"
+					aria-controls="navbarSupportedContent"
+					aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class=""> </span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+						<ul class="navbar-nav  ">
+							<li class="nav-item ">
+								<a class="nav-link" href="/index.html">Home<span class="sr-only">(current)</span></a>
+							</li>
+							<li class="nav-item">
+								<a href="/market/access" class="nav-link">Region Market</a>
+							</li>
+							<li class="nav-item active">
+								<a class="nav-link"	href="/shop/list">Shopping Mall</a>
+							</li>
+							<li class="nav-item">
+                				<a class="nav-link" href="/account/list">Account</a>
+							</li>
+						</ul>
+					</div>
+					
+	            <div class="quote_btn-container">
+	                <span style="color: black; margin-right: 15px;">
+	                    <i class="fa fa-user" aria-hidden="true"></i>
+	                    <span sec:authentication="name"></span>
+	                </span>
+	                <div class="d-flex flex-column">
+	                    <a th:href="@{/logout}" class="btn btn-outline-info mb-2" style="color: #6bb7be; border-color: #6bb7be;">
+	                        <i class="fa fa-unlock" aria-hidden="true"></i>
+	                    </a>
+	                </div>
+	            </div>
+			</nav>
+			<!-- 하단 네비게이션 (마우스 오버시 보이는 부분) -->
+			<div class="bottom-nav">
+				<div class="text-right" style="padding: 10px 20px;">
+				    <!-- 장바구니 버튼 - 모든 사용자에게 표시 -->
+				    <a href="/cart/list" class="btn btn-success text-white me-2">
+				        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+				    </a>
+				    
+				    <!-- 상품 등록 버튼 - 관리자에게만 표시 -->
+				    <a href="/shop/regist" class="btn btn-info text-white" sec:authorize="hasRole('MANAGER')">
+				        <i class="fa fa-plus" aria-hidden="true"></i> 
+				    </a>
+				</div>
+			</div>
+		</header>
+		<!-- end header section -->
+	
+	</div>
+	<!-- shop_content section -->
+	<section class="shop_section layout_padding px-5">
+		<div class="container-fluid px-5">
+			<div class="heading_container">
+				<h2>Project</h2>
+				<p>쇼핑몰 메인 페이지입니다.</p>
+				<!-- 검색 폼 추가 -->
+				<div class="search_container mt-5 mb-5 pr-5">
+					<form th:action="@{/shop/list}" method="get">
+						<div class="input-group">
+							<select class="form-control" name="category" style="width: 200px;">
+								<option value="">전체 카테고리</option>
+								<option value="category 000" th:selected="${category == 'category 000'}">category 000</option>
+								<option value="category 001" th:selected="${category == 'category 001'}">category 001</option>
+								<option value="category 002" th:selected="${category == 'category 002'}">category 002</option>
+								<option value="category 003" th:selected="${category == 'category 003'}">category 003</option>
+								<option value="category 004" th:selected="${category == 'category 004'}">category 004</option>
+							</select>
+							<input type="text" class="form-control" name="keyword" 
+									th:value="${keyword}" style="width: 600px" placeholder="검색어를 입력하세요">
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary" type="submit">
+									<i class="fa fa-search"></i>
+								</button>
+							</div>
+						</div>
+					</form>
+					
+					<!-- 검색 에러 메시지 표시 -->
+					<div th:if="${searchError}" class="alert alert-danger text-center mt-3" role="alert"> [[${searchError}]] </div>
+				</div>
+			</div>
+		</div>
+			<div class="product-list-container">
+			    <div class="flex-container">
+			        <th:block th:each="dto : ${responseDTO.dtoList}">
+			            <a th:href="@{/shop/read(bno=${dto.bno})}" class="box-link">
+			                <div class="box">
+			                    <div class="img-box">
+			                        <img th:if="${dto.thumbnail_path}"
+			                            th:src="@{/display(filename=${dto.thumbnail_path})}"
+			                            alt="상품 이미지"
+			                            style="max-width: 100%; height: auto;">
+			                        <p th:unless="${dto.thumbnail_path}" class="text-center text-muted">
+			                            이미지 없음
+			                        </p>
+			                    </div>
+			                    <div class="detail-box">
+			                        <div class="info-container text-right">
+			                            <span class="category">[[${dto.product_category}]]</span>
+			                            <h4 class="product-name">[[${dto.board_title}]]</h4>
+			                            <div class="price_box">
+			                                <h6 class="price_heading">
+			                                    <span>￦</span> [[${#numbers.formatInteger(dto.product_price, 0, 'COMMA')}]]
+			                                </h6>
+			                            </div>
+			                            <p class="content1">[[${dto.board_content1}]]</p>
+			                        </div>
+			                    </div>
+			                </div>
+			            </a>
+			        </th:block>
+			    </div>
+			</div>
+		</div>
+	</div>
+		</div>
+        <!-- 페이지네이션 -->
+        <div class="pagination-container">
+            <ul class="pagination justify-content-center" th:with="start=${responseDTO.start}, end=${responseDTO.end}">
+                <li class="page-item" th:if="${responseDTO.prev}">
+                    <a class="page-link" th:href="@{/shop/list(page=${start - 1}, category=${category}, keyword=${keyword})}">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                </li>
+                
+                <li th:each="num : ${#numbers.sequence(start, end)}" 
+                    th:class="${'page-item ' + (responseDTO.page == num ? 'active' : '')}">
+                    <a class="page-link" th:href="@{/shop/list(page=${num}, category=${category}, keyword=${keyword})}">
+                        [[${num}]]
+                    </a>
+                </li>
+                
+                <li class="page-item" th:if="${responseDTO.next}">
+                    <a class="page-link" th:href="@{/shop/list(page=${end + 1}, category=${category}, keyword=${keyword})}">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+	</section>
+
+	<!-- end shop_content section -->
+
+	<!-- end info_section -->
+
+
+	<!-- footer section -->
+	<footer class="footer_section">
+		<div class="container">
+			<p>
+				&copy; <span id="displayYear"></span> All Rights Reserved By <a	href="https://html.design/">Free Html Templates</a>
+			</p>
+		</div>
+	</footer>
+	<!-- footer section -->
+
+	<!-- jQery -->
+	<script src="/js/jquery-3.4.1.min.js"></script>
+	<!-- bootstrap js -->
+	<script src="/js/bootstrap.js"></script>
+	<!-- custom js -->
+	<script src="/js/custom.js"></script>
+</body>
+</html>
+    <!-- 스크롤 시 네비게이션 바 고정을 위한 스크립트 -->
+    <script>
+    window.addEventListener('DOMContentLoaded', function() {
+        var header = document.querySelector('.header_section');
+        var content = document.querySelector('.shop_section');
+        var bottomNav = document.querySelector('.bottom-nav');
+        var lastScroll = 0;
+        
+        
+        
+        function handleScroll() {
+            var currentScroll = window.pageYOffset;
+            
+            // 스크롤 방향 감지
+            if (currentScroll > lastScroll) {
+                // 아래로 스크롤
+                if (currentScroll > 100) {  // 특정 위치 이후부터 고정
+                    header.classList.add('fixed-top');
+                    content.classList.add('header-padding');
+                    bottomNav.style.marginRight ="0px";
+                }
+            } else {
+                // 위로 스크롤
+                if (currentScroll < 10) {  // 최상단 근처에서 고정 해제
+                    header.classList.remove('fixed-top');
+                    content.classList.remove('header-padding');
+                    bottomNav.style.marginRight = "45px";
+                }
+            }
+            
+            lastScroll = currentScroll;
+        }
+        
+        // 스크롤 이벤트 리스너 등록
+        window.addEventListener('scroll', handleScroll);
+        
+        // 초기 로드시 한번 체크
+        handleScroll();
+    });
+    </script>

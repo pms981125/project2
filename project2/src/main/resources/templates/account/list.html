@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<title>Edgecut - Bank Accounts</title>
+<link rel="icon" href="/images/fevicon.png" type="image/gif" />
+<link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+	rel="stylesheet" />
+<link rel="stylesheet" type="text/css"
+	th:href="@{/css/font-awesome.min.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{/css/responsive.css}" />
+<link rel="stylesheet" th:href="@{/css/account/list.css}" />
+</head>
+<body>
+	<header class="header_section long_section px-0">
+		<nav class="navbar navbar-expand-lg custom_nav-container ">
+			<a class="navbar-brand" href="/index.html"> <span> Edgecut
+			</span>
+			</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarSupportedContent"
+				aria-controls="navbarSupportedContent" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class=""> </span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<div
+					class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+					<ul class="navbar-nav  ">
+						<li class="nav-item "><a class="nav-link" href="/index.html">Home<span
+								class="sr-only">(current)</span></a></li>
+						<li class="nav-item"><a href="/market/access"
+							class="nav-link">Region Market</a></li>
+						<li class="nav-item active"><a class="nav-link"
+							href="/shop/list">Shopping Mall</a></li>
+						<li class="nav-item"><a class="nav-link" href="/account/list">Account</a>
+						</li>
+					</ul>
+				</div>
+				<div class="quote_btn-container">
+					<span style="color: black; margin-right: 15px;"> <i
+						class="fa fa-user" aria-hidden="true"></i> <span
+						sec:authentication="name"></span>
+					</span>
+					<div class="d-flex flex-column">
+						<a th:href="@{/logout}" class="btn btn-outline-info mb-2"
+							style="color: #6bb7be; border-color: #6bb7be;"> <i
+							class="fa fa-sign-out" aria-hidden="true"></i> <span>Logout</span>
+						</a>
+					</div>
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<main class="container my-5">
+		
+
+		<div class="row justify-content-center">
+			<div class="col-md-10">
+				<div class="card">
+					<div
+						class="card-header d-flex justify-content-between align-items-center">
+						<span>계좌 목록</span> <a href="/account/register"
+							class="btn btn-primary"> <i class="fa fa-plus-circle me-2"></i>신규
+							계좌 개설
+						</a>
+					</div>
+
+					<div class="card-body">
+						<div th:if="${#lists.isEmpty(responseDTO.dtoList)}"	class="text-center py-5">
+							<div class="no-accounts-message">
+								<i class="fa fa-exclamation-circle fa-3x mb-3" style="color: #6bb7be;"></i>
+								<h4 class="mb-3">생성된 계좌가 없습니다</h4>
+								<p class="mb-4">계좌를 생성하세요</p>
+							</div>
+						</div>
+						<div class="row row-cols-1 row-cols-md-3 g-4">
+							<div class="col" th:each="dto : ${responseDTO.dtoList}">
+								<div class="card h-100 account-card">
+									<div class="card-body position-relative">
+										<!-- Delete Button -->
+										<a th:href="@{/account/delete/{id}(id=${dto.accountId})}"
+											class="btn-close position-absolute top-0 end-0 m-2"
+											onclick="return confirm('정말로 이 계좌를 삭제하시겠습니까?')"
+											aria-label="Close"> </a>
+
+										<div class="account-number text-center">
+											<a
+												th:href="|@{/account/read(accountId=${dto.accountId})}&${link}|">
+												<i class="fa fa-credit-card me-2"></i> [[${dto.accountId}]]
+											</a>
+										</div>
+										<div class="account-info">
+											<div class="info-item">
+												<span class="info-label"> <i
+													class="fa fa-calendar me-1"></i> 개설일
+												</span> <span class="info-value">
+													[[${#temporals.format(dto.createDate, 'yyyy-MM-dd')}]] </span>
+											</div>
+											<div class="info-item">
+												<span class="info-label"> <i class="fa fa-money me-1"></i>
+													잔액
+												</span> <span class="info-value balance-value">
+													[[${#numbers.formatInteger(dto.balance, 1, 'COMMA')}]] 원 </span>
+											</div>
+										</div>
+									</div>
+									<div class="card-footer text-center p-2">
+										<div class="card-footer text-center p-2">
+											<div class="d-flex justify-content-between">
+												<a
+													th:href="|@{/account/read(accountId=${dto.accountId})}&${link}|"
+													class="btn btn-outline-primary detail-btn"> <i
+													class="fa fa-search me-1"></i> 자세히 보기
+												</a> <a th:href="@{/account/delete(accountId=${dto.accountId})}"
+													class="btn btn-outline-danger"
+													onclick="return confirm('정말로 이 계좌를 삭제하시겠습니까?')"> <i
+													class="fa fa-trash me-1"></i>
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<nav class="mt-4">
+							<ul class="pagination justify-content-center">
+								<li class="page-item" th:if="${responseDTO.prev}"><a
+									class="page-link" th:data-num="${responseDTO.start - 1}"
+									href="#">Prev</a></li>
+								<th:block
+									th:each="i : ${#numbers.sequence(responseDTO.start, responseDTO.end)}">
+									<li
+										th:class="${responseDTO.page == i} ? 'page-item active' : 'page-item'">
+										<a class="page-link" th:data-num="${i}" href="#">[[${i}]]</a>
+									</li>
+								</th:block>
+								<li class="page-item" th:if="${responseDTO.next}"><a
+									class="page-link" th:data-num="${responseDTO.end + 1}" href="#">Next</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<script th:inline="javascript">
+		document
+				.querySelector(".pagination")
+				.addEventListener(
+						"click",
+						function(e) {
+							e.preventDefault();
+							const target = e.target;
+							if (target.tagName !== 'A')
+								return;
+
+							const num = target.getAttribute("data-num");
+							const formObj = document.querySelector("form");
+							formObj.innerHTML += `<input type='hidden' name='page' value='${num}'>`;
+							formObj.submit();
+						});
+	</script>
+</body>
+</html>

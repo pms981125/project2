@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	  
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+
+<div layout:fragment="content">
+	<div class="container-fluid d-flex justify-content-center" style="height: 100vh">
+		<div class="card align-self-center">
+	        <div class="card-header">
+	            LOGIN Page
+	        </div>
+	        <div class="card-body">
+				<form action="/loginProcess" method="post">
+					<div class="input-group mb-3">
+			            <span class="input-group-text">아이디</span>
+			        	<input type="text" name="username" class="form-control" placeholder="USER ID">
+					</div>
+					<div class="input-group mb-3">
+	                    <span class="input-group-text">패스워드</span>
+	                    <input type="password" name="password" class="form-control" placeholder="PASSWORD">
+	                </div>
+	                <div class="my-4">
+	                    <div class="float-end">
+	                        <button type="submit" class="btn btn-primary submitBtn">LOGIN</button>
+	                        <a href="/user/goRegisterForm" class="text-decoration-none">
+		                        <button type="button" class="btn btn-success registerBtn">REGISTER</button> <!--  -->
+	                        </a>
+	                    </div>
+	                </div>
+				</form>
+				<!--
+	 			<div th:if="${session.errorMessage}" style="color: red;">
+        			<p th:text="${session.errorMessage}"></p>
+    			</div>
+    			-->
+	        </div>
+		</div>
+	</div>
+</div>
+<script layout:fragment="script" th:inline="javascript">
+	const error = /*[[${session.errorMessage}]]*/""
+	
+	if(error != null) {
+		alert(error);
+	}
+</script>

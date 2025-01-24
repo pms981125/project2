@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	  
+<link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+
+<!-- [[${member}]] -->
+<div layout:fragment="content">
+	<div class="container mt-4">
+		<form th:action="@{/sudo/update}" method="post" id="form">
+			<!-- [[${member.getId()}]] -->
+			<div class="form-group input-group">
+				<div class="input-group-prepend"><span class="input-group-text">ID</span></div>
+				<input type="text" name="id" class="form-control" th:value="${member.id}" readonly>
+			</div>
+			<div class="form-group input-group">
+				<div class="input-group-prepend"><span class="input-group-text">name</span></div>
+				<input type="text" name="name" class="form-control" th:value="${member.name}">
+			</div>
+			<div class="form-group input-group">
+				<div class="input-group-prepend"><span class="input-group-text">주민등록번호</span></div>
+				<input type="text" name="ssn" class="form-control" th:value="${member.ssn}">
+			</div>
+			<div class="form-group input-group">
+				<div class="input-group-prepend"><span class="input-group-text">핸드폰 번호</span></div>
+				<input type="text" name="phone" class="form-control" th:value="${member.phone}">
+			</div>
+			<div class="form-group input-group">
+				<div class="input-group-prepend"><span class="input-group-text">이메일</span></div>
+				<input type="email" name="email" class="form-control" th:value="${member.email}">
+			</div>
+			<div class="form-group input-group">
+				<div class="input-group-prepend"><span class="input-group-text">주소</span></div>
+				<input type="text" name="address" class="form-control" th:value="${member.address}">
+			</div>
+			<th:block th:if="${member.annualSalary > 0}">
+				<div class="form-group input-group">
+					<div class="input-group-prepend"><span class="input-group-text">연봉</span></div>
+					<input type="text" name="annualSalary" class="form-control" th:value="${member.annualSalary}">
+				</div>
+			</th:block>
+			
+			<!-- <input type="text" name="password" class="form-control" th:value="${member.password}" > -->
+			<div class="form-group input-group mt-sm-1 justify-content-center">
+				<button class="btn btn-primary memUpdateBtn">정보 수정</button>
+				<button class="btn btn-warning pwInitializeBtn ml-2">비밀번호 재발급</button>
+				<th:block th:if="${member.isAdmin()}"> <br />
+					<button class="btn btn-warning delegateAuthorityBtn ml-2">권한 위임</button>
+				</th:block>
+				<th:block th:unless="${member.isAdmin() || member.authorities[0].authority.equals('ROLE_SUPER_ADMIN')}"> <br />
+					<button class="btn btn-warning exaltationToAdminBtn ml-2">관리자 승격</button>
+				</th:block>
+				<th:block th:if="${member.isAdmin()}"> <br />
+					<button class="btn btn-danger adminRemoveBtn ml-2">관리자 삭제</button>
+				</th:block>
+				<th:block th:unless="${member.isAdmin() || member.authorities[0].authority.equals('ROLE_SUPER_ADMIN')}"> <br />
+					<button class="btn btn-danger memRemoveBtn ml-2">회원 삭제</button>
+				</th:block>
+				<a th:href="|@{/sudo/allUserList}|" class="text-decoration-none">
+					<button type="button" class="btn btn-success ml-2">목록으로</button>
+				</a>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+	const form = document.querySelector("#form")
+	const member = /*[[${member}]]*/""
+	
+	document.querySelector(".memUpdateBtn").addEventListener("click", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	    
+	    form.action = `/sudo/update`
+	    form.method = 'post'
+	    form.submit()
+	}, false)
+	
+	if(!member.admin && !(member.authorities[0].authority == "ROLE_SUPER_ADMIN")) {
+		document.querySelector(".memRemoveBtn").addEventListener("click", function(e) {
+		    e.preventDefault()
+		    e.stopPropagation()
+		    
+		    form.action = `/sudo/remove`
+		    form.method = 'post'
+		    form.submit()
+		}, false)
+	}
+	
+	if(member.admin) {
+		document.querySelector(".adminRemoveBtn").addEventListener("click", function(e) {
+		    e.preventDefault()
+		    e.stopPropagation()
+		    
+		    let input1 = document.createElement('input')
+		
+			input1.type = 'hidden'
+			input1.name = 'isAdmin'
+			input1.value = true
+			    
+			form.appendChild(input1)
+		    
+		    form.action = `/sudo/remove`
+		    form.method = 'post'
+		    form.submit()
+		}, false)
+	}
+	
+	document.querySelector(".pwInitializeBtn").addEventListener("click", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	    
+		form.action = `/sudo/initializePassword`
+		form.method = 'post'
+		form.submit()
+	}, false)
+		
+	if(member.admin) {
+		document.querySelector(".delegateAuthorityBtn").addEventListener("click", function(e) {
+		    e.preventDefault()
+		    e.stopPropagation()
+		    
+		    const auth = /*[[${#authentication.name}]]*/""
+		    
+		    let input1 = document.createElement('input')
+	
+		    input1.type = 'hidden'
+		    input1.name = 'superAdminId'
+		    input1.value = auth
+		    
+		    form.appendChild(input1)
+		    
+			form.action = `/sudo/delegate`
+			form.method = 'post'
+			form.submit()
+		}, false)
+	}
+	
+	if(!member.admin && !(member.authorities[0].authority == "ROLE_SUPER_ADMIN")) {
+		document.querySelector(".exaltationToAdminBtn").addEventListener("click", function(e) {
+		    e.preventDefault()
+		    e.stopPropagation()
+		    
+		    /* 연봉 입력 받기 추가 */
+		    const sal = prompt("연봉 입력")
+		    
+		    let input1 = document.createElement('input')
+	
+		    input1.type = 'hidden'
+		    input1.name = 'annualSalary'
+		    // input1.value = 10000 /* 임시 숫자 */
+		    input1.value = sal
+		    
+		    form.appendChild(input1)
+		    
+			form.action = `/sudo/exaltation`
+			form.method = 'post'
+			form.submit()
+		}, false)
+	}
+</script>

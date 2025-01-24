@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    <!-- Site Metas -->
+    <link rel="icon" href="images/fevicon.png" type="image/gif" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>order</title>
+
+    <!-- bootstrap core css -->
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+    <link href="/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="/css/style.css" rel="stylesheet" />
+    <link href="/css/responsive.css" rel="stylesheet" />
+    
+    <style>
+    .modal_dialog {
+    	position: relative;
+    	top: 30%;
+    	transform: translateY(-50%) !important;
+    	margin: 0 auto;
+    }
+    .modal{
+    	padding-right: 0 !important;
+    }
+    </style>
+</head>
+<body class="sub_page">
+    <!-- 스크롤 시 네비게이션 바 고정을 위한 스크립트 -->
+    <script>
+    window.addEventListener('DOMContentLoaded', function() {
+        var header = document.querySelector('.header_section');
+        var content = document.querySelector('.shop_section');
+        var bottomNav = document.querySelector('.bottom-nav');
+        var lastScroll = 0;
+        
+        
+        
+        function handleScroll() {
+            var currentScroll = window.pageYOffset;
+            
+            // 스크롤 방향 감지
+            if (currentScroll > lastScroll) {
+                // 아래로 스크롤
+                if (currentScroll > 100) {  // 특정 위치 이후부터 고정
+                    header.classList.add('fixed-top');
+                    content.classList.add('header-padding');
+                    bottomNav.style.marginRight ="0px";
+                }
+            } else {
+                // 위로 스크롤
+                if (currentScroll < 10) {  // 최상단 근처에서 고정 해제
+                    header.classList.remove('fixed-top');
+                    content.classList.remove('header-padding');
+                    bottomNav.style.marginRight = "45px";
+                }
+            }
+            
+            lastScroll = currentScroll;
+        }
+        
+        // 스크롤 이벤트 리스너 등록
+        window.addEventListener('scroll', handleScroll);
+        
+        // 초기 로드시 한번 체크
+        handleScroll();
+    });
+    </script>
+<body class="sub_page">
+    <div class="hero_area">
+        <!-- header section strats -->
+        <header class="header_section long_section px-0">
+		   <nav class="navbar navbar-expand-lg custom_nav-container ">
+		        <a class="navbar-brand" href="index.html">
+		            <span> Green Project </span>
+		        </a>
+		        
+		        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+		            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		            <span class=""> </span>
+		        </button>
+		        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+		            <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+		                <ul class="navbar-nav">
+		                    <li class="nav-item">
+		                        <a class="nav-link" href="/index.html">Home<span class="sr-only">(current)</span></a>
+		                    </li>
+		                    <li class="nav-item">
+		                        <a href="/market/access" class="nav-link">Region Market</a>
+		                    </li>
+		                    <li class="nav-item">
+		                        <a class="nav-link" href="/shop/list">Shopping Mall</a>
+		                    </li>
+		                    <li class="nav-item">
+		                        <a class="nav-link" href="/account/list">Account</a>
+		                    </li>
+		                </ul>
+		            </div>
+		            
+		            <div class="quote_btn-container">
+		                <span style="color: black; margin-right: 15px;">
+		                    <i class="fa fa-user" aria-hidden="true"></i>
+		                    <span sec:authentication="name"></span>
+		                </span>
+		                <div class="d-flex flex-column">
+		                    <a th:href="@{/logout}" class="btn btn-outline-info mb-2" style="color: #6bb7be; border-color: #6bb7be;">
+		                        <i class="fa fa-unlock" aria-hidden="true"></i>
+		                    </a>
+		                </div>
+		            </div>
+		        </div>
+		    </nav>
+			<!-- 하단 네비게이션 (마우스 오버시 보이는 부분) -->
+			<div class="bottom-nav">
+				<div class="text-right" style="padding: 10px 20px;">
+					<a href="/shop/list" class="btn btn-secondary">
+						<i class="fa fa-list"></i>
+					</a>
+		        	<a href="/cart/list" class="btn btn-outline-success" style="color: #28a745; border-color: #28a745;">
+		            	<i class="fa fa-shopping-cart" aria-hidden="true"></i>
+		        	</a>
+		    	</div>
+		    </div>
+        </header>
+    </div>
+
+    <!-- payment section -->
+    <section class="shop_section layout_padding px-5">
+        <div class="container-fluid px-5">
+        
+         <form id="orderForm" th:action="@{/cart/order/submit}" method="post" onsubmit="return false;">
+            <!-- 총 금액을 hidden으로 전달 -->
+            <input type="hidden" name="total_amount" th:value="${totalPrice}">         
+         
+            <div class="heading_container mb-4">
+                <h2>주문하기</h2>
+            </div>
+
+            <div class="row">
+                <!-- Left Column - Customer Information -->
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h4 class="card-title mb-4">주문자 정보</h4>
+                            
+                            <!-- Customer ID from Cart -->
+                            <div class="mb-3">
+                                <label class="form-label">주문자 ID</label>
+                                <input type="text" class="form-control" th:value="${member.id}" readonly>
+                            </div>
+
+                            <!-- Name Input -->
+                            <div class="mb-3">
+                                <label class="form-label">이름</label>
+                                <input type="text" class="form-control" name="customer_name"
+                                		th:value="${member.name}" required>
+                            </div>
+
+                            <!-- Phone Number Input -->
+                            <div class="mb-3">
+                                <label class="form-label">연락처</label>
+                                <input type="tel" class="form-control" name="phone_number"
+										th:value="${member.phone}" 
+                                       pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" 
+                                       placeholder="000-0000-0000" required>
+                            </div>
+
+                            <!-- Address Input -->
+                            <div class="mb-3">
+                                <label class="form-label">배송 주소</label>
+                                <input type="text" class="form-control" name="address" 
+                                		th:value="${member.detailedAddress}"placeholder="상세주소" required>
+                            </div>
+
+                            <!-- Special Requests -->
+                            <div class="mb-3">
+                                <label class="form-label">배송 요청사항</label>
+                                <textarea class="form-control" name="special_requests" rows="3" 
+                                          placeholder="배송 시 요청사항을 입력해주세요"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+				<!-- Right Column - Order Summary -->
+				<div class="col-md-6">
+				    <div class="card mb-4">
+				        <div class="card-body">
+				            <h4 class="card-title mb-4">주문 상품 정보</h4>
+				            
+				            <!-- Cart Items List -->
+				            <div class="cart-items">
+				                <div th:each="item : ${responseDTO.dtoList}" class="cart-item card mb-3">
+				                    <div class="card-body d-flex align-items-center p-3">
+				                    	<!-- 상품 이미지 -->
+				                        <div class="item-image me-4" style="width: 80px;">
+				                            <img th:if="${item.thumbnail_path != null}"
+				                                 th:src="@{/display(filename=${item.thumbnail_path})}"
+				                                 class="img-fluid rounded"
+				                                 style="max-width: 70px; height: auto;">
+				                            <span th:if="${item.thumbnail_path == null}" class="text-muted">No Image</span>
+				                        </div>
+				                        
+				                        <!-- 상품 정보 -->
+				                        <div class="item-details flex-grow-1">
+				                        <div class="d-flex justify-content-between align-items-center">
+				                        	<div>
+						                        <h6 class="card-title mb-1">[[${item.product_name}]] 
+						                            <span class="text-muted ms-3">수량: [[${item.count}]]개</span>
+						                        </h6>
+						                    </div>
+						                    <!-- 오른쪽: 가격 정보 -->
+						                    <div class="text-end">
+						                        <div class="text-muted small">단가: [[${#numbers.formatInteger(item.price, 0, 'COMMA')}]]원</div>
+						                        <div class="fw-bold">합계: [[${#numbers.formatInteger(item.total_price, 0, 'COMMA')}]]원</div>
+						                    </div>
+				                        
+				                         
+				                        </div>
+				                    </div>
+				                </div>
+				            </div>
+				
+				            <!-- Total Amount -->
+				            <div class="card bg-light mt-4">
+				                <div class="card-body">
+				                    <div class="d-flex justify-content-between align-items-center">
+				                        <h5 class="mb-0">총 주문금액</h5>
+				                        <h4 class="mb-0 text-primary">
+				                            [[${#numbers.formatInteger(totalPrice, 0, 'COMMA')}]]원
+				                        </h4>
+				                    </div>
+				                </div>
+				            </div>
+				
+				            <!-- Order Buttons -->
+						    <div class="d-flex justify-content-between mt-4">
+						        <a th:href="@{/cart/list}" class="btn btn-outline-secondary btn-lg">
+						            <i class="fa fa-arrow-left"></i> 장바구니로 돌아가기
+						        </a>
+								<button type="button" class="btn btn-primary btn-lg addTransferBtn">
+								    <i class="fa fa-check-circle"></i> 결제하기
+								</button>
+				            </div>
+				        </div>
+				    </div>
+				</div>
+            </div>
+            </form>
+        </div>
+    </section>
+    
+    <!-- transfer modal -->
+    <div class="modal transferModal" tabindex="-1">
+    	<div class="modal-dialog">
+    		<div class="modal-content">
+    			<div class="modal-header">
+    				<h5 class="modal-title">계좌이체 결제</h5>
+    				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    			</div>
+    			<div class="modal-body">
+					<input type="hidden" class="senderAccountId" 
+						th:value="${account.accountId}">
+					<div class="input-group mb-3">
+					    <span class="input-group-text">입금계좌(쇼핑몰)</span>
+					    <input type="text" class="form-control receiverAccountId" 
+					           id="receiverAccountId" name="receiverAccountId" 
+					           th:attr="data-account=${managerAccount.accountId}"
+					           value="Green Shopping Mall" readonly/>
+					</div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">결제금액</span>
+                        <input type="text" class="form-control transferAmount"
+                               id="transferAmount" name="transferAmount" 
+                               th:value="${totalPrice}" readonly/>
+                    </div>
+    			</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary transferBtn">결제하기</button>
+                    <button type="button" class="btn btn-outline-dark closeTransferBtn">취소</button>
+                </div>
+    		</div>
+    	</div>
+    </div>
+    
+	<!-- footer section -->
+	<footer class="footer_section">
+		<div class="container">
+			<p>
+				&copy; <span id="displayYear"></span> All Rights Reserved By <a	href="https://html.design/">Free Html Templates</a>
+			</p>
+		</div>
+	</footer>
+	<!-- footer section -->
+
+    <!-- Scripts -->
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/custom.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/js/transfer.js"></script>
+
+	<script th:inline="javascript">
+	document.addEventListener('DOMContentLoaded', function() {
+	    const transferModal = new bootstrap.Modal(document.querySelector('.transferModal'))
+	    const transferBtn = document.querySelector('.transferBtn')
+	    const senderAccountId = document.querySelector('.senderAccountId')
+	    const receiverAccountId = document.querySelector('.receiverAccountId')
+	    const transferAmount = document.querySelector('.transferAmount')
+	    const closeTransferBtn = document.querySelector('.closeTransferBtn')
+	    const orderForm = document.querySelector('#orderForm')
+	    const addTransferBtn = document.querySelector('.addTransferBtn')
+	    
+	    // Show modal when clicking the payment button
+	    addTransferBtn.addEventListener('click', function() {
+	        transferModal.show()
+	    })
+	    
+	    // Close modal
+	    closeTransferBtn.addEventListener('click', function() {
+	        transferModal.hide()
+	    })
+	    
+	    // Handle transfer and order submission
+	    transferBtn.addEventListener('click', async function() {
+	        if (!senderAccountId.value) {
+	            alert('보내는 계좌번호를 입력해주세요.');
+	            return;
+	        }
+	        
+	        const transferObj = {
+	            senderAccountId: senderAccountId.value,
+	            receiverAccountId: receiverAccountId.dataset.account,
+	            transferAmount: transferAmount.value
+	        }
+	        
+	        try {
+	            const result = await addTransfer(transferObj);
+	            
+	            // 계좌이체 성공
+	            alert("결제가 완료되었습니다. 주문을 처리합니다.");
+	            transferModal.hide();
+	            
+	            // 폼 제출
+	            orderForm.onsubmit = null;
+	            orderForm.submit();
+	            
+	        } catch (error) {
+	            alert("결제 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
+	            console.error("Payment error:", error);
+	        }
+	    })
+	});
+	</script>
+</body>
+</html>

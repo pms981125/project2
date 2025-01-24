@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+<link th:href="@{/css/ms/addAdminForm.css}" rel="stylesheet" />
+
+<div layout:fragment="content">
+
+	<section class="d-flex vh-100">
+	    <div class="container-fluid row justify-content-center align-content-center">
+	        <div class="card" style="border-radius: 1rem;">
+	            <div class="card-body p-5 text-center">
+					<form th:action="@{/sudo/addAdmin}" method="post" id="form" class="form">
+						<div class="form-group input-group">
+							<div class="input-group-prepend"><span class="input-group-text">ID</span></div>
+							<input type="text" name="id" class="form-control" placeholder="ID" required>
+						</div>
+						<div class="form-group input-group">
+							<div class="input-group-prepend"><span class="input-group-text">비밀번호</span></div>
+							<input type="text" name="password" class="form-control" placeholder="7자리 이상의 영어•숫자 조합" required>
+						</div>
+						<div class="form-group input-group">
+							<div class="input-group-prepend"><span class="input-group-text">이름</span></div>
+							<input type="text" name="name" class="form-control" placeholder="이름" required>
+						</div>
+						<div class="form-group input-group">
+							<div class="input-group-prepend"><span class="input-group-text">주민등록번호</span></div>
+							<input type="text" name="ssnFront" class="form-control ssnFront" placeholder="앞 6자리" required><span> − </span><input type="password" name="ssnEnd" class="form-control ssnEnd" placeholder="뒤 7자리" required>
+						</div>
+						<div class="form-group input-group">
+							<input type="text" class="form-control" value="010" readonly> -
+							<input type="text" name="phone1" class="form-control phone1" placeholder="핸드폰 앞자리" size="5" required> -
+							<input type="text" name="phone2" class="form-control phone2" placeholder="핸드폰 뒷자리" size="5" required>
+						</div>
+						<div class="form-group input-group">
+							<div class="input-group-prepend"><span class="input-group-text">이메일</span></div>
+							<input type="email" name="email" class="form-control" placeholder="이메일" required>
+						</div>
+						<div class="form-group input-group justify-content-center">
+							<span class="mr-2">지역 선택: </span>
+							<select name="location" id="location">
+								<option value="Seoul">서울</option>
+								<option value="Busan">부산</option>
+								<option value="Incheon">인천</option>
+								<option value="Jeju">제주</option>
+							</select>
+						</div>
+						<div class="form-group input-group">
+							<div class="input-group-prepend"><span class="input-group-text">상세주소</span></div>
+							<input type="text" name="address" class="form-control address" placeholder="상세 주소" required>
+						</div>
+						<div class="form-group input-group">
+							<div class="input-group-prepend"><span class="input-group-text">연봉</span></div>
+							<input type="text" name="annualSalary" class="form-control" placeholder="연봉" required>
+						</div>
+						<div class="form-group input-group mt-sm-1 justify-content-center">
+							<!-- <button class="btn btn-primary addAdminBtn">관리자 추가</button> -->
+							<input type="submit" class="btn btn-primary" value="관리자 추가" />
+							<button class="btn btn-success goBackBtn ml-2" >이전</button>
+						</div>
+					</form>
+	            </div>
+	        </div>
+	    </div>
+	</section>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+	const form = document.querySelector("#form")
+
+/* 	document.querySelector(".addAdminBtn").addEventListener("click", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	    
+	    form.action = `/sudo/addAdmin`
+	    form.method = 'post'
+	    form.submit()
+	}, false) */
+	
+	document.querySelector(".ssnFront").addEventListener("keyup", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+
+	    const val = document.querySelector(".ssnFront").value
+	    
+	    if(val.length == 6) {
+	    	document.querySelector(".ssnEnd").focus()
+	    }
+	}, false)
+	
+	document.querySelector(".phone1").addEventListener("keyup", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	
+	    const val = document.querySelector(".phone1").value
+	    
+	    if(val.length == 4) {
+	    	document.querySelector(".phone2").focus()
+	    }
+	}, false)
+	
+	document.querySelector(".goBackBtn").addEventListener("click", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	    
+		location.href = "/sudo/allUserList"
+	}, false)
+</script>

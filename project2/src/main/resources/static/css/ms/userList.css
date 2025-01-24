@@ -1,0 +1,29 @@
+@charset "UTF-8";
+td {
+	border-bottom: 1px solid #dee2e6;;
+}
+
+a {
+	color: black;
+}
+
+a:hover {
+	color: black;
+	text-decoration: none;
+}
+
+span.selected {
+	color: silver;
+}
+
+div.paging {
+	text-align: center;
+}
+
+div.button {
+	text-align: right;
+}
+
+span > a:hover {
+	color: #62626c; /*  */
+}

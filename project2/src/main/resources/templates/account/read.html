@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Edgecut</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/responsive.css}" />
+    <link rel="stylesheet" th:href="@{/css/account/read.css}" />
+    <link rel="stylesheet" th:href="@{/css/account/list.css}" />
+</head>
+<body>
+    <header class="header_section long_section px-0">
+        <nav class="navbar navbar-expand-lg custom_nav-container ">
+            <a class="navbar-brand" href="/index.html">
+                <span>Edgecut</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class=""></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/market/access" class="nav-link">Region Market</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/shop/list">Shopping Mall</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/account/list">Account</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="quote_btn-container">
+                    <span style="color: black; margin-right: 15px;">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <span sec:authentication="name"></span>
+                    </span>
+                    <div class="d-flex flex-column">
+                        <a th:href="@{/logout}" class="btn btn-outline-info mb-2" style="color: #6bb7be; border-color: #6bb7be;">
+                            <i class="fa fa-sign-out" aria-hidden="true"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <!-- Card for Account Details -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>계좌 상세정보</span>
+                        <a th:href="@{/account/list}" class="btn btn-primary">
+                            <i class="fa fa-arrow-left me-2"></i>Back to List
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <strong>계좌번호:</strong>
+                            <span th:text="${accountDTO.accountId}"></span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>개설일:</strong>
+                            <span th:text="${#temporals.format(accountDTO.createDate, 'yyyy-MM-dd')}"></span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>잔액:</strong>
+                            <span th:text="${#numbers.formatInteger(accountDTO.balance, 1, 'COMMA')}"></span>
+                        </div>
+                        <div class="text-end">
+                            <button class="btn btn-info addDepositBtn">
+                                <i class="fa fa-plus"></i> 입금하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card for Transactions -->
+                <div class="card">
+                    <div class="card-header">
+                        <strong>입출금 내역</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex bg-light p-2 border text-center">
+                            <div class="flex-fill" style="max-width: 20%;">거래번호</div>
+                            <div class="flex-fill" style="max-width: 20%;">거래구분</div>
+                            <div class="flex-fill" style="max-width: 20%;">거래계좌</div>
+                            <div class="flex-fill" style="max-width: 20%;">거래금액</div>
+                            <div class="flex-fill" style="max-width: 20%;">거래일시</div>
+                        </div>
+                        <ul class="list-group mt-3 transferList">
+                            <!-- Dynamic transaction rows -->
+                        </ul>
+                    </div>
+                    <div class="card-footer text-center">
+                        <ul class="pagination transferPaging"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Deposit Modal -->
+    <div class="modal fade" id="depositModal" tabindex="-1" aria-labelledby="depositModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="depositModalLabel">입금</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">계좌번호</span>
+                        <input type="text" class="form-control accountId" id="accountId" 
+                               name="accountId" th:value="${accountDTO.accountId}" readonly />
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">입금액</span>
+                        <input type="text" class="form-control depositAmount" 
+                               id="depositAmount" name="depositAmount" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info depositBtn">입금</button>
+                    <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/js/transfer.js"></script>
+
+    <script th:inline="javascript">
+        // 현재 계좌의 ID를 Thymeleaf를 통해 가져옴
+        const accountId = /*[[${accountDTO.accountId}]]*/'';
+        
+        const transferList = document.querySelector('.transferList');
+        const transferPaging = document.querySelector('.transferPaging');
+        const depositModal = new bootstrap.Modal(document.getElementById('depositModal'));
+        const accountIdInput = document.querySelector('.accountId');
+        const depositAmount = document.querySelector('.depositAmount');
+        const depositBtn = document.querySelector('.depositBtn');
+
+        // 입금하기 버튼 클릭 이벤트
+        document.querySelector('.addDepositBtn').addEventListener('click', function() {
+            depositModal.show();
+        });
+
+        // 입금 처리
+        depositBtn.addEventListener('click', function() {
+            if (!depositAmount.value) {
+                alert("입금액을 입력해주세요.");
+                return;
+            }
+            
+            if (isNaN(depositAmount.value) || parseInt(depositAmount.value) <= 0) {
+                alert("올바른 입금액을 입력해주세요.");
+                return;
+            }
+
+            const depositObj = {
+                accountId: accountIdInput.value,
+                depositAmount: parseInt(depositAmount.value)
+            }
+
+            addDeposit(depositObj)
+                .then(result => {
+                    if(result.success) {
+                        alert("입금이 성공적으로 완료되었습니다!");
+                        depositModal.hide();
+                        depositAmount.value = '';
+                        window.location.reload();
+                    } else {
+                        alert(result.message || "입금 처리 중 오류가 발생했습니다.");
+                    }
+                })
+                .catch(error => {
+                    alert("입금 처리 중 오류가 발생했습니다.");
+                    console.error(error);
+                });
+        });
+
+        function printList(dtoList) {
+            let str = '';
+            if (dtoList && dtoList.length > 0) {
+                for (const dto of dtoList) {
+                    const transferDate = new Date(dto.transferDate).toISOString().split('T')[0];
+                    const amount = dto.transferAmount.toLocaleString();
+                    const amountColor = dto.transactionType === '출금' ? 'text-danger' : 'text-primary';
+                    
+                    str += `<li class="list-group-item d-flex text-center">
+                                <div class="flex-fill" style="max-width: 20%;">${dto.accountHistoryId}</div>
+                                <div class="flex-fill" style="max-width: 20%;">${dto.transactionType}</div>
+                                <div class="flex-fill" style="max-width: 20%;">${dto.transferTarget}</div>
+                                <div class="flex-fill ${amountColor}" style="max-width: 20%;">${amount}원</div>
+                                <div class="flex-fill" style="max-width: 20%;">${transferDate}</div>
+                            </li>`;
+                }
+            } else {
+                str = `<li class="list-group-item text-center">이체 내역이 없습니다.</li>`;
+            }
+            transferList.innerHTML = str;
+        }
+
+        function printPage(data) {
+            let pageStr = '';
+            const total = data.total;
+            const page = data.page;
+            const size = data.size;
+            const totalPages = Math.ceil(total / size);
+            
+            if (page > 1) {
+                pageStr += `<li class="page-item">
+                               <a class="page-link" data-page="${page - 1}">이전</a>
+                           </li>`;
+            }
+            
+            for (let i = 1; i <= totalPages; i++) {
+                pageStr += `<li class="page-item ${i === page ? 'active' : ''}">
+                               <a class="page-link" data-page="${i}">${i}</a>
+                           </li>`;
+            }
+            
+            if (page < totalPages) {
+                pageStr += `<li class="page-item">
+                               <a class="page-link" data-page="${page + 1}">다음</a>
+                           </li>`;
+            }
+            
+            if(transferPaging) {
+                transferPaging.innerHTML = pageStr;
+            }
+        }
+
+        // 초기 데이터 로드
+        async function loadInitialData() {
+            try {
+                const data = await getList({
+                    accountId: accountId,
+                    page: 1,
+                    size: 10
+                });
+                
+                if(data.dtoList) {
+                    printList(data.dtoList);
+                    printPage(data);
+                }
+            } catch (error) {
+                console.error("Failed to load initial data:", error);
+            }
+        }
+
+        // 페이지 로드시 초기 데이터 로드
+        document.addEventListener('DOMContentLoaded', loadInitialData);
+
+        // 페이징 이벤트 처리
+        if(transferPaging) {
+            transferPaging.addEventListener('click', async function (e) {
+                e.preventDefault();
+                if (e.target.tagName === 'A') {
+                    const page = parseInt(e.target.getAttribute('data-page'));
+                    const data = await getList({
+                        accountId: accountId,
+                        page: page,
+                        size: 10
+                    });
+                    
+                    if(data.dtoList) {
+                        printList(data.dtoList);
+                        printPage(data);
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

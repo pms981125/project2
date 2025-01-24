@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	  
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+
+<div layout:fragment="content">
+	<section class="d-flex vh-100">
+	    <div class="container-fluid row justify-content-center align-content-center">
+	        <div class="card" style="border-radius: 1rem;">
+	            <div class="card-body p-5 text-center">
+					<h1>회원가입 페이지</h1>
+					<form th:action="@{/user/register}" method="post" id="form">
+						<div class="form-group input-group">
+							<input type="text" name="id" class="form-control mt-1" placeholder="ID" required>
+						</div>
+						<div class="form-group input-group">
+							<input type="text" name="password" class="form-control" placeholder="비밀번호" required>
+						</div>
+						<div class="form-group input-group">
+							<input type="text" name="name" class="form-control" placeholder="이름" required>
+						</div>
+						<div class="form-group input-group">
+							<input type="text" name="ssn1" class="form-control ssnFront" placeholder="주민등록번호 앞자리" required> -
+							<input type="password" name="ssn2" class="form-control ssnEnd" placeholder="주민등록번호 뒷자리" required>
+						</div>
+						<div class="form-group input-group">
+							<input type="text" class="form-control" value="010" readonly> -
+							<input type="text" name="phone1" class="form-control phone1" placeholder="핸드폰 앞자리" size="5" required> -
+							<input type="text" name="phone2" class="form-control phone2" placeholder="핸드폰 뒷자리" size="5" required>
+						</div>
+						<div class="form-group input-group">
+							<input type="email" name="email" class="form-control" placeholder="email" required>
+						</div>
+						<div class="form-group input-group justify-content-center">
+							<span class="mr-2">지역 선택: </span>
+							<select name="location" id="location">
+								<option value="Seoul">서울</option>
+								<option value="Busan">부산</option>
+								<option value="Incheon">인천</option>
+								<option value="Jeju">제주</option>
+							</select>
+						</div>
+						<div class="form-group input-group">
+							<input type="text" name="address" class="form-control address" placeholder="상세 주소" required>
+						</div>
+						<div class="form-group input-group mt-sm-3 justify-content-center">
+							<input type="submit" class="btn btn-primary" value="회원 가입"/>
+							<button class="btn btn-success goBackBtn ml-2" >이전</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+	document.querySelector(".ssnFront").addEventListener("keyup", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	
+	    const val = document.querySelector(".ssnFront").value
+	    
+	    if(val.length == 6) {
+	    	document.querySelector(".ssnEnd").focus()
+	    }
+	}, false)
+	
+	document.querySelector(".phone1").addEventListener("keyup", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	
+	    const val = document.querySelector(".phone1").value
+	    
+	    if(val.length == 4) {
+	    	document.querySelector(".phone2").focus()
+	    }
+	}, false)
+	
+	document.querySelector("#location").addEventListener("change", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	    
+	    /* 지역 선택 값 상세 주소로 */
+	}, false)
+	
+	document.querySelector(".goBackBtn").addEventListener("click", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	    
+		location.href = "/user/logout"
+	}, false)
+</script>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Cart/regist</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+	<h1>Cart/regist</h1>
+
+	<form id="registForm" action="/cart/regist" method="post">
+		<input type="hidden" name="product_code"
+			th:value="${product.product_code}">
+
+		<table border="1">
+			<tr>
+				<th>상품명</th>
+				<td>[[${product.product_name}]]</td>
+			</tr>
+			<tr>
+				<th>상품코드</th>
+				<td>[[${product.product_code}]]</td>
+			</tr>
+			<tr>
+				<th>수량</th>
+				<td><input type="number" name="count" value="1" min="1">
+				</td>
+			</tr>
+			<tr>
+				<th>가격</th>
+				<td>[[${product.price}]]</td>
+			</tr>
+			<tr>
+				<th>총 가격</th>
+				<td>[[${product.price}]]</td>
+			</tr>
+		</table>
+
+		<div>
+			<button type="submit">장바구니 담기</button>
+			<button type="reset">초기화</button>
+			<a th:href="@{/shop/list}">
+				<button type="button">취소</button>
+			</a>
+		</div>
+	</form>
+
+	<script th:inline="javascript">
+		document
+				.addEventListener(
+						'DOMContentLoaded',
+						function() {
+							const countInput = document
+									.querySelector('input[name="count"]');
+							const price = /*[[${product.product_price}]]*/0;
+
+							function updateTotalPrice() {
+								const count = parseInt(countInput.value) || 0;
+								const totalPrice = count * price;
+								document.querySelector('td:last-child').textContent = new Intl.NumberFormat(
+										'ko-KR').format(totalPrice)
+										+ '원';
+							}
+
+							countInput.addEventListener('change',
+									updateTotalPrice);
+						});
+	</script>
+
+</body>
+</html>

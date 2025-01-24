@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    <!-- Site Metas -->
+    <link rel="icon" href="images/fevicon.png" type="image/gif" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>cart</title>
+
+    <!-- bootstrap core css -->
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+    <link href="/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="/css/style.css" rel="stylesheet" />
+    <link href="/css/responsive.css" rel="stylesheet" />
+</head>
+<body class="sub_page">
+    <div class="hero_area">
+ 
+<!-- header section strats -->
+<header class="header_section long_section px-0">
+			<nav class="navbar navbar-expand-lg custom_nav-container ">
+				<a class="navbar-brand" href="index.html">
+				<span> Green Project </span>
+				</a>
+				
+				<button class="navbar-toggler"
+					type="button"
+					data-toggle="collapse"
+					data-target="#navbarSupportedContent"
+					aria-controls="navbarSupportedContent"
+					aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class=""> </span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+						<ul class="navbar-nav  ">
+							<li class="nav-item ">
+								<a class="nav-link" href="/index.html">Home<span class="sr-only">(current)</span></a>
+							</li>
+							<li class="nav-item">
+								<a href="/market/access" class="nav-link">Region Market</a>
+							</li>
+							<li class="nav-item active">
+								<a class="nav-link"	href="/shop/list">Shopping Mall</a>
+							</li>
+							<li class="nav-item">
+                				<a class="nav-link" href="/account/list">Account</a>
+							</li>
+						</ul>
+					</div>
+					
+	            <div class="quote_btn-container">
+	                <span style="color: black; margin-right: 15px;">
+	                    <i class="fa fa-user" aria-hidden="true"></i>
+	                    <span sec:authentication="name"></span>
+	                </span>
+	                <div class="d-flex flex-column">
+	                    <a th:href="@{/logout}" class="btn btn-outline-info mb-2" style="color: #6bb7be; border-color: #6bb7be;">
+	                        <i class="fa fa-unlock" aria-hidden="true"></i>
+	                    </a>
+	                </div>
+	            </div>
+			</nav>
+			<!-- 하단 네비게이션 (마우스 오버시 보이는 부분) -->
+			<div class="bottom-nav">
+				<div class="text-right" style="padding: 10px 20px;">
+					<a href="/cart/list" class="btn btn-success text-white me-2">
+						<i class="fa fa-shopping-cart" aria-hidden="true"></i>
+					</a>
+					<a href="/shop/regist" class="btn btn-info text-white" sec:authorize="hasRole('MANAGER')">
+						<i class="fa fa-plus" aria-hidden="true"></i> 
+					</a>
+		    	</div>
+		    </div>	
+    	</header>
+    </div>
+
+    <!-- cart section -->
+    <section class="shop_section layout_padding px-5">
+        <div class="container-fluid px-5">
+            <div class="heading_container mb-4">
+                <h2>장바구니</h2>
+                <div class="d-flex justify-content-between align-items-center w-100 mt-4">
+                    <div>
+                        <span class="me-2">접속 ID:</span>
+                        <strong th:text="${memberId}"></strong>
+                    </div>
+                    <div>
+                        <span class="me-2">총 결제금액:</span>
+                        <strong class="text-primary" th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')}">0</strong>
+                        <span>원</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 장바구니 아이템 리스트 -->
+            <div class="cart-items">
+                <div th:each="item : ${responseDTO.dtoList}" class="cart-item card mb-3">
+                    <div class="card-body d-flex align-items-center p-3">
+                        <div class="item-image me-4" style="width: 120px;">
+                            <img th:if="${item.thumbnail_path != null}"
+                                 th:src="@{/display(filename=${item.thumbnail_path})}"
+                                 class="img-fluid rounded"
+                                 style="max-width: 100px; height: auto;">
+                            <span th:if="${item.thumbnail_path == null}" class="text-muted">No Image</span>
+                        </div>
+                        
+                        <div class="item-details flex-grow-1">
+                            <h5 class="card-title mb-2">
+                                <a th:href="@{/shop/read(product_code=${item.product_code})}" class="text-decoration-none">[[${item.product_name}]]</a>
+                            </h5>
+                            
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="quantity-control d-flex align-items-center">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateQuantity(this, -1)">-</button>
+                                    <input type="number" th:value="${item.count}" 
+                                           th:data-price="${item.price}" th:data-id="${item.id}" 
+                                           min="1" class="form-control mx-2" style="width: 60px;"
+                                           onchange="updateQuantity(this, 0)">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="updateQuantity(this, 1)">+</button>
+                                </div>
+                                
+                                <div class="price-info text-end">
+                                    <div class="unit-price text-muted small">
+                                        단가: [[${#numbers.formatInteger(item.price, 0, 'COMMA')}]]원
+                                    </div>
+                                    <div class="total-price">
+                                        합계: <strong>[[${#numbers.formatInteger(item.total_price, 0, 'COMMA')}]]원</strong>
+                                    </div>
+                                </div>
+                                
+                                <form th:action="@{/cart/remove}" method="post" class="ms-3">
+                                    <input type="hidden" name="id" th:value="${item.id}">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                            onclick="return confirm('이 항목을 삭제하시겠습니까?')">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+		<div class="d-flex justify-content-between align-items-center mt-4">
+			<div class="btn-group">
+				<a th:href="@{/shop/list}" class="btn btn-outline-primary">
+					<i class="fa fa-shopping-cart"></i> 쇼핑 계속하기
+				</a>
+				<button type="button" onclick="clearCart()" class="btn btn-outline-danger">
+					<i class="fa fa-trash"></i> 장바구니 비우기
+				</button>
+			</div>
+		
+		    <!-- 페이지네이션 -->
+			<ul class="pagination mb-0" th:if="${responseDTO.start != null && responseDTO.end != null}">
+				<li class="page-item" th:if="${responseDTO.prev}">
+					<a class="page-link" th:href="@{/cart/list(page=${responseDTO.start - 1})}">
+						<i class="fa fa-angle-left"></i>
+					</a>
+				</li>
+				
+				<li th:each="num : ${#numbers.sequence(responseDTO.start, responseDTO.end)}" 
+					th:class="${'page-item ' + (responseDTO.page == num ? 'active' : '')}">
+					<a class="page-link" th:href="@{/cart/list(page=${num})}">[[${num}]]</a>
+				</li>
+				
+				<li class="page-item" th:if="${responseDTO.next}">
+					<a class="page-link" th:href="@{/cart/list(page=${responseDTO.end + 1})}">
+						<i class="fa fa-angle-right"></i>
+					</a>
+				</li>
+			</ul>
+		
+		    <div class="d-flex flex-column align-items-end">
+			<div class="total-amount mb-3">
+			<h4 class="mb-0">
+				총 결제금액: <span class="text-primary" th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')}">0</span>원
+			</h4>
+			</div>
+			<a href="javascript:void(0);" 
+			th:class="${responseDTO.dtoList.isEmpty() ? 'btn btn-primary btn-lg disabled' : 'btn btn-primary btn-lg'}"
+			onclick="validateOrder()">
+			<i class="fa fa-check-circle"></i> 주문하기
+			</a>
+			</div>
+		</div>
+    </section>
+
+    <!-- footer section -->
+    <footer class="footer_section">
+        <div class="container">
+            <p>&copy; <span id="displayYear"></span> All Rights Reserved By <a href="https://html.design/">Free Html Templates</a></p>
+        </div>
+    </footer>
+
+    <!-- 필요한 스크립트들 -->
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/custom.js"></script>
+
+<script th:inline="javascript">
+function updateQuantity(element, change) {
+    const cartItem = element.closest('.cart-item');
+    const input = cartItem.querySelector('input[type="number"]');
+    const id = input.dataset.id;
+    let newQuantity;
+
+    if (change === 0) {
+        newQuantity = parseInt(input.value);
+    } else {
+        newQuantity = parseInt(input.value) + change;
+    }
+
+    //최소 수량 체크
+    if (newQuantity < 1) {
+		alert('수량은 1개 이상이어야 합니다.....');
+        input.value = 1;
+        return;
+    }
+    
+    input.value = newQuantity;
+    
+    fetch('/api/cart/updateQuantity', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `id=${id}&quantity=${newQuantity}`
+    })
+    .then(response => {
+		if(!response.ok){
+			throw new Error('Network response was not ok');
+		}
+		return response.json();
+    })
+    .then(data => {
+		if(data.success) {
+			
+			// 개별 상품 총액 업데이트
+			const price = parseInt(input.dataset.price);
+			const itemTotalPrice = price * newQuantity;
+			cartItem.querySelector('.total-price strong').textContent =
+				new Intl.NumberFormat('ko-KR').format(itemTotalPrice) + '원';
+			
+			// 총 액 업데이트
+			const formattedTotalPrice = new Intl.NumberFormat('ko-KR').format(data.totalPrice);
+            // 상단 총액 업데이트
+            document.querySelector('.heading_container .text-primary').textContent = formattedTotalPrice;
+            // 하단 총액 업데이트
+            document.querySelector('.total-amount .text-primary').textContent = formattedTotalPrice;
+        } else {
+			throw new Error(data.message || '수량 업데이트에 실패했습니다.....');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('수량 업데이트 중 오류가 발생했습니다.');
+        // 오류 발생시 원래 수량으로 되돌리기
+        location.reload();
+    });
+}
+
+function clearCart() {
+    if(!confirm('장바구니를 비우시겠습니까?')) {
+		return;
+    }
+    
+    fetch('/api/cart/clear', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	})
+	.then(response => {
+		if(!response.ok) {
+			throw new Error('장바구니 비우기 실패...');
+		}
+		alert('장바구니가 비워졌습니다.');
+		location.reload();
+	})
+	.catch(error => {
+		console.error('Error:', error);
+		alert('장바구니 비우기 중 오류가 발생했습니다.');
+	});
+}
+
+function validateOrder() {
+	const cartIsEmpty = /*[[${responseDTO.dtoList.isEmpty()}]]*/'';
+	if (cartIsEmpty) {
+		alert('장바구니가 비어있습니다. 상품을 먼저 담아주세요.');
+		return false;
+	}
+	
+	// 계좌 확인(Manager & User 둘 다)
+	Promise.all([
+		fetch('/api/account/check'),
+		fetch('/api/account/check-manager')
+	])
+	.then(responses => Promise.all(responses.map(res => res.json())))
+	.then(([userAccount, managerAccount]) => {
+	    // 유저 계좌 확인
+	    if (!userAccount.hasAccount) {
+			if(confirm('결제를 위해서는 계좌 등록이 필요합니다.\n계좌 등록 페이지로 이동하시겠습니까?')) {
+				window.location.href = '/account/list';
+			}
+			return;
+	    }
+	    
+	    // 관리자 계좌 확인
+	    if (!managerAccount.hasAccount) {
+			alert('죄송합니다. 현재 쇼핑몰 시스템 점검 중입니다.\n잠시 후 다시 시도해주세요.');
+			return;
+	    }
+	    
+	    // 모든 계좌가 정상일 경우
+	    if(confirm('주문 페이지로 이동하시겠습니까?')) {
+			window.location.href = '/cart/order';
+	    }
+	})
+	.catch(error => {
+		console.error('Error:', error);
+		alert('계좌 확인 중 오류가 발생했습니다. 다시 시도해주세요.');
+	});
+	
+	return false;
+}
+//네비게이션바
+    window.addEventListener('DOMContentLoaded', function() {
+        var header = document.querySelector('.header_section');
+        var content = document.querySelector('.shop_section');
+        var bottomNav = document.querySelector('.bottom-nav');
+        var lastScroll = 0;
+        
+        
+        
+        function handleScroll() {
+            var currentScroll = window.pageYOffset;
+            
+            // 스크롤 방향 감지
+            if (currentScroll > lastScroll) {
+                // 아래로 스크롤
+                if (currentScroll > 100) {  // 특정 위치 이후부터 고정
+                    header.classList.add('fixed-top');
+                    content.classList.add('header-padding');
+                    bottomNav.style.marginRight ="0px";
+                }
+            } else {
+                // 위로 스크롤
+                if (currentScroll < 10) {  // 최상단 근처에서 고정 해제
+                    header.classList.remove('fixed-top');
+                    content.classList.remove('header-padding');
+                    bottomNav.style.marginRight = "45px";
+                }
+            }
+            
+            lastScroll = currentScroll;
+        }
+        
+        // 스크롤 이벤트 리스너 등록
+        window.addEventListener('scroll', handleScroll);
+        
+        // 초기 로드시 한번 체크
+        handleScroll();
+    });
+</script>

@@ -1,0 +1,369 @@
+<!-- shop read -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+	<meta charset="UTF-8">
+	
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    <!-- Site Metas -->
+    <link rel="icon" href="images/fevicon.png" type="image/gif" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>shop</title>
+	
+	<!-- bootstrap core css -->
+	<link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+	
+	<!-- fonts style -->
+	<link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+	
+	<!-- font awesome style -->
+	<link href="/css/font-awesome.min.css" rel="stylesheet" />
+	
+	<!-- Custom styles for this template -->
+	<link href="/css/style.css" rel="stylesheet" />
+	
+	<!-- responsive style -->
+	<link href="/css/responsive.css" rel="stylesheet" />
+</head>
+
+<body class="sub_page">
+    <div class="hero_area">
+        <!-- header section strats -->
+		<header class="header_section long_section px-0">
+		    <nav class="navbar navbar-expand-lg custom_nav-container ">
+		        <a class="navbar-brand" href="index.html">
+		            <span> Green Project </span>
+		        </a>
+		        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+		            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		            <span class=""> </span>
+		        </button>
+		        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+		            <div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+		                <ul class="navbar-nav">
+		                    <li class="nav-item">
+		                        <a class="nav-link" href="/index.html">Home<span class="sr-only">(current)</span></a>
+		                    </li>
+		                    <li class="nav-item">
+		                        <a href="/market/access" class="nav-link">Region Market</a>
+		                    </li>
+		                    <li class="nav-item active">
+		                        <a class="nav-link" href="/shop/list">Shopping Mall</a>
+		                    </li>
+		                    <li class="nav-item">
+		                        <a class="nav-link" href="/account/list">Account</a>
+		                    </li>
+		                </ul>
+		            </div>
+		            
+		            <div class="quote_btn-container">
+		                <span style="color: black; margin-right: 15px;">
+		                    <i class="fa fa-user" aria-hidden="true"></i>
+		                    <span sec:authentication="name"></span>
+		                </span>
+		                <!-- logout -->
+		                <div class="d-flex flex-column">
+		                    <a th:href="@{/logout}" class="btn btn-outline-info mb-2" style="color: #6bb7be; border-color: #6bb7be;">
+		                        <i class="fa fa-unlock" aria-hidden="true"></i>
+		                    </a>
+		                </div>
+		            </div>
+		        </div>
+		    </nav>
+		    <!-- 장바구니 버튼 -->
+		    <div class="bottom-nav">
+			    <div class="text-right" style="padding: 10px 20px;">
+					<a href="/shop/list" class="btn btn-secondary">
+						<i class="fa fa-list"></i>
+					</a>
+			        <a href="/cart/list" class="btn btn-outline-success" style="color: #28a745; border-color: #28a745;">
+			            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+			        </a>
+			    </div>
+		    </div>
+		</header>
+        <!-- end header section -->
+    </div>
+
+    <!-- shop read section -->
+    <section class="shop_section layout_padding px-5">
+        <div class="container-fluid px-5">
+            <!-- 상단 버튼 영역 -->
+            <div class="text-right mb-4">
+                <div sec:authorize="hasRole('ROLE_MANAGER')" style="display: inline-block;">
+                    <a th:href="@{/shop/modify(bno=${dto.bno})}" class="btn btn-info text-white me-2">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    <form action="/shop/remove" method="post" style="display: inline;">
+                        <input type="hidden" name="bno" th:value="${dto.bno}">
+                        <button type="submit" class="btn btn-danger text-white me-2">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="product-detail-container">
+                <!-- 왼쪽: 이미지 캐러셀 -->
+                <div class="product-image">
+                    <div id="image-carousel-container"></div>
+                </div>
+
+                <!-- 오른쪽: 상품 정보 -->
+                <div class="product-info">
+                    <div class="title-section">
+                        <span class="category">[[${dto.product_category}]]</span>
+                        <h2 class="product-name">[[${dto.board_title}]]</h2>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-row">
+                            <strong>상품 코드:</strong>
+                            <span>[[${dto.product_code}]]</span>
+                        </div>
+                        <div class="info-row">
+                            <strong>가격:</strong>
+                            <span class="price">￦[[${#numbers.formatInteger(dto.product_price, 0, 'COMMA')}]]</span>
+                        </div>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>상세 설명</h4>
+                        <div class="content1">[[${dto.board_content1}]]</div>
+                        <div class="content2">[[${dto.board_content2}]]</div>
+                    </div>
+                    
+			        <div class="action-buttons">
+			            <div class="quantity-selector mb-3">
+			            <!-- 수량 선택 -->
+			                <label>수량: </label>
+			                <input type="number" id="quantity" value="1" min="1"
+			                		class="form-control d-inline-block"
+			                		style="width: 100px;"
+				                   onchange="updateTotalPrice()"
+				                   onkeyup="updateTotalPrice()">
+			            </div>
+						<div class="total-price text-right">
+							총 가격: ￦<span id="totalPrice">[[${#numbers.formatInteger(dto.product_price, 0, 'COMMA')}]]</span>
+						</div>
+					<!-- 카트에 담기 -->
+					<div style="text-align: right;">
+			            <button class="btn btn-success text-white" onclick="addToCart()">
+			                <i class="fa fa-shopping-cart"></i>
+			                <span>장바구니에 담기</span>
+			            </button>
+			        </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- footer section -->
+    <footer class="footer_section">
+        <div class="container">
+            <p>
+                &copy; <span id="displayYear"></span> All Rights Reserved By <a href="https://html.design/">Free Html Templates</a>
+            </p>
+        </div>
+    </footer>
+    <!-- footer section -->
+
+	<!-- React와 ReactDOM 스크립트 추가 -->
+	<script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+	<script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+<script th:inline="javascript">
+	function addToCart() {
+	    const quantity = document.getElementById('quantity').value;
+	    const productCode = /*[[${dto.product_code}]]*/ '';
+	    
+	    fetch('/api/cart/add', {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/x-www-form-urlencoded',
+	        },
+	        body: `productCode=${productCode}&count=${quantity}`
+	    })
+	    .then(response => {
+	        if (response.ok) {
+	            if(confirm('상품이 장바구니에 담겼습니다. 장바구니로 이동하시겠습니까?')) {
+	                window.location.href = '/cart/list';
+	            }
+	        } else {
+	            throw new Error('장바구니 담기 실패');
+	        }
+	    })
+	    .catch(error => {
+	        alert('장바구니에 담기 실패했습니다. 로그인 상태를 확인해주세요.');
+	    });
+	}
+
+	
+    // 이미지 데이터를 안전하게 가져오기
+    const productImages = /*[[${productImages}]]*/ [];
+    console.log('Product Images:', productImages);
+    
+    function ImageCarousel({ images }) {
+        const [currentIndex, setCurrentIndex] = React.useState(0);
+
+        const mainImageStyle = {
+            width: '100%',
+            height: '500px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#fff',
+            borderRadius: '5px',
+            marginBottom: '20px',
+            position: 'relative'
+        };
+
+        const thumbnailContainerStyle = {
+            display: 'flex',
+            gap: '10px',
+            overflowX: 'auto',
+            padding: '10px 0',
+            justifyContent: 'center'
+        };
+
+        const thumbnailStyle = {
+            width: '100px',
+            height: '100px',
+            border: '2px solid transparent',
+            cursor: 'pointer',
+            objectFit: 'cover',
+            borderRadius: '4px',
+            flexShrink: 0
+        };
+
+        const arrowButtonStyle = {
+            background: 'rgba(107, 183, 190, 0.7)',
+            border: 'none',
+            color: 'white',
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            fontSize: '20px',
+            position: 'absolute',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            zIndex: 10
+        };
+
+        if (!images || images.length === 0) {
+            return React.createElement('div', { style: mainImageStyle },
+                React.createElement('p', { className: 'text-center text-muted' }, '이미지 없음')
+            );
+        }
+
+        return React.createElement('div', { className: 'image-carousel' },
+            // 메인 이미지
+            React.createElement('div', { style: mainImageStyle },
+                React.createElement('img', {
+                    src: `/display?filename=${encodeURIComponent(images[currentIndex].thumbnail_path)}`,
+                    alt: '상품 이미지',
+                    style: {
+                        maxWidth: '100%',
+                        maxHeight: '100%',
+                        objectFit: 'contain'
+                    }
+                }),
+                // 메인 이미지 화살표
+                images.length > 1 && React.createElement('button', {
+                    onClick: () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length),
+                    style: { ...arrowButtonStyle, left: '10px' }
+                }, '〈'),
+                images.length > 1 && React.createElement('button', {
+                    onClick: () => setCurrentIndex((prev) => (prev + 1) % images.length),
+                    style: { ...arrowButtonStyle, right: '10px' }
+                }, '〉')
+            ),
+            // 썸네일 이미지들
+            React.createElement('div', { style: thumbnailContainerStyle },
+                images.map((image, index) =>
+                    React.createElement('img', {
+                        key: index,
+                        src: `/display?filename=${encodeURIComponent(image.thumbnail_path)}`,
+                        alt: `썸네일 ${index + 1}`,
+                        style: {
+                            ...thumbnailStyle,
+                            border: index === currentIndex ? '2px solid #6bb7be' : '2px solid transparent'
+                        },
+                        onClick: () => setCurrentIndex(index)
+                    })
+                )
+            )
+        );
+    }
+
+    // 안전한 렌더링 방식
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.React && window.ReactDOM) {
+            ReactDOM.render(
+                React.createElement(ImageCarousel, { images: productImages }),
+                document.getElementById('image-carousel-container')
+            );
+        } else {
+            console.error('React or ReactDOM not loaded');
+        }
+    });
+    
+    function updateTotalPrice() {
+        const quantity = document.getElementById('quantity').value;
+        const price = /*[[${dto.product_price}]]*/'';
+        const totalPrice = quantity * price;
+        document.getElementById('totalPrice').textContent = totalPrice.toLocaleString();
+    }
+
+    // 페이지 로드 시 초기 가격 설정
+    document.addEventListener('DOMContentLoaded', function() {
+        updateTotalPrice();
+    });
+    
+    window.addEventListener('DOMContentLoaded', function() {
+        var header = document.querySelector('.header_section');
+        var content = document.querySelector('.shop_section');
+        var bottomNav = document.querySelector('.bottom-nav');
+        var lastScroll = 0;
+        
+        
+        
+        function handleScroll() {
+            var currentScroll = window.pageYOffset;
+            
+            // 스크롤 방향 감지
+            if (currentScroll > lastScroll) {
+                // 아래로 스크롤
+                if (currentScroll > 100) {  // 특정 위치 이후부터 고정
+                    header.classList.add('fixed-top');
+                    content.classList.add('header-padding');
+                    bottomNav.style.marginRight ="0px";
+                }
+            } else {
+                // 위로 스크롤
+                if (currentScroll < 10) {  // 최상단 근처에서 고정 해제
+                    header.classList.remove('fixed-top');
+                    content.classList.remove('header-padding');
+                    bottomNav.style.marginRight = "45px";
+                }
+            }
+            
+            lastScroll = currentScroll;
+        }
+        
+        // 스크롤 이벤트 리스너 등록
+        window.addEventListener('scroll', handleScroll);
+        
+        // 초기 로드시 한번 체크
+        handleScroll();
+    });
+</script>

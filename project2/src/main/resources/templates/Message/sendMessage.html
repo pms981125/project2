@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메시지함</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        ul li strong {
+            color: #4CAF50;
+            margin-right: 10px;
+        }
+
+        form {
+            margin-top: 20px;
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        form input, form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        form button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #45a049;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>메시지함</h1>
+    </header>
+
+    <div class="container">
+        <!-- 메시지 목록 표시 -->
+        <div>
+            <h3>메시지 목록</h3>
+            <ul>
+                <li th:each="message : ${messages}">
+                    <strong th:text="${message.sender.username}">Sender</strong>: 
+                    <span th:text="${message.content}">Message Content</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 메시지 전송 폼 -->
+        <form th:action="@{/messages/send}" method="post">
+            <label for="receiverId">수신자 ID:</label>
+            <input type="text" id="receiverId" name="receiverId" required />
+
+            <label for="content">내용:</label>
+            <textarea id="content" name="content" rows="4" required></textarea>
+
+            <button type="submit">보내기</button>
+        </form>
+
+        <a href="/market/detail/{postId}" class="back-link">게시글로 돌아가기</a>
+    </div>
+</body>
+</html>
+

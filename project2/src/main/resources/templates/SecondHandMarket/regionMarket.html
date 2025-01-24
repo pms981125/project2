@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<!-- font awesome style -->
+<link href="/css/font-awesome.min.css" rel="stylesheet" />
+
+<!-- Custom styles for this template -->
+<link href="/css/style.css" rel="stylesheet" />
+
+<!-- responsive style -->
+<link href="/css/responsive.css" rel="stylesheet" />
+
+<head>
+	<div class="hero_area">
+		<!-- header section strats -->
+		<header class="header_section long_section px-0">
+			<nav class="navbar navbar-expand-lg custom_nav-container ">
+				<a class="navbar-brand" href="index.html">
+				<span> Edgecut	</span>
+				</a>
+				
+				<button class="navbar-toggler"
+					type="button"
+					data-toggle="collapse"
+					data-target="#navbarSupportedContent"
+					aria-controls="navbarSupportedContent"
+					aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class=""> </span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+						<ul class="navbar-nav  ">
+							<li class="nav-item ">
+								<a class="nav-link" href="/index.html">Home<span class="sr-only">(current)</span></a>
+							</li>
+							<li class="nav-item">
+								<a href="/market/access" class="nav-link">Region Market</a>
+							</li>
+							<li class="nav-item active">
+								<a class="nav-link"	href="/shop/list">Shopping Mall</a>
+							</li>
+							<li class="nav-item">
+                				<a class="nav-link" href="/account/list">Account</a>
+							</li>
+						</ul>
+					</div>
+					
+				<div class="quote_btn-container">
+				    <span style="color: black; margin-right: 15px;">
+				        <i class="fa fa-user" aria-hidden="true"></i>
+				        <span sec:authentication="name"></span>
+				    </span>
+				    <div class="d-flex flex-column">
+				        <a th:href="@{/logout}" class="btn btn-outline-info mb-2" style="color: #6bb7be; border-color: #6bb7be;">
+				            <i class="fa fa-sign-out" aria-hidden="true"></i>
+				            <span>Logout</span>
+				        </a>
+				    </div>
+				</div>
+			</nav>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지역별 중고거래 게시판</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Helper Styles */
+        body {
+            font-family: Varela Round;
+            background: #f1f1f1;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* Card Styles */
+        .card-sl {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            margin-bottom: 20px;
+        }
+
+        .card-image img {
+            max-height: 100%;
+            max-width: 100%;
+            border-radius: 8px 8px 0px 0;
+        }
+
+        .card-action {
+            position: relative;
+            float: right;
+            margin-top: -25px;
+            margin-right: 20px;
+            z-index: 2;
+            color: #E26D5C;
+            background: #fff;
+            border-radius: 100%;
+            padding: 15px;
+            font-size: 15px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .card-action:hover {
+            color: #fff;
+            background: #E26D5C;
+            -webkit-animation: pulse 1.5s infinite;
+        }
+
+        .card-heading {
+            font-size: 18px;
+            font-weight: bold;
+            background: #fff;
+            padding: 10px 15px;
+        }
+
+        .card-text {
+            padding: 10px 15px;
+            background: #fff;
+            font-size: 14px;
+            color: #636262;
+        }
+
+        .card-button {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+            width: 100%;
+            background-color: #1F487E;
+            color: #fff;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .card-button:hover {
+            text-decoration: none;
+            background-color: #1D3461;
+            color: #fff;
+        }
+
+        @-webkit-keyframes pulse {
+            0% {
+                -moz-transform: scale(0.9);
+                -ms-transform: scale(0.9);
+                -webkit-transform: scale(0.9);
+                transform: scale(0.9);
+            }
+
+            70% {
+                -moz-transform: scale(1);
+                -ms-transform: scale(1);
+                -webkit-transform: scale(1);
+                transform: scale(1);
+                box-shadow: 0 0 0 50px rgba(90, 153, 212, 0);
+            }
+
+            100% {
+                -moz-transform: scale(0.9);
+                -ms-transform: scale(0.9);
+                -webkit-transform: scale(0.9);
+                transform: scale(0.9);
+                box-shadow: 0 0 0 0 rgba(90, 153, 212, 0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">중고거래</h1>
+
+        <!-- 검색 폼 -->
+		<form action="/market/region" method="GET">
+		    <input type="hidden" name="region" th:value="${region}">
+		    <input type="text" name="search" placeholder="검색어를 입력하세요" th:value="${search}">
+		    <button type="submit">검색</button>
+		</form>
+
+        <!-- 글쓰기 및 메시지함 버튼 -->
+        <div class="d-flex justify-content-end mb-3">
+            <a href="/market/write" class="card-action" title="글쓰기">
+                <i class="fas fa-pencil-alt"></i>
+            </a>
+            <a href="/messages/inbox" class="card-action ml-2" title="메시지함">
+                <i class="fas fa-envelope"></i>
+            </a>
+        </div>
+
+		<!-- 게시판 카드 -->
+		<div class="row">
+		    <div class="col-md-4" th:each="post : ${posts.content}">
+		        <div class="card-sl">
+		            <!-- 이미지 섹션 -->
+		            <div class="card-image">
+						<img th:src="@{'/' + ${post.thumbnail}}" alt="게시글 이미지" 
+						     style="width: 100%; height: 200px; object-fit: cover;">
+		            </div>
+		            
+		            <!-- 게시글 제목 -->
+		            <div class="card-heading">
+		                <a th:href="@{/market/detail/{postId}(postId=${post.postId})}" 
+		                   th:text="${post.title}" 
+		                   style="color: #007bff; text-decoration: none;"></a>
+		            </div>
+		            <!-- 게시글 내용 -->
+		            <div class="card-text">
+		                <p>가격: <span th:text="${post.price}">가격</span> 원</p>
+		                <p>지역: <span th:text="${post.region}">지역</span></p>
+		            </div>
+		            <!-- 상세보기 버튼 -->
+		            <div class="card-button">
+		                <a th:href="@{/market/detail/{postId}(postId=${post.postId})}" 
+		                   style="color: #fff; text-decoration: none;">
+		                    상세보기
+		                </a>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+
+
+
+        <!-- 페이지네이션 -->
+        <div class="d-flex justify-content-center mt-4">
+            <ul class="pagination">
+                <li th:classappend="${posts.hasPrevious()} ? '' : 'disabled'">
+                    <a th:href="@{/market/region(region=${region}, search=${search}, page=0)}" class="page-link">첫 페이지</a>
+                </li>
+                <li th:classappend="${posts.hasPrevious()} ? '' : 'disabled'">
+                    <a th:href="@{/market/region(region=${region}, search=${search}, page=${posts.number - 1})}" class="page-link">이전</a>
+                </li>
+                <li th:each="i : ${#numbers.sequence(0, posts.totalPages - 1)}" 
+                    th:classappend="${posts.pageable.pageNumber == i} ? 'active' : ''">
+                    <a th:href="@{/market/region(region=${region}, search=${search}, page=${i})}" 
+                       class="page-link" th:text="${i + 1}">1</a>
+                </li>
+                <li th:classappend="${posts.hasNext()} ? '' : 'disabled'">
+                    <a th:href="@{/market/region(region=${region}, search=${search}, page=${posts.number + 1})}" class="page-link">다음</a>
+                </li>
+                <li th:classappend="${posts.hasNext()} ? '' : 'disabled'">
+                    <a th:href="@{/market/region(region=${region}, search=${search}, page=${posts.totalPages - 1})}" class="page-link">마지막</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>

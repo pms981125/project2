@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+<link th:href="@{/css/ms/userList.css}" rel="stylesheet" />
+
+<div layout:fragment="content">
+	<div class="container mt-4">
+		<div class="input-group">
+			<div class="input-group-prepend">
+				<select class="form-select" name="size" id="size">
+					<option value="10" th:selected="${size == 10}">10개씩 보기</option>
+					<option value="20" th:selected="${size == 20}">20개씩 보기</option>
+					<option value="50" th:selected="${size == 50}">50개씩 보기</option>
+				</select>
+			</div>
+		</div>
+		<table class="table table-hover mt-3">
+			<thead>
+				<tr>
+					<th>회원 ID</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="page:${pages}">
+					<td><a th:href="|@{/hr/userInfo(id=${page.getId()})}|">[[${page.getId()}]]</a></td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<div class="paging">
+			<span th:if="${!pages.first}" >
+				<a th:href="@{/hr/userList(page=1, size=${size})}">첫 페이지</a>
+				<a th:href="${pages.first} ? '#' : @{/hr/userList(page=${pages.number}, size=${size})}">이전</a>
+			</span>
+			<span th:each="page:${#numbers.sequence(startPage, endPage)}">
+				<span th:if="${page == pages.number + 1}" th:text="${page}" class="selected"></span>
+				<span th:unless="${page == pages.number + 1}">
+					<a th:href="@{/hr/userList(page=${page}, size=${size})}" th:text="${page}"></a>
+				</span>
+			</span>
+			<span th:if="${!pages.last}" >
+				<a th:href="${pages.last} ? '#' : @{/hr/userList(page=${pages.number+2}, size=${size})}">다음</a>
+				<a th:href="@{/hr/userList(page=${pages.totalPages}, size=${size})}">마지막 페이지</a>
+			</span>
+		</div>
+		<hr />
+		<div class="button">
+			<a th:href="|@{/hr/logout}|" class="text-decoration-none">
+				<button type="button" class="btn btn-secondary">로그 아웃</button>
+			</a>
+		</div>
+	</div>	
+</div>
+<script layout:fragment="script" th:inline="javascript">
+	const selectSize = document.querySelector("#size")
+	const page = /*[[${pages.number + 1}]]*/''
+	
+	selectSize.addEventListener('change', function(e) {
+		const form = document.createElement('form')
+		const size = selectSize.value
+		
+		let input1 = document.createElement('input')
+		let input2 = document.createElement('input')
+
+		input1.type = 'hidden'
+	    input1.name = 'page'
+	    input1.value = page
+		input2.type = 'hidden'
+	    input2.name = 'size'
+	    input2.value = size
+	    
+	    form.appendChild(input1)
+	    form.appendChild(input2)
+		
+		form.action = `/hr/userList`
+		form.method = 'get'
+		document.body.appendChild(form)
+		form.submit()
+	}, false)
+</script>
+<!-- 	const a = /*[[${#authentication}]]*/''
+	console.log(a) -->
+<!-- <div th:text="${#authentication.name}">Username</div> -->

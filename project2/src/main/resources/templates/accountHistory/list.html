@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<title>Edgecut</title>
+	<link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
+
+	<!-- Font Awesome style -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}" />
+	
+	<!-- Custom styles for this template -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+	
+	<!-- Responsive style -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/responsive.css}" />
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="row mt-3 justify-content-center">
+			<form action="/accountHistory/list" method="get">
+				<div class="col">
+					<input type="hidden" name="size" th:value="${pageRequestDTO.size}"/>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="row mt-3">
+		<div class="col">
+			<div class="card">
+				<div class="card-header">
+					AccountHistory
+				</div>
+				<div class="card-body">
+					<h5 class="card-title">AccountHistory</h5>
+					<table class="table" style="text-align: center;">
+						<thead>
+							<tr>
+								<th scope="col">이체내역번호</th>
+								<th scope="col">계좌번호</th>
+								<th scope="col">이체대상</th>
+								<th scope="col">이체금액</th>
+								<th scope="col">이체날짜</th>
+							</tr>
+						</thead>
+						<tbody th:with="link = ${pageRequestDTO.getLink()}">
+							<tr th:each="dto:${responseDTO.dtoList}">
+								<th scope="row">
+									<a th:href="|@{/accountHistory/read(accountHistoryId =${dto.accountHistoryId})}&${link}|"> [[${dto.accountHistoryId}]] </a>
+								</th>
+								<td scope="row">[[${dto.accountId}]]</td>
+								<td scope="row">[[${dto.transferTarget}]]</td>
+								<td scope="row">[[${dto.transferAmount}]]</td>
+								<td scope="row">[[${#temporals.format(dto.transferDate, 'yyyy-MM-dd')}]]</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="float-end">
+						<ul class="pagination flex-wrap justify-content-center">
+							<li class="page-item" th:if="${responseDTO.prev}">
+								<a class="page-link" th:data-num="${responseDTO.start - 1}">Prev</a>
+							</li>
+							
+							<th:block th:each="i: ${#numbers.sequence(responseDTO.start, responseDTO.end)}">
+	                                <li th:class="${responseDTO.page == i}?'page-item active':'page-item'" >
+	                                    <a class="page-link"  th:data-num="${i}">[[${i}]]</a>
+	                                </li>
+	                        </th:block>
+							
+							
+							<li class="page-item" th:if="${responseDTO.next}">
+								<a class="page-link" th:data-num="${responseDTO.end + 1}">Next</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script layout:fragment="script" th:inline="javascript">
+
+	document.querySelector(".pagination").addEventListener("click", function (e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+
+		const target = e.target
+/* 		
+		console.log(e)
+		console.log(target)
+		console.log(target.tagName)
+ */		
+		if(target.tagName != 'A') {
+			return
+		}
+		
+	    const num = target.getAttribute("data-num")
+	    const formObj = document.querySelector("form")
+	    
+	    formObj.innerHTML += `<input type='hidden' name='page' value='${num}'>`
+	    formObj.submit()  // localhost:8090/board/list?page=3
+	    		
+	}, false)
+	
+
+
+</script>
+</html>
