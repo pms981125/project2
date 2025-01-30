@@ -40,7 +40,7 @@ async function addTransfer(transferObj) {
 
 async function addDeposit(depositObj) {
     try {
-        const response = await axios.post('/account/', depositObj);
+        const response = await axios.post('/account/deposit', depositObj);
         return response.data;
     } catch (error) {
         console.error("Deposit error:", error);

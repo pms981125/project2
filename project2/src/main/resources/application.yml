@@ -9,7 +9,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    genrate-ddl: false
+    generate-ddl: false
     properties:
       hibernate:
         format_sql: true

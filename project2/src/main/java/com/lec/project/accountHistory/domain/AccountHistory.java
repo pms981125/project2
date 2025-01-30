@@ -6,6 +6,7 @@ import java.util.List;
 import com.lec.project.account.domain.Account;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,12 +32,11 @@ public class AccountHistory extends BaseEntity{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long accountHistoryId;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "accountId", nullable = false)
 	private Account account;
 
 	
-	//private LocalDateTime transferDate;
 	private Long transferTarget;
 	private int transferAmount;
 	private String transactionType;
