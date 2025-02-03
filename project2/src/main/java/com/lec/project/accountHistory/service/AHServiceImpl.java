@@ -42,7 +42,7 @@ public class AHServiceImpl implements AHService{
 		String keyword = pageRequestDTO.getKeyword();
 		Pageable pageable = pageRequestDTO.getPageable("accountHistoryId");
 		
-		Page<AccountHistory> result = ahRepository.searchAllImpl(types, keyword, pageable);
+		Page<AccountHistory> result = pageRequestDTO.searchAllImpl(types, keyword, pageable);
 		List<AccountHistoryDTO> dtoList = result.getContent()
 								.stream()
 								.map(ah -> modelMapper.map(ah, AccountHistoryDTO.class))

@@ -9,9 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.lec.project.accountHistory.domain.AccountHistory;
-import com.lec.project.accountHistory.repository.search.AHSearch;
 
-public interface AHRepository extends JpaRepository<AccountHistory, Long>, AHSearch{
+public interface AHRepository extends JpaRepository<AccountHistory, Long> {
 
 	@Query("select ah from AccountHistory ah where ah.account.accountId = :accountId")
 	Page<AccountHistory> listOfBoard(@Param("accountId") Long accountId, Pageable pageable);
@@ -32,4 +31,6 @@ public interface AHRepository extends JpaRepository<AccountHistory, Long>, AHSea
 	        @Param("accountId") Long accountId, 
 	        Pageable pageable
 	    );
+	 
+	
 }

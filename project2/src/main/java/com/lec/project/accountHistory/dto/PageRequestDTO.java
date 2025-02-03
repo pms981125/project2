@@ -3,9 +3,12 @@ package com.lec.project.accountHistory.dto;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
+import com.lec.project.accountHistory.domain.AccountHistory;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,7 +41,11 @@ public class PageRequestDTO {
 		return PageRequest.of(this.page - 1, this.size, Sort.by(props).ascending());
 	}
 	
-	private String link; // localhost:8090/board/list?page=10&size=10&type=name&keyword=홍길
+	private String link; 
+	
+	public Page<AccountHistory> searchAllImpl(String[] types, String keyword, Pageable pageable) {
+		return null;
+	}
 	
 	public String getLink() {
 		if(link == null) {
