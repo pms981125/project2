@@ -109,12 +109,8 @@ public class AccountServiceImpl implements AccountService{
         // 송금 계좌 잔액 차감
         senderAccount.setBalance(senderAccount.getBalance() - transferAmount);
 
-        // 수신 계좌 잔액 추가
-        receiverAccount.setBalance(receiverAccount.getBalance() + transferAmount);
-
         // 계좌 정보 저장
         accountRepository.save(senderAccount);
-        accountRepository.save(receiverAccount);
 
         // 이체 내역 저장
         AccountHistory history = new AccountHistory();
