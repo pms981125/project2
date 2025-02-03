@@ -10,9 +10,9 @@ import com.lec.project.shoppingmall.domain.shop.Shop;
 import com.lec.project.shoppingmall.repository.search.ShopSearch;
 
 public interface ShopRepository extends JpaRepository<Shop, Long>, ShopSearch{
-	@Query("SELECT COUNT(s) > 0 FROM Shop s WHERE s.product_code = :productCode")
+	@Query("SELECT COUNT(s) > 0 FROM Shop s WHERE s.productCode = :productCode")
 	boolean existsByProductCode(@Param("productCode") String productCode);
 	
-	@Query("SELECT s FROM Shop s WHERE s.product_code = :productCode")
-	Optional<Shop> findByProduct_code(@Param("productCode") String productCode);
+	@Query("SELECT s FROM Shop s WHERE s.productCode = :productCode")
+	Optional<Shop> findByProductCode(@Param("productCode") String productCode);
 }

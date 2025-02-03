@@ -8,5 +8,5 @@ import com.lec.project.shoppingmall.domain.cart.Cart;
 
 
 public interface CartRepository extends JpaRepository<Cart, Long>{
-	Optional<Cart> findByMember_id(String memberid);
+	Optional<Cart> findByMemberId(String memberId);
 }

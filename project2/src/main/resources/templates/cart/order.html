@@ -2,8 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- 	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/> -->
     
     <!-- Site Metas -->
     <link rel="icon" href="images/fevicon.png" type="image/gif" />
@@ -19,18 +21,31 @@
     <link href="/css/font-awesome.min.css" rel="stylesheet" />
     <link href="/css/style.css" rel="stylesheet" />
     <link href="/css/responsive.css" rel="stylesheet" />
-    
+
+    <!-- 기존 스타일들 -->
     <style>
-    .modal_dialog {
-    	position: relative;
-    	top: 30%;
-    	transform: translateY(-50%) !important;
-    	margin: 0 auto;
+    .payment-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
     }
-    .modal{
-    	padding-right: 0 !important;
+
+    .btn-warning {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: #FEE500;
+        border-color: #FEE500;
+        color: #000000;
+    }
+
+    .btn-warning:hover {
+        background-color: #E6CF00;
+        border-color: #E6CF00;
+        color: #000000;
     }
     </style>
+    
 </head>
 <body class="sub_page">
     <!-- 스크롤 시 네비게이션 바 고정을 위한 스크립트 -->
@@ -73,7 +88,6 @@
         handleScroll();
     });
     </script>
-<body class="sub_page">
     <div class="hero_area">
         <!-- header section strats -->
         <header class="header_section long_section px-0">
@@ -135,9 +149,10 @@
     <section class="shop_section layout_padding px-5">
         <div class="container-fluid px-5">
         
-         <form id="orderForm" th:action="@{/cart/order/submit}" method="post" onsubmit="return false;">
+         <form id="orderForm" th:action="@{/cart/order/submit}" method="post">
+         	<!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
             <!-- 총 금액을 hidden으로 전달 -->
-            <input type="hidden" name="total_amount" th:value="${totalPrice}">         
+            <input type="hidden" name="totalAmount" th:value="${totalPrice}">         
          
             <div class="heading_container mb-4">
                 <h2>주문하기</h2>
@@ -159,14 +174,14 @@
                             <!-- Name Input -->
                             <div class="mb-3">
                                 <label class="form-label">이름</label>
-                                <input type="text" class="form-control" name="customer_name"
+                                <input type="text" class="form-control" name="customerName"
                                 		th:value="${member.name}" required>
                             </div>
 
                             <!-- Phone Number Input -->
                             <div class="mb-3">
                                 <label class="form-label">연락처</label>
-                                <input type="tel" class="form-control" name="phone_number"
+                                <input type="tel" class="form-control" name="phoneNumber"
 										th:value="${member.phone}" 
                                        pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" 
                                        placeholder="000-0000-0000" required>
@@ -182,7 +197,7 @@
                             <!-- Special Requests -->
                             <div class="mb-3">
                                 <label class="form-label">배송 요청사항</label>
-                                <textarea class="form-control" name="special_requests" rows="3" 
+                                <textarea class="form-control" name="specialRequests" rows="3" 
                                           placeholder="배송 시 요청사항을 입력해주세요"></textarea>
                             </div>
                         </div>
@@ -201,25 +216,25 @@
 				                    <div class="card-body d-flex align-items-center p-3">
 				                    	<!-- 상품 이미지 -->
 				                        <div class="item-image me-4" style="width: 80px;">
-				                            <img th:if="${item.thumbnail_path != null}"
-				                                 th:src="@{/display(filename=${item.thumbnail_path})}"
+				                            <img th:if="${item.thumbnailPath != null}"
+				                                 th:src="@{/display(filename=${item.thumbnailPath})}"
 				                                 class="img-fluid rounded"
 				                                 style="max-width: 70px; height: auto;">
-				                            <span th:if="${item.thumbnail_path == null}" class="text-muted">No Image</span>
+				                            <span th:if="${item.thumbnailPath == null}" class="text-muted">No Image</span>
 				                        </div>
 				                        
 				                        <!-- 상품 정보 -->
 				                        <div class="item-details flex-grow-1">
 				                        <div class="d-flex justify-content-between align-items-center">
 				                        	<div>
-						                        <h6 class="card-title mb-1">[[${item.product_name}]] 
+						                        <h6 class="card-title mb-1">[[${item.productName}]] 
 						                            <span class="text-muted ms-3">수량: [[${item.count}]]개</span>
 						                        </h6>
 						                    </div>
 						                    <!-- 오른쪽: 가격 정보 -->
 						                    <div class="text-end">
 						                        <div class="text-muted small">단가: [[${#numbers.formatInteger(item.price, 0, 'COMMA')}]]원</div>
-						                        <div class="fw-bold">합계: [[${#numbers.formatInteger(item.total_price, 0, 'COMMA')}]]원</div>
+						                        <div class="fw-bold">합계: [[${#numbers.formatInteger(item.totalPrice, 0, 'COMMA')}]]원</div>
 						                    </div>
 				                        
 				                         
@@ -241,14 +256,14 @@
 				            </div>
 				
 				            <!-- Order Buttons -->
-						    <div class="d-flex justify-content-between mt-4">
-						        <a th:href="@{/cart/list}" class="btn btn-outline-secondary btn-lg">
-						            <i class="fa fa-arrow-left"></i> 장바구니로 돌아가기
-						        </a>
-								<button type="button" class="btn btn-primary btn-lg addTransferBtn">
-								    <i class="fa fa-check-circle"></i> 결제하기
+							<div class="payment-buttons">
+								<button type="button" id="kakaoPayBtn" class="btn btn-warning btn-lg">
+									<alt="카카오페이" height="24px"> 카카오페이 결제
 								</button>
-				            </div>
+								<button type="submit" class="btn btn-primary btn-lg ms-2">
+									<i class="fa fa-check-circle"></i> 일반 결제
+							    </button>
+							</div>
 				        </div>
 				    </div>
 				</div>
@@ -256,39 +271,6 @@
             </form>
         </div>
     </section>
-    
-    <!-- transfer modal -->
-    <div class="modal transferModal" tabindex="-1">
-    	<div class="modal-dialog">
-    		<div class="modal-content">
-    			<div class="modal-header">
-    				<h5 class="modal-title">계좌이체 결제</h5>
-    				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    			</div>
-    			<div class="modal-body">
-					<input type="hidden" class="senderAccountId" 
-						th:value="${account.accountId}">
-					<div class="input-group mb-3">
-					    <span class="input-group-text">입금계좌(쇼핑몰)</span>
-					    <input type="text" class="form-control receiverAccountId" 
-					           id="receiverAccountId" name="receiverAccountId" 
-					           th:attr="data-account=${managerAccount.accountId}"
-					           value="Green Shopping Mall" readonly/>
-					</div>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text">결제금액</span>
-                        <input type="text" class="form-control transferAmount"
-                               id="transferAmount" name="transferAmount" 
-                               th:value="${totalPrice}" readonly/>
-                    </div>
-    			</div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary transferBtn">결제하기</button>
-                    <button type="button" class="btn btn-outline-dark closeTransferBtn">취소</button>
-                </div>
-    		</div>
-    	</div>
-    </div>
     
 	<!-- footer section -->
 	<footer class="footer_section">
@@ -304,60 +286,77 @@
     <script src="/js/jquery-3.4.1.min.js"></script>
     <script src="/js/bootstrap.js"></script>
     <script src="/js/custom.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="/js/transfer.js"></script>
 
-	<script th:inline="javascript">
-	document.addEventListener('DOMContentLoaded', function() {
-	    const transferModal = new bootstrap.Modal(document.querySelector('.transferModal'))
-	    const transferBtn = document.querySelector('.transferBtn')
-	    const senderAccountId = document.querySelector('.senderAccountId')
-	    const receiverAccountId = document.querySelector('.receiverAccountId')
-	    const transferAmount = document.querySelector('.transferAmount')
-	    const closeTransferBtn = document.querySelector('.closeTransferBtn')
-	    const orderForm = document.querySelector('#orderForm')
-	    const addTransferBtn = document.querySelector('.addTransferBtn')
-	    
-	    // Show modal when clicking the payment button
-	    addTransferBtn.addEventListener('click', function() {
-	        transferModal.show()
-	    })
-	    
-	    // Close modal
-	    closeTransferBtn.addEventListener('click', function() {
-	        transferModal.hide()
-	    })
-	    
-	    // Handle transfer and order submission
-	    transferBtn.addEventListener('click', async function() {
-	        if (!senderAccountId.value) {
-	            alert('보내는 계좌번호를 입력해주세요.');
-	            return;
-	        }
-	        
-	        const transferObj = {
-	            senderAccountId: senderAccountId.value,
-	            receiverAccountId: receiverAccountId.dataset.account,
-	            transferAmount: transferAmount.value
-	        }
-	        
-	        try {
-	            const result = await addTransfer(transferObj);
-	            
-	            // 계좌이체 성공
-	            alert("결제가 완료되었습니다. 주문을 처리합니다.");
-	            transferModal.hide();
-	            
-	            // 폼 제출
-	            orderForm.onsubmit = null;
-	            orderForm.submit();
-	            
-	        } catch (error) {
-	            alert("결제 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
-	            console.error("Payment error:", error);
-	        }
-	    })
-	});
-	</script>
+<script th:inline="javascript">
+document.addEventListener('DOMContentLoaded', function() {
+    const kakaoPayBtn = document.getElementById('kakaoPayBtn');
+    
+    if(kakaoPayBtn) {
+        kakaoPayBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log("KakaoPay button clicked");
+            requestKakaoPay();
+        });
+    }
+});
+
+function requestKakaoPay() {
+	console.log("KakaoPay button clicked");
+	
+    const orderData = {
+		partnerOrderId: generateOrderId(),  
+		partnerUserId: /*[[${member.id}]]*/ '',
+		itemName: /*[[${responseDTO.dtoList[0].productName}]]*/ '' + 
+		         (/*[[${responseDTO.dtoList.size()}]]*/ 0 > 1 ? 
+		          ' 외 ' + (/*[[${responseDTO.dtoList.size()}]]*/ 0 - 1) + '건' : ''),
+		quantity: /*[[${responseDTO.dtoList.size()}]]*/ 0,
+		totalAmount: /*[[${totalPrice}]]*/ 0,
+		taxFreeAmount: 0,
+		successUrl: window.location.origin + '/cart/order/kakao/success',
+		cancelUrl: window.location.origin + '/cart/order/kakao/cancel',
+		failUrl: window.location.origin + '/cart/order/kakao/fail'
+    };
+
+    console.log("결제 요청 데이터:", orderData);
+    
+    fetch('/api/kakao-pay/ready', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData)
+    })
+    .then(response => {
+        if (!response.ok) {
+			return response.text().then(errorText => {
+				throw new Error(`HTTP 오류! 상태: ${response.status}, 메시지: ${errorText}`);
+        	});
+        }
+        return response.json();
+    })
+    .then(data => {
+    	console.log("결제 준비 응답:", data);
+        if (data && data.nextRedirectPcUrl) {
+            window.location.href = data.nextRedirectPcUrl;
+        } else {
+        	throw new Error('유효하지 않은 응답 데이터');
+        }
+    })
+    .catch(error => {
+		console.error('결제 요청 중 오류:', error);
+		alert('결제 요청 중 오류가 발생했습니다: ' + error.message);
+    });
+}
+
+function generateOrderId() {
+    const date = new Date();
+    const timestamp = date.getTime();
+    return 'ORDER_' + 
+           date.getFullYear() +
+           String(date.getMonth() + 1).padStart(2, '0') +
+           String(date.getDate()).padStart(2, '0') + '_' +
+           timestamp.toString().slice(-6);
+}
+</script>
 </body>
 </html>

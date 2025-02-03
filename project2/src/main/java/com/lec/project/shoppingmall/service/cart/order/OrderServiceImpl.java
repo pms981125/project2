@@ -41,9 +41,11 @@ public class OrderServiceImpl implements OrderService{
         //주문 정보 생성
         Ordered order = Ordered.builder()
         		.member(member)
-        		.special_requests(orderSubmitDTO.getSpecial_requests())
-        		.order_date(LocalDateTime.now())
-        		.total_amount(orderSubmitDTO.getTotal_amount())
+        		//.special_requests(orderSubmitDTO.getSpecial_requests())
+        		.specialRequests(orderSubmitDTO.getSpecialRequests())
+        		.orderDate(LocalDateTime.now())
+        		//.total_amount(orderSubmitDTO.getTotal_amount())
+        		.totalAmount(orderSubmitDTO.getTotalAmount())
         		.build();
         
         // 장바구니 조회
@@ -51,7 +53,7 @@ public class OrderServiceImpl implements OrderService{
         
         // 주문 상품 정보 생성
         for(CartListDTO item : cartItems) {
-        	Product product = productRepository.findById(item.getProduct_code())
+        	Product product = productRepository.findById(item.getProductCode())
         			.orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다........."));
         	
         	OrderedProduct orderedProduct = OrderedProduct.builder()
@@ -59,7 +61,7 @@ public class OrderServiceImpl implements OrderService{
         			.product(product)
         			.count(item.getCount())
         			.price(item.getPrice())
-        			.total_price(item.getTotal_price())
+        			.totalPrice(item.getTotalPrice())
         			.build();
         	
         	order.getOrderedProducts().add(orderedProduct);
@@ -69,7 +71,7 @@ public class OrderServiceImpl implements OrderService{
         orderedRepository.save(order);
         
         // 총 구매금액 업데이트
-        member.setTotalSpent(member.getTotalSpent() + orderSubmitDTO.getTotal_amount());
+        member.setTotalSpent(member.getTotalSpent() + orderSubmitDTO.getTotalAmount());
         memberRepository.save(member);
         
         // 장바구니 비우기

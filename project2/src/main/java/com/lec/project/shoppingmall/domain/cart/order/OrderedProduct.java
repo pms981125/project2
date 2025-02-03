@@ -33,5 +33,5 @@ public class OrderedProduct {
     
     private int price;
     
-    private int total_price;
+    private int totalPrice;
 }

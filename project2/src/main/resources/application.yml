@@ -65,3 +65,9 @@ com:
       path: d:/sungil/98.temp/upload/
     jwt:
       secret: hello1234567890
+
+# kakaopay
+kakao:
+  pay:
+    admin:
+      key: 662243decad4a12b970ab6e252196768

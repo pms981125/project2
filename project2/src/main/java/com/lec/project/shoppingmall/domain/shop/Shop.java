@@ -29,35 +29,35 @@ public class Shop {
 	private Long bno;
 
 	@Column
-    private String product_code;
+	private String productCode;
 
 	@Column(nullable = false)
-	private String board_title;
+	private String boardTitle;
 
-	@Column//detail1
-	private String board_content1;
+	@Column//firstDetail
+	private String firstBoardContent;
 
-	@Column//detail2
-	private String board_content2;
+	@Column//secondDetail
+	private String secondBoardContent;
 
 	// 이후 상품 묶음 판매등의 확장을 위해 OneToOne가 아닌 ManyToOne으로 코드 작성
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_code", referencedColumnName = "product_code", insertable = false, updatable = false)
+	@JoinColumn(name = "productCode", referencedColumnName = "productCode", insertable = false, updatable = false)
 	private Product product;
 	
-	public void changeProductCode(String product_code) {
-		this.product_code = product_code;
+	public void changeProductCode(String productCode) {
+		this.productCode = productCode;
 	}
 	
-	public void changeTitle(String board_title) {
-		this.board_title = board_title;
+	public void changeTitle(String boardTitle) {	
+		this.boardTitle = boardTitle;
 	}
 	
-	public void changeDetail1(String board_contetn1) {
-		this.board_content1 = board_contetn1;
+	public void changeFirstDetail(String firstBoardContent) {
+		this.firstBoardContent = firstBoardContent;
 	}
 	
-	public void changeDetail2(String board_contetn2) {
-		this.board_content2 = board_contetn2;
+	public void changeSecondDetail(String secondBoardContent) {
+		this.secondBoardContent = secondBoardContent;
 	}
 }

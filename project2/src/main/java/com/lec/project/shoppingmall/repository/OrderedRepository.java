@@ -12,9 +12,9 @@ import com.lec.project.Member;
 import com.lec.project.shoppingmall.domain.cart.order.Ordered;
 
 public interface OrderedRepository extends JpaRepository<Ordered, Long> {
-	@Query("SELECT o FROM Ordered o WHERE o.member = :member ORDER BY o.order_date DESC")
-    Page<Ordered> findByMemberOrderByOrder_dateDesc(@Param("member") Member member, Pageable pageable);
+	@Query("SELECT o FROM Ordered o WHERE o.member = :member ORDER BY o.orderDate DESC")
+    Page<Ordered> findByMemberOrderByOrderDateDesc(@Param("member") Member member, Pageable pageable);
     
-    @Query("SELECT o FROM Ordered o WHERE o.member = :member ORDER BY o.order_date DESC")
-    List<Ordered> findByMemberOrderByOrder_dateDesc(@Param("member") Member member);
+    @Query("SELECT o FROM Ordered o WHERE o.member = :member ORDER BY o.orderDate DESC")
+    List<Ordered> findByMemberOrderByOrderDateDesc(@Param("member") Member member);
 }

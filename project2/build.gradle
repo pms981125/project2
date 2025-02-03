@@ -60,6 +60,9 @@ dependencies {
 	
 	// 이메일
 	implementation 'javax.mail:mail:1.4.7'
+	
+	// KakaoPay
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {

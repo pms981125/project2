@@ -45,7 +45,7 @@ public class CartServiceImpl implements CartService {
 		Member member = memberRepository.findById(memberId)
 				.orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다........."));
 
-		return cartRepository.findByMember_id(memberId).orElseGet(() -> cartRepository.save(Cart.createCart(member)));
+		return cartRepository.findByMemberId(memberId).orElseGet(() -> cartRepository.save(Cart.createCart(member)));
 	}
 
 	@Override
@@ -57,13 +57,13 @@ public class CartServiceImpl implements CartService {
 		List<CartListDTO> dtoList = result.getContent().stream().map(cartProduct -> {
 			CartListDTO dto = modelMapper.map(cartProduct, CartListDTO.class);
 			Product product = cartProduct.getProduct();
-			dto.setProduct_name(product.getProduct_name());
-			dto.setProduct_code(product.getProduct_code());
-			dto.setPrice(product.getProduct_price());
+			dto.setProductName(product.getProductName());
+			dto.setProductCode(product.getProductCode());
+			dto.setPrice(product.getProductPrice());
 			
-			ProductImageDTO mainImage = productImageService.getMainImage(product.getProduct_code());
+			ProductImageDTO mainImage = productImageService.getMainImage(product.getProductCode());
 			if(mainImage != null) {
-				dto.setThumbnail_path(mainImage.getThumbnail_path());
+				dto.setThumbnailPath(mainImage.getThumbnailPath());
 			}
 			
 			
@@ -85,13 +85,13 @@ public class CartServiceImpl implements CartService {
 		}
 
 		CartListDTO dto = modelMapper.map(cartProduct, CartListDTO.class);
-		dto.setProduct_name(cartProduct.getProduct().getProduct_name());
-		dto.setPrice(cartProduct.getProduct().getProduct_price());
+		dto.setProductName(cartProduct.getProduct().getProductName());
+		dto.setPrice(cartProduct.getProduct().getProductPrice());
 		
-		ProductImageDTO mainImage = productImageService.getMainImage(cartProduct.getProduct().getProduct_code());
+		ProductImageDTO mainImage = productImageService.getMainImage(cartProduct.getProduct().getProductCode());
 		if(mainImage != null) {
-			dto.setImg_path(mainImage.getImg_path());
-			dto.setThumbnail_path(mainImage.getThumbnail_path());
+			dto.setImgPath(mainImage.getImgPath());
+			dto.setThumbnailPath(mainImage.getThumbnailPath());
 		}
 
 		return dto;
@@ -107,7 +107,7 @@ public class CartServiceImpl implements CartService {
 		}
 
 		cartProduct.setCount(count);
-		cartProduct.setTotal_price(count * cartProduct.getProduct().getProduct_price());
+		cartProduct.setTotalPrice(count * cartProduct.getProduct().getProductPrice());
 
 		cartProductRepository.save(cartProduct);
 	}
@@ -142,11 +142,11 @@ public class CartServiceImpl implements CartService {
 			CartProduct cartProduct = exsitingProduct.get();
 			int newCount = cartProduct.getCount() + count;
 			cartProduct.setCount(newCount);
-			cartProduct.setTotal_price(newCount * product.getProduct_price());
+			cartProduct.setTotalPrice(newCount * product.getProductPrice());
 			cartProductRepository.save(cartProduct);
 		} else {
 			CartProduct cartProduct = CartProduct.CreateProductCart(cart, product, count,
-					count * product.getProduct_price());
+					count * product.getProductPrice());
 
 			cartProductRepository.save(cartProduct);
 		}
@@ -155,7 +155,7 @@ public class CartServiceImpl implements CartService {
 	@Override
 	public int getTotalPrice(String memberId) {
 		Cart cart = getOrCreateCart(memberId);
-		return cartProductRepository.findByCart(cart).stream().mapToInt(CartProduct::getTotal_price).sum();
+		return cartProductRepository.findByCart(cart).stream().mapToInt(CartProduct::getTotalPrice).sum();
 	}
 
 }

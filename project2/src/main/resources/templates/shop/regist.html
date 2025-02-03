@@ -37,7 +37,7 @@
                 <div th:if="${error}" class="alert alert-danger">[[${error}]]</div>
                 <div>
                     <label class="me-2">상품 코드를 입력하세요</label></br>
-                    <input type="text" id="search_product_code" placeholder="상품 코드" class="form-control d-inline-block" style="width: 200px;">
+                    <input type="text" id="searchProductCode" placeholder="상품 코드" class="form-control d-inline-block" style="width: 200px;">
                     <button type="button" class="btn btn-primary" onclick="searchProduct()">
                     	<i class="fa fa-search" aria-hidden="true">  상품 조회</i>
                     </button>
@@ -47,7 +47,7 @@
 			<!-- 상품 등록 폼 -->
 			<form id="registForm" action="/shop/regist" method="post" enctype="multipart/form-data">
 			    <!-- 숨겨진 상품 코드 입력 필드 -->
-			    <input type="hidden" name="product_code" id="product_code">
+			    <input type="hidden" name="productCode" id="productCode">
 			    
 			    <div class="product-detail-container">
 			        <!-- 왼쪽: 이미지 영역 -->
@@ -81,37 +81,37 @@
                         <div class="info-section">
                             <div class="title-section text-right mb-4">
                                 <span class="category">
-                                    <input type="text" name="product_category" id="product_category" 
+                                    <input type="text" name="productCategory" id="productCategory" 
                                            readonly class="form-control text-right" placeholder="카테고리">
                                 </span>
                                 <h2 class="product-name">
-                                    <input type="text" name="board_title" id="board_title" 
+                                    <input type="text" name="boardTitle" id="boardTitle" 
                                            readonly class="form-control text-right" placeholder="상품명">
                                 </h2>
                             </div>
 
                             <div class="info-row text-right">
                                 <strong>상품 코드:</strong>
-                                <span id="product_code_display"></span>
+                                <span id="productCodeDisplay"></span>
                             </div>
 
                             <div class="info-row text-right">
                                 <strong>가격:</strong>
-                                <input type="number" name="product_price" id="product_price" 
+                                <input type="number" name="productPrice" id="productPrice" 
                                        readonly class="form-control text-right">
                             </div>
 
                             <div class="info-row text-right">
                                 <strong>재고:</strong>
-                                <input type="number" name="product_stock" id="product_stock"
+                                <input type="number" name="productStock" id="productStock"
                                        readonly class="form-control text-right">
                             </div>
 
                             <div class="content-section text-right">
                                 <h4>상세 설명</h4>
-                                <textarea name="board_content1" id="board_content1" 
+                                <textarea name="firstBoardContent" id="firstBoardContent" 
                                           readonly class="form-control text-right mb-3" rows="4"></textarea>
-                                <textarea name="board_content2" id="board_content2" 
+                                <textarea name="secondBoardContent" id="secondBoardContent" 
                                           readonly class="form-control text-right" rows="4"></textarea>
                             </div>
 
@@ -141,7 +141,7 @@
 
 	<script>
 		function searchProduct() {
-			const productCode = document.getElementById('search_product_code').value;
+			const productCode = document.getElementById('searchProductCode').value;
 			// ProductCode중복확인
 			$.ajax({
 				url : '/api/shop/checkProductCode',
@@ -159,14 +159,14 @@
 						url : '/api/product/' + productCode,
 						method : 'GET',
 						success : function(product) {
-							document.getElementById('product_code').value = product.product_code;
-							document.getElementById('product_code_display').textContent = product.product_code;
-							document.getElementById('board_title').value = product.product_name;
-							document.getElementById('product_category').value = product.product_category;
-							document.getElementById('product_price').value = product.product_price;
-							document.getElementById('product_stock').value = product.product_stock;
-							document.getElementById('board_content1').value = product.product_detail1;
-							document.getElementById('board_content2').value = product.product_detail2;
+							document.getElementById('productCode').value = product.productCode;
+							document.getElementById('productCodeDisplay').textContent = product.productCode;
+							document.getElementById('boardTitle').value = product.productName;
+							document.getElementById('productCategory').value = product.productCategory;
+							document.getElementById('productPrice').value = product.productPrice;
+							document.getElementById('productStock').value = product.productStock;
+							document.getElementById('firstBoardContent').value = product.firstProductDetail;
+							document.getElementById('secondBoardContent').value = product.secondProductDetail;
 						},
 						error : function() {
 							alert('상품을 찾을 수 없습니다.');

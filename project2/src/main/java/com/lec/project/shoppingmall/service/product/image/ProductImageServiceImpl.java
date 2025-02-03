@@ -66,10 +66,10 @@ public class ProductImageServiceImpl implements ProductImageService {
 	            product,
 	            isMainImage
 	    );
-	    log.info("Created ProductImage entity: {}", productImage.getImg_id());
+	    log.info("Created ProductImage entity: {}", productImage.getImgId());
 
 	    ProductImage savedImage = productImageRepository.save(productImage);
-	    log.info("Saved ProductImage to database: {}", savedImage.getImg_id());
+	    log.info("Saved ProductImage to database: {}", savedImage.getImgId());
 
 	    return modelMapper.map(savedImage, ProductImageDTO.class);
 	}
@@ -109,12 +109,12 @@ public class ProductImageServiceImpl implements ProductImageService {
 	    
 	    List<ProductImage> mainImages = productImageRepository.findAllByProductCode(productCode)
 	            .stream()
-	            .filter(pi -> pi.getIs_main_img())
+	            .filter(pi -> pi.getIsMainImg())
 	            .collect(Collectors.toList());
 	            
 	    if (!mainImages.isEmpty()) {
 	        ProductImage mainImage = mainImages.get(0); // 첫 번째 대표 이미지 선택
-	        log.info("Main image found for product {}: {}", productCode, mainImage.getImg_id());
+	        log.info("Main image found for product {}: {}", productCode, mainImage.getImgId());
 	        return modelMapper.map(mainImage, ProductImageDTO.class);
 	    }
 	    
@@ -124,7 +124,7 @@ public class ProductImageServiceImpl implements ProductImageService {
 
 	@Override
 	public void deleteImage(String imageId) {
-		log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Attempting to delete image with ID: {}", imageId); // 로그 추가
+		log.info("Attempting to delete image with ID: {}", imageId); // 로그 추가
 		
 		// 이미지 ID가 null이나 빈 문자열인지 먼저 체크
 	    if (imageId == null || imageId.trim().isEmpty()) {
@@ -144,15 +144,15 @@ public class ProductImageServiceImpl implements ProductImageService {
 
 		try {
 			//실제 파일 삭제
-			fileUtils.deleteFile(productImage.getImg_path());
-			fileUtils.deleteFile(productImage.getThumbnail_path());
+			fileUtils.deleteFile(productImage.getImgPath());
+			fileUtils.deleteFile(productImage.getThumbnailPath());
 
 			//DB에서 이미지 정보 삭제
 			productImageRepository.delete(productImage);
 
 			log.info("Image deleted: {}", imageId);
 		} catch (IOException e) {
-			log.error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@이미지 삭제 중 오류 발생", e);
+			log.error("이미지 삭제 중 오류 발생", e);
 			throw new RuntimeException("이미지 삭제 중 오류가 발생했습니다..........", e);
 		}
 
@@ -164,13 +164,13 @@ public class ProductImageServiceImpl implements ProductImageService {
 				.orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다.........."));
 
 		List<ProductImage> productImages = productImageRepository.findAllByProductCode(productCode);
-		productImages.forEach(img -> img.setIs_main_img(false));
+		productImages.forEach(img -> img.setIsMainImg(false));
 		productImageRepository.saveAll(productImages);
 		// 새 대표 이미지 설정
 		ProductImage newMainImage = productImageRepository.findById(imageId)
 				.orElseThrow(() -> new IllegalArgumentException("이미지를 찾을 수 없습니다."));
 
-		newMainImage.setIs_main_img(true);
+		newMainImage.setIsMainImg(true);
 		productImageRepository.save(newMainImage);
 
 		log.info("Main image changed for product {}: {}", productCode, imageId);

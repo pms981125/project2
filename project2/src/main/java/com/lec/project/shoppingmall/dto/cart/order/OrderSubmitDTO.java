@@ -4,10 +4,10 @@ import lombok.Data;
 
 @Data
 public class OrderSubmitDTO {
-	private String customer_name;
-	private String phone_number;
+	private String customerName;
+	private String phoneNumber;
 	private String location;
 	private String address;
-	private String special_requests;
-	private int total_amount;
+	private String specialRequests;
+	private int totalAmount;
 }

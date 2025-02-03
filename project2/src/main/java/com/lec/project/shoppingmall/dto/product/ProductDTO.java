@@ -15,20 +15,20 @@ import lombok.NoArgsConstructor;
 public class ProductDTO {
 
 	@NotEmpty
-	private String product_code;
+	private String productCode;
 	
 	@NotEmpty
-	private String product_name;
+	private String productName;
 	
 	@Min(0)
-	private int product_price;
+	private int productPrice;
 	
-	private String product_category;
+	private String productCategory;
 	
 	@Min(0)
-	private int product_stock;
+	private int productStock;
 	
-	private String product_detail1;
+	private String firstProductDetail;
 	
-	private String product_detail2;
+	private String secondProductDetail;
 }

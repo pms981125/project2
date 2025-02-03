@@ -28,18 +28,18 @@ public class ProductServiceTests {
 		log.info("....." + productService.getClass().getName());
 		
 		ProductDTO productDTO = ProductDTO.builder()
-								.product_code("product_code Test.....")
-								.product_category("product_category Test.....")
-								.product_detail1("1st...detail")
-								.product_detail2("2nd...detail")
-								.product_name("product_name Test.....")
-								.product_price(77777)
-								.product_stock(123)
+								.productCode("product_code Test.....")
+								.productCategory("product_category Test.....")
+								.firstProductDetail("1st...detail")
+								.secondProductDetail("2nd...detail")
+								.productName("product_name Test.....")
+								.productPrice(77777)
+								.productStock(123)
 								.build();
 		
-		String product_name = productService.register(productDTO);
+		String productName = productService.register(productDTO);
 		
-		log.info("상품이름 = " + product_name);
+		log.info("상품이름 = " + productName);
 	}
 	
 	@Test
@@ -49,13 +49,13 @@ public class ProductServiceTests {
 		IntStream.rangeClosed(1, 1000).forEach(i -> {
 			
 			ProductDTO productDTO = ProductDTO.builder()
-					.product_code(String.format("상품코드 %03d", i))
-					.product_category(String.format("category %03d", i%5))
-					.product_detail1(String.format("세부정보 %03d", i))
-					.product_detail2(String.format("20일(현지시간) 트럼프 대통령은 취임사에서 AI 및 바이오 헬스케어 등 첨단산업과 관련된 구체적인 언급을 하지는 않았다. 이날 꺼내든 첫 번째 행정명령 카드는 ‘이민자 추방 정책’과 ‘무역 시스템의 개편’이었다. %03d", i))
-					.product_name(String.format("상품 %03d", i))
-					.product_price(i*100)
-					.product_stock(i)
+					.productCode(String.format("상품코드 %03d", i))
+					.productCategory(String.format("category %03d", i%5))
+					.firstProductDetail(String.format("세부정보 %03d", i))
+					.secondProductDetail(String.format("세부정보 %03d", i))
+					.productName(String.format("상품 %03d", i))
+					.productPrice(i*100)
+					.productStock(i)
 					.build();
 			
 			String product_name = productService.register(productDTO);

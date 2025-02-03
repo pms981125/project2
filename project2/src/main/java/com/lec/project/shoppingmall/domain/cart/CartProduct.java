@@ -26,13 +26,13 @@ public class CartProduct {
 	private Long id;
 	
 	@ManyToOne
-	@JoinColumn(name = "cart_id")
+	@JoinColumn(name = "cartId")
 	private Cart cart;
 	
-	private String product_name;
+	private String productName;
 	
 	//물품 총 가격 합계
-	private int total_price;
+	private int totalPrice;
 	
 	// 물품 갯수
 	private int count;
@@ -40,20 +40,20 @@ public class CartProduct {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Product product;
 	
-	public static CartProduct CreateProductCart(Cart cart, Product product
-								, int total_count, int total_price) {
+	public static CartProduct CreateProductCart(Cart cart, Product product,
+			int totalCount, int totalPrice) {
 		
 		CartProduct cartProduct = new CartProduct();
 		cartProduct.setCart(cart);
 		cartProduct.setProduct(product);
-		cartProduct.setCount(total_count);
-		cartProduct.setTotal_price(total_price);
+		cartProduct.setCount(totalCount);
+		cartProduct.setTotalPrice(totalPrice);
 		
 		return cartProduct;
 	}
 	
     public void updateCount(int newCount) {
         this.count = newCount;
-        this.total_price = newCount * this.product.getProduct_price();
+        this.totalPrice = newCount * this.product.getProductPrice();
     }
 }

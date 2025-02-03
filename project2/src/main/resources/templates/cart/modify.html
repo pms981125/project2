@@ -10,7 +10,7 @@
 
 	<form id="modifyForm" action="/cart/modify" method="post">
 		<input type="hidden" name="id" th:value="${dto.id}"> <input
-			type="hidden" name="product_code" th:value="${dto.product_code}">
+			type="hidden" name="productCode" th:value="${dto.productCode}">
 
 		<table border="1">
 			<tr>
@@ -19,11 +19,11 @@
 			</tr>
 			<tr>
 				<th>상품명</th>
-				<td>[[${dto.product_name}]]</td>
+				<td>[[${dto.productName}]]</td>
 			</tr>
 			<tr>
 				<th>상품코드</th>
-				<td>[[${dto.product_code}]]</td>
+				<td>[[${dto.productCode}]]</td>
 			</tr>
 			<tr>
 				<th>수량</th>
@@ -36,7 +36,7 @@
 			</tr>
 			<tr>
 				<th>총 가격</th>
-				<td>[[${dto.total_price}]]</td>
+				<td>[[${dto.totalPrice}]]</td>
 			</tr>
 		</table>
 

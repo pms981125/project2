@@ -20,22 +20,23 @@ import lombok.Setter;
 public class Product {
 
 	@Id
-	private String product_code;
+	private String productCode;
 	
 	@Column(nullable = false)
-	private String product_name;
+	private String productName;
 	
 	@Column
-	private int product_price;
+	private int productPrice;
 	
 	@Column
-	private String product_category;
+	private String productCategory;
 	
 	@Column
-	private int product_stock;
+	private int productStock;
 	
 	@Column
-	private String product_detail1;
+	private String firstProductDetail;
+	
 	@Column
-	private String product_detail2;
+	private String secondProductDetail;
 }

@@ -36,7 +36,7 @@
             <div class="text-right mb-4">
                 <div>
                     <label class="me-2">상품 코드를 입력하세요</label></br>
-                    <input type="text" id="search_product_code" placeholder="상품 코드" class="form-control d-inline-block" style="width: 200px;">
+                    <input type="text" id="searchProductCode" placeholder="상품 코드" class="form-control d-inline-block" style="width: 200px;">
                     <button type="button" class="btn btn-primary" onclick="searchProduct()">
                     	<i class="fa fa-search" aria-hidden="true">  상품 조회</i>
                     </button>
@@ -50,7 +50,7 @@
                 <div class="product-image">
 		            <div style="width: 100%; height: 500px; background: #fff; display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
 		                <img th:if="${productImages != null and !productImages.isEmpty()}"
-		                     th:src="@{/display(filename=${productImages[0].thumbnail_path})}"
+		                     th:src="@{/display(filename=${productImages[0].thumbnailPath})}"
 		                     alt="메인 이미지"
 		                     style="max-width: 100%; max-height: 100%; object-fit: contain;">
 		                <p th:unless="${productImages != null and !productImages.isEmpty()}" 
@@ -60,10 +60,10 @@
 		            <!-- 썸네일 이미지들 -->
 		            <div style="display: flex; gap: 10px; margin-bottom: 30px; justify-content: center; flex-wrap: wrap;">
 		                <div th:each="image : ${productImages}" style="position: relative;">
-		                    <img th:src="@{/display(filename=${image.thumbnail_path})}"
+		                    <img th:src="@{/display(filename=${image.thumbnailPath})}"
 		                         style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
 		                    <button type="button"
-		                            th:data-image-id="${image.img_id}"
+		                            th:data-image-id="${image.imgId}"
 		                            onclick="removeExistingImage(this, this.getAttribute('data-image-id'))"
 		                            style="position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; 
 		                                   background-color: #ff4444; color: white; border: none; 
@@ -94,39 +94,39 @@
                 <div class="product-info">
                     
                         <input type="hidden" name="bno" th:value="${dto.bno}">
-            			<input type="hidden" name="product_code" id="product_code" th:value="${dto.product_code}">
+            			<input type="hidden" name="productCode" id="productCode" th:value="${dto.productCode}">
                         
                         <div class="info-section">
                             <div class="title-section text-right mb-4">
                                 <span class="category">
-                                    <input type="text" name="product_category" id="product_category" 
-                                           th:value="${dto.product_category}" readonly 
+                                    <input type="text" name="productCategory" id="productCategory" 
+                                           th:value="${dto.productCategory}" readonly 
                                            class="form-control text-right">
-                                </span>
-                                <h2 class="product-name">
-                                    <input type="text" name="board_title" id="board_title" 
-                                           th:value="${dto.board_title}" readonly 
-                                           class="form-control text-right">
+								</span>
+								<h2 class="product-name">
+									<input type="text" name="boardTitle" id="boardTitle" 
+											th:value="${dto.boardTitle}" readonly 
+											class="form-control text-right">
                                 </h2>
                             </div>
 
                             <div class="info-row text-right">
                                 <strong>상품 코드:</strong>
-                                <span id="product_code_display">[[${dto.product_code}]]</span>
+                                <span id="productCodeDisplay">[[${dto.productCode}]]</span>
                             </div>
                             
                             <div class="info-row text-right">
                                 <strong>가격:</strong>
-                                <input type="number" name="product_price" id="product_price" 
-                                       th:value="${dto.product_price}" class="form-control text-right">
+                                <input type="number" name="productPrice" id="productPrice" 
+                                       th:value="${dto.productPrice}" class="form-control text-right">
                             </div>
 
                             <div class="content-section text-right">
                                 <h4>상세 설명</h4>
-                                <textarea name="board_content1" id="board_content1" 
-                                          class="form-control text-right mb-3" rows="4">[[${dto.board_content1}]]</textarea>
-                                <textarea name="board_content2" id="board_content2" 
-                                          class="form-control text-right" rows="4">[[${dto.board_content2}]]</textarea>
+                                <textarea name="firstBoardContent" id="firstboardContent" 
+                                          class="form-control text-right mb-3" rows="4">[[${dto.firstBoardContent}]]</textarea>
+                                <textarea name="secondBoardContent" id="secondBoardContent" 
+                                          class="form-control text-right" rows="4">[[${dto.secondBoardContent}]]</textarea>
                             </div>
 
                             <!-- 버튼 영역 -->
@@ -163,20 +163,20 @@
 			}
 		});
 		function searchProduct() {
-			const productCode = document.getElementById('search_product_code').value;
+			const productCode = document.getElementById('searchProductCode').value;
 
 			$.ajax({
 				url : '/api/product/' + productCode,
 				method : 'GET',
 				success : function(product) {
-					document.getElementById('product_code').value = product.product_code;
-					document.getElementById('product_code_display').textContent = product.product_code;
-					document.getElementById('board_title').value = product.product_name;
-					document.getElementById('product_price').value = product.product_price;
-					document.getElementById('product_category').value = product.product_category;
-					document.getElementById('product_stock').value = product.product_stock;
-					document.getElementById('board_content1').value = product.product_detail1;
-					document.getElementById('board_content2').value = product.product_detail2;
+					document.getElementById('productCode').value = product.productCode;
+					document.getElementById('productCodeDisplay').textContent = product.productCode;
+					document.getElementById('boardTitle').value = product.productName;
+					document.getElementById('productPrice').value = product.productPrice;
+					document.getElementById('productCategory').value = product.productCategory;
+					document.getElementById('productStock').value = product.productStock;
+					document.getElementById('firstBoardContent').value = product.firstProductDetail;
+					document.getElementById('secondBoardContent').value = product.secondProductDetail;
 				},
 				error : function() {
 					alert('상품을 찾을 수 없습니다.');
@@ -248,10 +248,10 @@
 
 		// 기존 이미지 삭제 함수
 		function removeExistingImage(btn, imageId) {
-			console.log('#########################################Attempting to delete image:', imageId); // 콘솔 로그 추가
+			console.log('Attempting to delete image:', imageId); // 콘솔 로그 추가
 			
 			if(confirm('이 이미지를 삭제하겠습니까?')){
-				const productCode = document.getElementById('product_code').value;
+				const productCode = document.getElementById('productCode').value;
 				
 				fetch('/shop/deleteImage', {
 					method: 'POST',
@@ -261,7 +261,7 @@
 					body: `imageId=${imageId}&productCode=${productCode}`
 				})
 				.then(response => {
-					console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$Delete response:', response); // 응답 로그 추가
+					console.log('Delete response:', response); // 응답 로그 추가
 					
 					if (response.ok){
 						btn.closest('div').remove();

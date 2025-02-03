@@ -9,17 +9,17 @@
 	<h1>Cart/regist</h1>
 
 	<form id="registForm" action="/cart/regist" method="post">
-		<input type="hidden" name="product_code"
-			th:value="${product.product_code}">
+		<input type="hidden" name="productCode"
+			th:value="${product.productCode}">
 
 		<table border="1">
 			<tr>
 				<th>상품명</th>
-				<td>[[${product.product_name}]]</td>
+				<td>[[${product.productName}]]</td>
 			</tr>
 			<tr>
 				<th>상품코드</th>
-				<td>[[${product.product_code}]]</td>
+				<td>[[${product.productCode}]]</td>
 			</tr>
 			<tr>
 				<th>수량</th>
@@ -52,7 +52,7 @@
 						function() {
 							const countInput = document
 									.querySelector('input[name="count"]');
-							const price = /*[[${product.product_price}]]*/0;
+							const price = /*[[${product.productPrice}]]*/0;
 
 							function updateTotalPrice() {
 								const count = parseInt(countInput.value) || 0;

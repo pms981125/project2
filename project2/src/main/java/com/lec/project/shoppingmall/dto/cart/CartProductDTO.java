@@ -13,7 +13,7 @@ public class CartProductDTO {
 
 	private Long id;
 	
-	private int total_price;
+	private int totalPrice;
 	
 	private int count;
 }

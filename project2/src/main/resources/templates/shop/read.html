@@ -117,25 +117,25 @@
                 <!-- 오른쪽: 상품 정보 -->
                 <div class="product-info">
                     <div class="title-section">
-                        <span class="category">[[${dto.product_category}]]</span>
-                        <h2 class="product-name">[[${dto.board_title}]]</h2>
+                        <span class="category">[[${dto.productCategory}]]</span>
+                        <h2 class="product-name">[[${dto.boardTitle}]]</h2>
                     </div>
 
                     <div class="info-section">
                         <div class="info-row">
                             <strong>상품 코드:</strong>
-                            <span>[[${dto.product_code}]]</span>
+                            <span>[[${dto.productCode}]]</span>
                         </div>
                         <div class="info-row">
                             <strong>가격:</strong>
-                            <span class="price">￦[[${#numbers.formatInteger(dto.product_price, 0, 'COMMA')}]]</span>
+                            <span class="price">￦[[${#numbers.formatInteger(dto.productPrice, 0, 'COMMA')}]]</span>
                         </div>
                     </div>
 
                     <div class="content-section">
                         <h4>상세 설명</h4>
-                        <div class="content1">[[${dto.board_content1}]]</div>
-                        <div class="content2">[[${dto.board_content2}]]</div>
+                        <div class="content1">[[${dto.firstBoardContent}]]</div>
+                        <div class="content2">[[${dto.secondBoardContent}]]</div>
                     </div>
                     
 			        <div class="action-buttons">
@@ -149,7 +149,7 @@
 				                   onkeyup="updateTotalPrice()">
 			            </div>
 						<div class="total-price text-right">
-							총 가격: ￦<span id="totalPrice">[[${#numbers.formatInteger(dto.product_price, 0, 'COMMA')}]]</span>
+							총 가격: ￦<span id="totalPrice">[[${#numbers.formatInteger(dto.productPrice, 0, 'COMMA')}]]</span>
 						</div>
 					<!-- 카트에 담기 -->
 					<div style="text-align: right;">
@@ -180,7 +180,7 @@
 <script th:inline="javascript">
 	function addToCart() {
 	    const quantity = document.getElementById('quantity').value;
-	    const productCode = /*[[${dto.product_code}]]*/ '';
+	    const productCode = /*[[${dto.productCode}]]*/ '';
 	    
 	    fetch('/api/cart/add', {
 	        method: 'POST',
@@ -269,7 +269,7 @@
             // 메인 이미지
             React.createElement('div', { style: mainImageStyle },
                 React.createElement('img', {
-                    src: `/display?filename=${encodeURIComponent(images[currentIndex].thumbnail_path)}`,
+                    src: `/display?filename=${encodeURIComponent(images[currentIndex].thumbnailPath)}`,
                     alt: '상품 이미지',
                     style: {
                         maxWidth: '100%',
@@ -292,7 +292,7 @@
                 images.map((image, index) =>
                     React.createElement('img', {
                         key: index,
-                        src: `/display?filename=${encodeURIComponent(image.thumbnail_path)}`,
+                        src: `/display?filename=${encodeURIComponent(image.thumbnailPath)}`,
                         alt: `썸네일 ${index + 1}`,
                         style: {
                             ...thumbnailStyle,
@@ -319,7 +319,7 @@
     
     function updateTotalPrice() {
         const quantity = document.getElementById('quantity').value;
-        const price = /*[[${dto.product_price}]]*/'';
+        const price = /*[[${dto.productPrice}]]*/'';
         const totalPrice = quantity * price;
         document.getElementById('totalPrice').textContent = totalPrice.toLocaleString();
     }

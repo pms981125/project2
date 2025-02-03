@@ -23,7 +23,7 @@ public class ProductServiceImpl implements ProductService{
 	@Override
 	public String register(ProductDTO productDTO) {
 		Product product = modelMapper.map(productDTO, Product.class);
-		String product_name = productRepository.save(product).getProduct_name();
+		String product_name = productRepository.save(product).getProductName();
 		return product_name;
 	}
 

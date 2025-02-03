@@ -44,10 +44,10 @@
 	<h1>Cart/read</h1>
 
 	<div style="margin: 20px 0;">
-	    <img th:if="${dto.thumbnail_path != null}"
-	         th:src="@{/display(filename=${dto.thumbnail_path})}"
+	    <img th:if="${dto.thumbnailPath != null}"
+	         th:src="@{/display(filename=${dto.thumbnailPath})}"
 	         style="max-width: 500px; height: auto;">
-	    <span th:if="${dto.thumbnail_path == null}" class="text-muted">No Image</span>
+	    <span th:if="${dto.thumbnailPath == null}" class="text-muted">No Image</span>
 	</div>
 
 	<table border="1">
@@ -57,11 +57,11 @@
 		</tr>
 		<tr>
 			<th>상품명</th>
-			<td>[[${dto.product_name}]]</td>
+			<td>[[${dto.productName}]]</td>
 		</tr>
 		<tr>
 			<th>상품코드</th>
-			<td>[[${dto.product_code}]]</td>
+			<td>[[${dto.productCode}]]</td>
 		</tr>
 		<tr>
 			<th>수량</th>
@@ -73,7 +73,7 @@
 		</tr>
 		<tr>
 			<th>총 가격</th>
-			<td>[[${dto.total_price}]]</td>
+			<td>[[${dto.totalPrice}]]</td>
 		</tr>
 	</table>
 

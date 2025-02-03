@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProductImageDTO {
 
-	private String img_id;
-	private String original_img_name;
-	private String stored_img_name;
-	private String img_path;
-	private String thumbnail_path;
-	private Boolean is_main_img;
-	private String product_code;
+	private String imgId;
+	private String originalImgName;
+	private String storedImgName;
+	private String imgPath;
+	private String thumbnailPath;
+	private Boolean isMainImg;
+	private String productCode;
 }

@@ -14,15 +14,15 @@ public interface ProductImageRepository extends JpaRepository<ProductImage, Stri
 
     List<ProductImage> findByProduct(Product product);
     
-    @Query("SELECT pi FROM ProductImage pi WHERE pi.product = :product AND pi.is_main_img = true")
+    @Query("SELECT pi FROM ProductImage pi WHERE pi.product = :product AND pi.isMainImg = true")
     Optional<ProductImage> findByProductAndMainImgTrue(@Param("product") Product product);
     
-    @Query("SELECT pi FROM ProductImage pi WHERE pi.product.product_code = :productCode")
+    @Query("SELECT pi FROM ProductImage pi WHERE pi.product.productCode = :productCode")
     List<ProductImage> findAllByProductCode(@Param("productCode") String productCode);
     
-    @Query("SELECT pi FROM ProductImage pi WHERE pi.product.product_code = :productCode AND pi.is_main_img = true")
+    @Query("SELECT pi FROM ProductImage pi WHERE pi.product.productCode = :productCode AND pi.isMainImg = true")
     Optional<ProductImage> findMainImageByProductCode(@Param("productCode") String productCode);
     
-    @Query("UPDATE ProductImage pi SET pi.is_main_img = false WHERE pi.product = :product")
+    @Query("UPDATE ProductImage pi SET pi.isMainImg = false WHERE pi.product = :product")
     void resetMainImageFlag(@Param("product") Product product);
 }

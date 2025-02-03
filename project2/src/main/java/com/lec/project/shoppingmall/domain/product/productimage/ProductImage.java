@@ -26,31 +26,31 @@ public class ProductImage {
 	@Id
 	@Column(columnDefinition = "CHAR(36)")
 	@Builder.Default
-	private String img_id = UUID.randomUUID().toString();
+	private String imgId = UUID.randomUUID().toString();
 	
 	// 원본 파일명
 	@Column(nullable = false)
-	private String original_img_name;
+	private String originalImgName;
 	
 	// 서버에 저장된 파일명
 	@Column(nullable = false)
-	private String stored_img_name;
+	private String storedImgName;
 	
 	// 이미지 저장 경로
 	@Column(nullable = false)
-	private String img_path;
+	private String imgPath;
 	
 	// 썸네일 경로
 	@Column(nullable = false)
-	private String thumbnail_path;
+	private String thumbnailPath;
 	
 	// 대표 이미지 존재 여부
 	@Column(nullable = false)
 	@Builder.Default
-	private Boolean is_main_img = false;
+	private Boolean isMainImg = false;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_code", nullable = false)
+    @JoinColumn(name = "productCode", nullable = false)
     private Product product;
 	
 	public static ProductImage createProductImage(
@@ -62,16 +62,16 @@ public class ProductImage {
 				, Boolean isMainImg
 			) {
 			return ProductImage.builder()
-					.original_img_name(originalFileName)
-					.stored_img_name(storedFileName)
-					.img_path(imgPath)
-					.thumbnail_path(thumbnailPath)
+					.originalImgName(originalFileName)
+					.storedImgName(storedFileName)
+					.imgPath(imgPath)
+					.thumbnailPath(thumbnailPath)
 					.product(product)
-					.is_main_img(isMainImg)
+					.isMainImg(isMainImg)
 					.build();
 		}
 	
 	 public void setAsMainImage() {
-	        this.is_main_img = true;
+		 this.isMainImg = true;
 	    }
 }

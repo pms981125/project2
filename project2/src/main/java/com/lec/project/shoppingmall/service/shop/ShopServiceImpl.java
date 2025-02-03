@@ -50,14 +50,14 @@ public class ShopServiceImpl implements ShopService {
 			
 			// Null 체크 추가
 			if (shop.getProduct() != null) {
-				shopDTO.setProduct_price(shop.getProduct().getProduct_price());
-				shopDTO.setProduct_category(shop.getProduct().getProduct_category());
-				shopDTO.setProduct_stock(shop.getProduct().getProduct_stock());
+				shopDTO.setProductPrice(shop.getProduct().getProductPrice());
+				shopDTO.setProductCategory(shop.getProduct().getProductCategory());
+				shopDTO.setProductStock(shop.getProduct().getProductStock());
 
-				ProductImageDTO mainImage = productImageService.getMainImage(shop.getProduct_code());
+				ProductImageDTO mainImage = productImageService.getMainImage(shop.getProductCode());
 				if (mainImage != null) {
-					shopDTO.setImg_path(mainImage.getImg_path());
-					shopDTO.setThumbnail_path(mainImage.getThumbnail_path());
+					shopDTO.setImgPath(mainImage.getImgPath());
+					shopDTO.setThumbnailPath(mainImage.getThumbnailPath());
 				}
 
 				
@@ -73,16 +73,18 @@ public class ShopServiceImpl implements ShopService {
 	@Override
 	public Long register(ShopDTO shopDTO) {
 		// product_code 존재 확인
-		if (shopRepository.existsByProductCode(shopDTO.getProduct_code())) {
+		if (shopRepository.existsByProductCode(shopDTO.getProductCode())) {
 			throw new IllegalArgumentException("이미 등록된 product_code입니다.");
 		}
 
-		Product product = productRepository.findById(shopDTO.getProduct_code()).orElseThrow(
-				() -> new IllegalArgumentException("Product not found for code: " + shopDTO.getProduct_code()));
+		Product product = productRepository.findById(shopDTO.getProductCode()).orElseThrow(
+				() -> new IllegalArgumentException("Product not found for code: " + shopDTO.getProductCode()));
 
-		Shop shop = Shop.builder().product_code(shopDTO.getProduct_code()).board_title(product.getProduct_name())
-				.board_content1(product.getProduct_detail1()) // detail1 저장
-				.board_content2(product.getProduct_detail2()) // detail2 저장
+		Shop shop = Shop.builder()
+				.productCode(shopDTO.getProductCode())
+				.boardTitle(product.getProductName())
+				.firstBoardContent(product.getFirstProductDetail()) // detail1 저장
+				.secondBoardContent(product.getSecondProductDetail()) // detail2 저장
 				.build();
 
 		return shopRepository.save(shop).getBno();
@@ -97,21 +99,21 @@ public class ShopServiceImpl implements ShopService {
 		Product product = shop.getProduct();
 
 		if (product != null) {
-			shopDTO.setProduct_price(product.getProduct_price());
-			shopDTO.setProduct_category(product.getProduct_category());
-			shopDTO.setProduct_stock(product.getProduct_stock());
+			shopDTO.setProductPrice(product.getProductPrice());
+			shopDTO.setProductCategory(product.getProductCategory());
+			shopDTO.setProductStock(product.getProductStock());
 
-			ProductImageDTO mainImage = productImageService.getMainImage(shop.getProduct_code());
+			ProductImageDTO mainImage = productImageService.getMainImage(shop.getProductCode());
 			if (mainImage != null) {
-				shopDTO.setImg_path(mainImage.getImg_path());
-				shopDTO.setThumbnail_path(mainImage.getThumbnail_path());
+				shopDTO.setImgPath(mainImage.getImgPath());
+				shopDTO.setThumbnailPath(mainImage.getThumbnailPath());
 			}
 		}
 		return shopDTO;
 	}
 	
 	public ShopDTO readByProductCode(String productCode) {
-		Shop shop = shopRepository.findByProduct_code(productCode)
+		Shop shop = shopRepository.findByProductCode(productCode)
 				.orElseThrow(()-> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
 		return modelMapper.map(shop, ShopDTO.class);
 	}
@@ -125,27 +127,27 @@ public class ShopServiceImpl implements ShopService {
 				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
 
 		// 기존 product_code와 새로운 product_code가 다른 경우에만 중복 체크
-		if (!existsShop.getProduct_code().equals(shopDTO.getProduct_code())) {
-			if (shopRepository.existsByProductCode(shopDTO.getProduct_code())) {
+		if (!existsShop.getProductCode().equals(shopDTO.getProductCode())) {
+			if (shopRepository.existsByProductCode(shopDTO.getProductCode())) {
 				throw new IllegalArgumentException("이미 등록된 상품 코드입니다.");
 			}
 		}
 
 		// 새로운 Product 조회
-		Product product = productRepository.findById(shopDTO.getProduct_code())
+		Product product = productRepository.findById(shopDTO.getProductCode())
 				.orElseThrow(() -> new IllegalArgumentException("해당 상품 코드의 상품이 존재하지 않습니다."));
 
 		
 		//shop에서 수정된 가격과 내용 업데이트
-		product	.setProduct_price(shopDTO.getProduct_price());
-		product.setProduct_detail1(shopDTO.getBoard_content1());
-		product.setProduct_detail2(shopDTO.getBoard_content2());
+		product	.setProductPrice(shopDTO.getProductPrice());
+		product.setFirstProductDetail(shopDTO.getFirstBoardContent());
+		product.setSecondProductDetail(shopDTO.getSecondBoardContent());
 		
 		//shop의 내용 업데이트
-		existsShop.changeProductCode(shopDTO.getProduct_code());
-		existsShop.changeTitle(product.getProduct_name());
-		existsShop.changeDetail1(shopDTO.getBoard_content1());
-		existsShop.changeDetail2(shopDTO.getBoard_content2());
+		existsShop.changeProductCode(shopDTO.getProductCode());
+		existsShop.changeTitle(product.getProductName());
+		existsShop.changeFirstDetail(shopDTO.getFirstBoardContent());
+		existsShop.changeSecondDetail(shopDTO.getSecondBoardContent());
 
 		productRepository.save(product);
 		shopRepository.save(existsShop);

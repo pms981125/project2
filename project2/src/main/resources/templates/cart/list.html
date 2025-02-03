@@ -106,16 +106,16 @@
                 <div th:each="item : ${responseDTO.dtoList}" class="cart-item card mb-3">
                     <div class="card-body d-flex align-items-center p-3">
                         <div class="item-image me-4" style="width: 120px;">
-                            <img th:if="${item.thumbnail_path != null}"
-                                 th:src="@{/display(filename=${item.thumbnail_path})}"
+                            <img th:if="${item.thumbnailPath != null}"
+                                 th:src="@{/display(filename=${item.thumbnailPath})}"
                                  class="img-fluid rounded"
                                  style="max-width: 100px; height: auto;">
-                            <span th:if="${item.thumbnail_path == null}" class="text-muted">No Image</span>
+                            <span th:if="${item.thumbnailPath == null}" class="text-muted">No Image</span>
                         </div>
                         
                         <div class="item-details flex-grow-1">
                             <h5 class="card-title mb-2">
-                                <a th:href="@{/shop/read(product_code=${item.product_code})}" class="text-decoration-none">[[${item.product_name}]]</a>
+                                <a th:href="@{/shop/read(productCode=${item.productCode})}" class="text-decoration-none">[[${item.productName}]]</a>
                             </h5>
                             
                             <div class="d-flex align-items-center justify-content-between">
@@ -133,7 +133,7 @@
                                         단가: [[${#numbers.formatInteger(item.price, 0, 'COMMA')}]]원
                                     </div>
                                     <div class="total-price">
-                                        합계: <strong>[[${#numbers.formatInteger(item.total_price, 0, 'COMMA')}]]원</strong>
+                                        합계: <strong>[[${#numbers.formatInteger(item.totalPrice, 0, 'COMMA')}]]원</strong>
                                     </div>
                                 </div>
                                 
@@ -186,11 +186,10 @@
 				총 결제금액: <span class="text-primary" th:text="${#numbers.formatInteger(totalPrice, 0, 'COMMA')}">0</span>원
 			</h4>
 			</div>
-			<a href="javascript:void(0);" 
-			th:class="${responseDTO.dtoList.isEmpty() ? 'btn btn-primary btn-lg disabled' : 'btn btn-primary btn-lg'}"
-			onclick="validateOrder()">
-			<i class="fa fa-check-circle"></i> 주문하기
-			</a>
+				<a th:href="@{/cart/order}"
+				th:class="${responseDTO.dtoList.isEmpty() ? 'btn btn-primary btn-lg disabled' : 'btn btn-primary btn-lg'}">
+				<i class="fa fa-check-circle"></i> 주문하기
+				</a>
 			</div>
 		</div>
     </section>
@@ -293,46 +292,6 @@ function clearCart() {
 	});
 }
 
-function validateOrder() {
-	const cartIsEmpty = /*[[${responseDTO.dtoList.isEmpty()}]]*/'';
-	if (cartIsEmpty) {
-		alert('장바구니가 비어있습니다. 상품을 먼저 담아주세요.');
-		return false;
-	}
-	
-	// 계좌 확인(Manager & User 둘 다)
-	Promise.all([
-		fetch('/api/account/check'),
-		fetch('/api/account/check-manager')
-	])
-	.then(responses => Promise.all(responses.map(res => res.json())))
-	.then(([userAccount, managerAccount]) => {
-	    // 유저 계좌 확인
-	    if (!userAccount.hasAccount) {
-			if(confirm('결제를 위해서는 계좌 등록이 필요합니다.\n계좌 등록 페이지로 이동하시겠습니까?')) {
-				window.location.href = '/account/list';
-			}
-			return;
-	    }
-	    
-	    // 관리자 계좌 확인
-	    if (!managerAccount.hasAccount) {
-			alert('죄송합니다. 현재 쇼핑몰 시스템 점검 중입니다.\n잠시 후 다시 시도해주세요.');
-			return;
-	    }
-	    
-	    // 모든 계좌가 정상일 경우
-	    if(confirm('주문 페이지로 이동하시겠습니까?')) {
-			window.location.href = '/cart/order';
-	    }
-	})
-	.catch(error => {
-		console.error('Error:', error);
-		alert('계좌 확인 중 오류가 발생했습니다. 다시 시도해주세요.');
-	});
-	
-	return false;
-}
 //네비게이션바
     window.addEventListener('DOMContentLoaded', function() {
         var header = document.querySelector('.header_section');

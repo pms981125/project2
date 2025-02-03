@@ -76,9 +76,11 @@
 	                    <span sec:authentication="name"></span>
 	                </span>
 	                <div class="d-flex flex-column">
-	                    <a th:href="@{/logout}" class="btn btn-outline-info mb-2" style="color: #6bb7be; border-color: #6bb7be;">
-	                        <i class="fa fa-unlock" aria-hidden="true"></i>
-	                    </a>
+	                	<form th:action="@{/logout}" method="post"style="margin: 0;">
+		                    <button type="submit" class="btn btn-outline-info mb-2" style="color: #6bb7be; border-color: #6bb7be;">
+		                        <i class="fa fa-unlock" aria-hidden="true"></i>
+							</button>
+	                    </form>
 	                </div>
 	            </div>
 			</nav>
@@ -139,24 +141,24 @@
 			            <a th:href="@{/shop/read(bno=${dto.bno})}" class="box-link">
 			                <div class="box">
 			                    <div class="img-box">
-			                        <img th:if="${dto.thumbnail_path}"
-			                            th:src="@{/display(filename=${dto.thumbnail_path})}"
+			                        <img th:if="${dto.thumbnailPath}"
+			                            th:src="@{/display(filename=${dto.thumbnailPath})}"
 			                            alt="상품 이미지"
 			                            style="max-width: 100%; height: auto;">
-			                        <p th:unless="${dto.thumbnail_path}" class="text-center text-muted">
+			                        <p th:unless="${dto.thumbnailPath}" class="text-center text-muted">
 			                            이미지 없음
 			                        </p>
 			                    </div>
 			                    <div class="detail-box">
 			                        <div class="info-container text-right">
-			                            <span class="category">[[${dto.product_category}]]</span>
-			                            <h4 class="product-name">[[${dto.board_title}]]</h4>
+			                            <span class="category">[[${dto.productCategory}]]</span>
+			                            <h4 class="product-name">[[${dto.boardTitle}]]</h4>
 			                            <div class="price_box">
 			                                <h6 class="price_heading">
-			                                    <span>￦</span> [[${#numbers.formatInteger(dto.product_price, 0, 'COMMA')}]]
+			                                    <span>￦</span> [[${#numbers.formatInteger(dto.productPrice, 0, 'COMMA')}]]
 			                                </h6>
 			                            </div>
-			                            <p class="content1">[[${dto.board_content1}]]</p>
+			                            <p class="content1">[[${dto.firstBoardContent}]]</p>
 			                        </div>
 			                    </div>
 			                </div>

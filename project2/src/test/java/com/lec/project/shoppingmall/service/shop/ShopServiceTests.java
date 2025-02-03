@@ -35,14 +35,21 @@ public class ShopServiceTests {
 	public void testInsert() {
 		log.info("......" + shopService.getClass().getName());
 
-		Product product = Product.builder().product_code("BM001") // 실제 사용할 상품 코드
-				.product_name("테스트 상품").product_price(10000).product_category("테스트").product_stock(100)
-				.product_detail1("상품 상세 설명 1").product_detail2("상품 상세 설명 2").build();
+		Product product = Product.builder().productCode("BM001") // 실제 사용할 상품 코드
+				.productName("테스트 상품")
+				.productPrice(10000)
+				.productCategory("테스트")
+				.productStock(100)
+				.firstProductDetail("상품 상세 설명 1")
+				.secondProductDetail("상품 상세 설명 2")
+				.build();
 
 		productRepository.save(product);
 
-		ShopDTO shopDTO = ShopDTO.builder().product_code("BM001") // 위에서 생성한 product_code 사용
+		ShopDTO shopDTO = ShopDTO.builder()
+				.productCode("BM001") // 위에서 생성한 product_code 사용
 				.build();
+		
 		Long bno = shopService.register(shopDTO);
 
 		log.info("게시글번호 =" + bno);
@@ -53,7 +60,7 @@ public class ShopServiceTests {
     public void testInsertMany() {
         IntStream.rangeClosed(1, 500).forEach(i -> {
             ShopDTO shopDTO = ShopDTO.builder()
-                .product_code(String.format("상품코드 %03d", i))
+                .productCode(String.format("상품코드 %03d", i))
                 .build();
 
             Long bno = shopService.register(shopDTO);

@@ -35,12 +35,13 @@ public class Ordered extends BaseEntity {
 	private Member member;
 	
 	@Column(length = 500)
-	private String special_requests;
+	private String specialRequests;
+	
 	
 	@Builder.Default
-    private LocalDateTime order_date = LocalDateTime.now();
+	private LocalDateTime orderDate = LocalDateTime.now();
 	
-	private int total_amount;
+	private int totalAmount;
 	
 	@Builder.Default
 	@OneToMany(mappedBy = "ordered", cascade = CascadeType.ALL, orphanRemoval = true)

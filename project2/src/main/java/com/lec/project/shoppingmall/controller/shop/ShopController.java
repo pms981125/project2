@@ -64,10 +64,10 @@ public class ShopController {
 			
 			if(responseDTO != null && responseDTO.getDtoList() != null) {
 				responseDTO.getDtoList().forEach(shopDTO -> {
-					ProductImageDTO mainImage = productImageService.getMainImage(shopDTO.getProduct_code());
+					ProductImageDTO mainImage = productImageService.getMainImage(shopDTO.getProductCode());
 					if(mainImage != null) {
-						shopDTO.setImg_path(mainImage.getImg_path());
-						shopDTO.setThumbnail_path(mainImage.getThumbnail_path());
+						shopDTO.setImgPath(mainImage.getImgPath());
+						shopDTO.setThumbnailPath(mainImage.getThumbnailPath());
 					}
 				});
 			}
@@ -108,15 +108,15 @@ public class ShopController {
 		}
 
 		// 이미지 경로 로깅
-		log.info("Shop DTO - Thumbnail Path: {}", shopDTO.getThumbnail_path());
+		log.info("Shop DTO - Thumbnail Path: {}", shopDTO.getThumbnailPath());
 
 		// 제품의 모든 이미지 가져오기
-		List<ProductImageDTO> productImages = productImageService.getProductImages(shopDTO.getProduct_code());
+		List<ProductImageDTO> productImages = productImageService.getProductImages(shopDTO.getProductCode());
 
-		ProductImageDTO mainImage = productImageService.getMainImage(shopDTO.getProduct_code());
+		ProductImageDTO mainImage = productImageService.getMainImage(shopDTO.getProductCode());
 		if (mainImage != null) {
-			shopDTO.setImg_path(mainImage.getImg_path());
-			shopDTO.setThumbnail_path(mainImage.getThumbnail_path());
+			shopDTO.setImgPath(mainImage.getImgPath());
+			shopDTO.setThumbnailPath(mainImage.getThumbnailPath());
 		}
 		model.addAttribute("dto", shopDTO);
 		model.addAttribute("productImages", productImages);
@@ -130,10 +130,10 @@ public class ShopController {
 
 	@PreAuthorize("hasRole('MANAGER')")
 	@PostMapping("/regist")
-	public String registerPost(@Valid ShopDTO shopDTO
-	        , BindingResult bindingResult
-	        , @RequestParam(value = "productImages", required = false) List<MultipartFile> productImages
-	        , RedirectAttributes redirectAttributes) {
+	public String registerPost(@Valid ShopDTO shopDTO,
+	        BindingResult bindingResult,
+	        @RequestParam(value = "productImages", required = false) List<MultipartFile> productImages,
+	        RedirectAttributes redirectAttributes) {
 	    log.info("regist.Post..........");
 	    
 	    try {
@@ -159,7 +159,7 @@ public class ShopController {
 	                    }
 	                }
 
-	                productImageService.uploadMultipleProductImages(productImages, shopDTO.getProduct_code(), true);
+	                productImageService.uploadMultipleProductImages(productImages, shopDTO.getProductCode(), true);
 	            } catch (Exception e) {
 	                log.error("이미지 업로드 실패..........", e);
 	                redirectAttributes.addFlashAttribute("error", "이미지 업로드에 실패했습니다.");
@@ -184,7 +184,8 @@ public class ShopController {
 	@PostMapping("modify")
 	public String modify(@Valid ShopDTO shopDTO,
 			@RequestParam(value = "productImages", required = false) List<MultipartFile> productImages,
-			BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+			BindingResult bindingResult,
+			RedirectAttributes redirectAttributes) {
 		log.info("modify.Post : " + shopDTO);
 
 		try {
@@ -207,10 +208,10 @@ public class ShopController {
 						boolean isMainImage = (i == 0);
 
 						ProductImageDTO imageDTO = productImageService.uploadProductImage(productImage,
-								shopDTO.getProduct_code(), isMainImage);
+								shopDTO.getProductCode(), isMainImage);
 
 						if (imageDTO != null) {
-							log.info("Image uploaded successfully: {}", imageDTO.getImg_path());
+							log.info("Image uploaded successfully: {}", imageDTO.getImgPath());
 						}
 					}
 				} catch (Exception e) {
@@ -231,7 +232,8 @@ public class ShopController {
 
 	@PreAuthorize("hasRole('MANAGER')")
 	@PostMapping("remove")
-	public String remove(@RequestParam("bno") Long bno, RedirectAttributes redirectAttributes) {
+	public String remove(@RequestParam("bno") Long bno,
+			RedirectAttributes redirectAttributes) {
 	    log.info("remove.Post..........");
 
 	    try {
@@ -239,10 +241,10 @@ public class ShopController {
 	        ShopDTO shopDTO = shopService.readOne(bno);
 	        if (shopDTO != null) {
 	            // 해당 상품의 모든 이미지를 삭제
-	            List<ProductImageDTO> images = productImageService.getProductImages(shopDTO.getProduct_code());
+	            List<ProductImageDTO> images = productImageService.getProductImages(shopDTO.getProductCode());
 	            if (images != null && !images.isEmpty()) {
 	                for (ProductImageDTO image : images) {
-	                    productImageService.deleteImage(image.getImg_id());
+	                    productImageService.deleteImage(image.getImgId());
 	                }
 	            }
 	        }

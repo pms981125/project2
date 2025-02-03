@@ -13,17 +13,17 @@ public class CartListDTO {
 
 	private Long id;
 	
-	private String product_name;
+	private String productName;
 	
-	private String product_code;
+	private String productCode;
 	
 	private int count;
 	
 	private int price;
 	
-	private int total_price;
+	private int totalPrice;
 	
-	private String img_path;
+	private String imgPath;
 	
-	private String thumbnail_path;
+	private String thumbnailPath;
 }
