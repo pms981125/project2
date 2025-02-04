@@ -12,6 +12,7 @@
 	        </div>
 	        <div class="card-body">
 				<form action="/loginProcess" method="post">
+					<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/> <!-- 다른 post요청 안될시 이부분 추가 -->
 					<div class="input-group mb-3">
 			            <span class="input-group-text">아이디</span>
 			        	<input type="text" name="username" class="form-control" placeholder="USER ID">
@@ -40,6 +41,9 @@
 </div>
 <script layout:fragment="script" th:inline="javascript">
 	const error = /*[[${session.errorMessage}]]*/""
+	const token = /*[[${_csrf.token}]]*/"";
+	
+	console.log(token)
 	
 	if(error != null) {
 		alert(error);

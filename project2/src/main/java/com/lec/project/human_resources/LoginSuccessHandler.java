@@ -15,7 +15,7 @@ import lombok.extern.log4j.Log4j2;
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-		log.info(authentication.getAuthorities() + "-=-=-=-=-=-=-=-=-=");	
+		log.info(authentication.getAuthorities() + "-=-=-=-=-=-=-=-=-=-");	
 	
 		if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER_ADMIN"))) {
 			response.sendRedirect("/sudo/allUserList");

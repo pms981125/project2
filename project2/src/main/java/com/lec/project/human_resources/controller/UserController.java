@@ -87,6 +87,7 @@ public class UserController {
 		return "redirect:/user/logout"; // 수정 필요?
 	}
 	
+	
 	@GetMapping("/logout")
 	public String logout() {
 		return "redirect:/logout";
