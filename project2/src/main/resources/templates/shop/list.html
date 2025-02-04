@@ -76,11 +76,9 @@
 	                    <span sec:authentication="name"></span>
 	                </span>
 	                <div class="d-flex flex-column">
-	                	<form th:action="@{/logout}" method="post"style="margin: 0;">
-		                    <button type="submit" class="btn btn-outline-info mb-2" style="color: #6bb7be; border-color: #6bb7be;">
-		                        <i class="fa fa-unlock" aria-hidden="true"></i>
-							</button>
-	                    </form>
+	                    <a th:href="@{/logout}" class="btn btn-outline-info mb-2" style="color: #6bb7be; border-color: #6bb7be;">
+	                        <i class="fa fa-unlock" aria-hidden="true"></i>
+	                    </a>
 	                </div>
 	            </div>
 			</nav>

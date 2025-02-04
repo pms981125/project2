@@ -22,6 +22,11 @@
     <link href="/css/style.css" rel="stylesheet" />
     <link href="/css/responsive.css" rel="stylesheet" />
 
+	 <!-- jQuery -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <!-- iamport.payment.js -->
+    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+
     <!-- 기존 스타일들 -->
     <style>
     .payment-buttons {
@@ -291,70 +296,44 @@
 document.addEventListener('DOMContentLoaded', function() {
 	const kakaoPayBtn = document.getElementById('kakaoPayBtn');
 	
+	// IMP 초기화
+	const IMP = window.IMP;
+	IMP.init("imp26252757"); // 포트원 관리자 페이지에서 발급받은 가맹점 식별코드
+	
 	if(kakaoPayBtn) {
 		kakaoPayBtn.addEventListener('click', function(e) {
 			e.preventDefault();
-			requestKakaoPay();
+			requestPayment();
 		});
 	}
 });
 
-function requestKakaoPay() {
-	console.log("KakaoPay button clicked");
+function requestPayment() {
+	// 주문 번호 생성
+	const orderId = generateOrderId();
 	
-	// Thymeleaf 변수를 안전하게 가져오기
-	const productName = /*[[${responseDTO.dtoList[0].productName}]]*/ '';
-	const totalItems = /*[[${responseDTO.dtoList.size()}]]*/ 0;
-	const totalPrice = /*[[${totalPrice}]]*/ 0;
-	const userId = /*[[${member.id}]]*/ '';
-	
-	// 상품명 생성
-	const itemNameDisplay = totalItems > 1 ? 
-		`${productName} 외 ${totalItems - 1}건` : 
-		productName;
-	
-    const orderData = {
-		partnerOrderId: generateOrderId(),
-		partnerUserId: userId,
-		itemName: itemNameDisplay,
-		quantity: totalItems,
-		totalAmount: totalPrice,
-		taxFreeAmount: 0,
-		successUrl: window.location.origin + '/cart/order/kakao/success',
-		cancelUrl: window.location.origin + '/cart/order/kakao/cancel',
-		failUrl: window.location.origin + '/cart/order/kakao/fail'
-    };
-
-    console.log("결제 요청 데이터:", orderData);
-    
-    fetch('/api/kakao-pay/ready', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(orderData)
-    })
-    .then(response => {
-        if (!response.ok) {
-			return response.text().then(errorText => {
-				console.error("Error response:", text);
-				throw new Error(`HTTP 오류! 상태: ${response.status}, 메시지: ${errorText}`);
-        	});
-        }
-        return response.json();
-    })
-    .then(data => {
-    	console.log("Payment preparation successful:", data);
-        if (data && data.nextRedirectPcUrl) {
-            window.location.href = data.nextRedirectPcUrl;
-        } else {
-        	throw new Error('Invalid response: missing redirect URL');
-        }
-    })
-    .catch(error => {
-    	console.error('Payment request failed:', error);
-    	alert('결제 요청 중 오류가 발생했습니다: ' + error.message);
-    });
+	//결제 데이터 준비
+	IMP.request_pay({
+			pg: "kakaopay",												// PG사 코드
+			pay_method: "card",											// 결제 수단
+			merchant_uid: orderId,										// 주문번호
+			name: /*[[${responseDTO.dtoList[0].productName}]]*/ '', 	// 상품명
+			amount: /*[[${totalPrice}]]*/ 0,							// 결제금액
+			buyer_email: /*[[${member.email}]]*/ '',					// 구매자 이메일
+			buyer_name: /*[[${member.name}]]*/ '',						// 구매자 이름
+			buyer_tel: /*[[${member.phone}]]*/ '',						// 구매자 전화번호
+			buyer_addr: /*[[${member.detailedAddress}]]*/ '',			// 구매자 주소
+		}, function(rsp) { // callback
+			if(rsp.success) {
+			//결제 성공 시 : 결제 승인 또는 가상계좌 발급에 성공한 경우
+			alert("결제가 완료되었습니다.");
+			window.location.herf = '/cart/order/success';
+		} else {
+			// 결제 실패 시
+			alert("결제에 실패했습니다. 에러 내용: ${rsp.error_msg}");
+		}
+	});
+		
 }
 
 function generateOrderId() {

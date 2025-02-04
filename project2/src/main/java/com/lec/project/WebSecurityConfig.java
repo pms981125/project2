@@ -42,9 +42,9 @@ public class WebSecurityConfig {
         									   .requestMatchers("/hr/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
         									   .requestMatchers("/sudo/**").hasRole("SUPER_ADMIN")
         									   
-        								        // protoshop 관련 권한을 MANAGER에 부여
-        								       .requestMatchers("/shop/modify/**", "/shop/remove/**", "/shop/regist/**").hasRole("MANAGER")
-        								       .requestMatchers("/shop/list", "/shop/read/**", "/cart/**").permitAll()
+        								        // shop 관련 권한을 MANAGER에 부여
+        								       .requestMatchers("/shop/modify/**", "/shop/remove/**", "/shop/regist/**", "/shop/deleteImage/**").hasRole("MANAGER")
+        								       .requestMatchers("/shop/list", "/shop/read/**", "/cart/**", "/api/**").permitAll()
         								        
         									   // .requestMatchers("/user/**").hasRole("USER") // 없애도 될듯?
         								       // .requestMatchers("/login.html").permitAll()
@@ -68,39 +68,6 @@ public class WebSecurityConfig {
         
 		return http.build();
 	}
-
-	//바로 위 코드에 kakaoPay csrf_token 예외 처리한 코드
-//	@Bean
-//	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//		log.info("filter1 =-=-=-==-=");
-//
-//        http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/kakao-pay/**"))		// 카카오페이 API는 CSRF 검사 제외
-//        	.authorizeHttpRequests(auth -> auth.requestMatchers("/admin/**").hasRole("ADMIN") // 효과 X
-//        									   .requestMatchers("/hr/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
-//        									   .requestMatchers("/sudo/**").hasRole("SUPER_ADMIN")
-//        									   
-//        								        // shop 관련 권한을 MANAGER에 부여
-//        								       .requestMatchers("/shop/modify/**", "/shop/remove/**", "/shop/regist/**").hasRole("MANAGER")
-//        								       .requestMatchers("/shop/list", "/shop/read/**", "/cart/**").permitAll()
-//        								        
-//        									   // .requestMatchers("/user/**").hasRole("USER") // 없애도 될듯?
-//        								       // .requestMatchers("/login.html").permitAll()
-//        								       .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // 정적 리소스 접근 허용
-//        								       .requestMatchers("user/register", "user/goRegisterForm").permitAll() //123
-//        									   .anyRequest().authenticated())
-//        	// .formLogin(form -> form.loginPage("/login.html")
-//        	.formLogin(form -> form.loginPage("/user/login")
-//        						   .loginProcessingUrl("/loginProcess")
-//        						   .successHandler(successHandler())
-//        						   .failureHandler(failureHandler())
-//        						   .permitAll())
-//        	.logout(out -> out.logoutUrl("/logout")
-//							  // .logoutSuccessHandler(custom)
-//							  .permitAll()
-//        );
-//        
-//		return http.build();
-//	}
 	
 	@Bean
 	AuthenticationSuccessHandler successHandler() {

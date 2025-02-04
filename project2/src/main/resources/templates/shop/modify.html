@@ -10,6 +10,8 @@
     <meta name="keywords" content="" />
     <meta name="description" content="" />
     <meta name="author" content="" />
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <title>shop</title>
 
@@ -44,6 +46,7 @@
             </div>
 
 		<form id="modifyForm" action="/shop/modify" method="post" enctype="multipart/form-data" onreset="resetForm()">
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <!-- 상품 수정 폼 -->
             <div class="product-detail-container">
                 <!-- 왼쪽: 이미지 영역 -->
@@ -135,8 +138,8 @@
 					        <a th:href="@{/shop/read(bno=${dto.bno})}" class="btn btn-secondary me-2">취소</a>
 					        <a th:href="@{/shop/list}" class="btn btn-secondary">목록</a>
 					    </div>
-					</form>
-                </div>
+                	</div>
+                </form>
             </div>
         </div>
     </section>
@@ -252,11 +255,14 @@
 			
 			if(confirm('이 이미지를 삭제하겠습니까?')){
 				const productCode = document.getElementById('productCode').value;
+				const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+				const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 				
 				fetch('/shop/deleteImage', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded',
+						[header]: token
 					},
 					body: `imageId=${imageId}&productCode=${productCode}`
 				})
