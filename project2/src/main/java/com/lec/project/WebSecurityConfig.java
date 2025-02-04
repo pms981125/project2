@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.lec.project.human_resources.LoginFailureHandler;
 import com.lec.project.human_resources.LoginSuccessHandler;
@@ -34,7 +36,8 @@ public class WebSecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		log.info("filter1 =-=-=-==-=");
-        http.csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+        // http.csrf(csrf -> csrf.disable())
         	.authorizeHttpRequests(auth -> auth.requestMatchers("/admin/**").hasRole("ADMIN") // 효과 X
         									   .requestMatchers("/hr/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
         									   .requestMatchers("/sudo/**").hasRole("SUPER_ADMIN")
@@ -55,6 +58,10 @@ public class WebSecurityConfig {
         						   .failureHandler(failureHandler())
         						   .permitAll())
         	.logout(out -> out.logoutUrl("/logout")
+        					  .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // GET 요청 허용
+        					  .logoutSuccessUrl("/login")  // 로그아웃 성공 후 이동할 URL
+        					  .invalidateHttpSession(true) // 세션 삭제
+        					  .deleteCookies("JSESSIONID") // 쿠키 삭제
 							  // .logoutSuccessHandler(custom)
 							  .permitAll()
         );
