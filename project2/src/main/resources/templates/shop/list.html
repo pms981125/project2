@@ -71,10 +71,12 @@
 					</div>
 					
 	            <div class="quote_btn-container">
+	            	<button class="btn  my-2 my-sm-0 userInfoBtn" type="button" onclick="javascript:getUserInfo()">
 	                <span style="color: black; margin-right: 15px;">
 	                    <i class="fa fa-user" aria-hidden="true"></i>
 	                    <span sec:authentication="name"></span>
 	                </span>
+	                </button>
 	                <div class="d-flex flex-column">
 	                	<form th:action="@{/logout}" method="post"style="margin: 0;">
 		                    <button type="submit" class="btn btn-outline-info mb-2" style="color: #6bb7be; border-color: #6bb7be;">
@@ -257,4 +259,16 @@
         // 초기 로드시 한번 체크
         handleScroll();
     });
+    
+   	document.querySelector(".userInfoBtn").addEventListener("click", function(e) {
+   		e.preventDefault()
+   		e.stopPropagation()
+   		    
+   		const form = document.createElement('form')
+   		    
+   		form.action = `/user/userInfo`
+   		form.method = 'get'
+   		document.body.appendChild(form)
+   		form.submit()
+	}, false)
     </script>
