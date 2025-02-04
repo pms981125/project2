@@ -35,7 +35,7 @@
 						</div>
 						<div class="form-group input-group">
 							<div class="input-group-prepend"><span class="input-group-text">이메일</span></div>
-							<input type="email" name="email" class="form-control" placeholder="이메일" required>
+							<input type="email" name="email" class="form-control email" placeholder="이메일" required>
 						</div>
 						<div class="form-group input-group justify-content-center">
 							<span class="mr-2">지역 선택: </span>
@@ -57,7 +57,7 @@
 						</div>
 						<div class="form-group input-group mt-sm-1 justify-content-center">
 							<!-- <button class="btn btn-primary addAdminBtn">관리자 추가</button> -->
-							<input type="submit" class="btn btn-primary" value="관리자 추가" />
+							<input type="submit" class="btn btn-primary" value="직원 추가" />
 							<button class="btn btn-success goBackBtn ml-2" >이전</button>
 						</div>
 					</form>
@@ -83,11 +83,22 @@
 	document.querySelector(".ssnFront").addEventListener("keyup", function(e) {
 	    e.preventDefault()
 	    e.stopPropagation()
-
+	
 	    const val = document.querySelector(".ssnFront").value
 	    
 	    if(val.length == 6) {
 	    	document.querySelector(".ssnEnd").focus()
+	    }
+	}, false)
+	
+	document.querySelector(".ssnEnd").addEventListener("keyup", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	
+	    const val = document.querySelector(".ssnEnd").value
+	    
+	    if(val.length >= 7) {
+	    	document.querySelector(".ssnEnd").value = val.substring(0, 7)
 	    }
 	}, false)
 	
@@ -99,6 +110,17 @@
 	    
 	    if(val.length == 4) {
 	    	document.querySelector(".phone2").focus()
+	    }
+	}, false)
+	
+	document.querySelector(".phone2").addEventListener("keyup", function(e) {
+	    e.preventDefault()
+	    e.stopPropagation()
+	
+	    const val = document.querySelector(".phone2").value
+	    
+	    if(val.length == 4) {
+	    	document.querySelector(".email").focus()
 	    }
 	}, false)
 	
