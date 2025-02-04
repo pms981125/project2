@@ -289,28 +289,36 @@
 
 <script th:inline="javascript">
 document.addEventListener('DOMContentLoaded', function() {
-    const kakaoPayBtn = document.getElementById('kakaoPayBtn');
-    
-    if(kakaoPayBtn) {
-        kakaoPayBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log("KakaoPay button clicked");
-            requestKakaoPay();
-        });
-    }
+	const kakaoPayBtn = document.getElementById('kakaoPayBtn');
+	
+	if(kakaoPayBtn) {
+		kakaoPayBtn.addEventListener('click', function(e) {
+			e.preventDefault();
+			requestKakaoPay();
+		});
+	}
 });
 
 function requestKakaoPay() {
 	console.log("KakaoPay button clicked");
 	
+	// Thymeleaf 변수를 안전하게 가져오기
+	const productName = /*[[${responseDTO.dtoList[0].productName}]]*/ '';
+	const totalItems = /*[[${responseDTO.dtoList.size()}]]*/ 0;
+	const totalPrice = /*[[${totalPrice}]]*/ 0;
+	const userId = /*[[${member.id}]]*/ '';
+	
+	// 상품명 생성
+	const itemNameDisplay = totalItems > 1 ? 
+		`${productName} 외 ${totalItems - 1}건` : 
+		productName;
+	
     const orderData = {
-		partnerOrderId: generateOrderId(),  
-		partnerUserId: /*[[${member.id}]]*/ '',
-		itemName: /*[[${responseDTO.dtoList[0].productName}]]*/ '' + 
-		         (/*[[${responseDTO.dtoList.size()}]]*/ 0 > 1 ? 
-		          ' 외 ' + (/*[[${responseDTO.dtoList.size()}]]*/ 0 - 1) + '건' : ''),
-		quantity: /*[[${responseDTO.dtoList.size()}]]*/ 0,
-		totalAmount: /*[[${totalPrice}]]*/ 0,
+		partnerOrderId: generateOrderId(),
+		partnerUserId: userId,
+		itemName: itemNameDisplay,
+		quantity: totalItems,
+		totalAmount: totalPrice,
 		taxFreeAmount: 0,
 		successUrl: window.location.origin + '/cart/order/kakao/success',
 		cancelUrl: window.location.origin + '/cart/order/kakao/cancel',
@@ -322,40 +330,41 @@ function requestKakaoPay() {
     fetch('/api/kakao-pay/ready', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(orderData)
     })
     .then(response => {
         if (!response.ok) {
 			return response.text().then(errorText => {
+				console.error("Error response:", text);
 				throw new Error(`HTTP 오류! 상태: ${response.status}, 메시지: ${errorText}`);
         	});
         }
         return response.json();
     })
     .then(data => {
-    	console.log("결제 준비 응답:", data);
+    	console.log("Payment preparation successful:", data);
         if (data && data.nextRedirectPcUrl) {
             window.location.href = data.nextRedirectPcUrl;
         } else {
-        	throw new Error('유효하지 않은 응답 데이터');
+        	throw new Error('Invalid response: missing redirect URL');
         }
     })
     .catch(error => {
-		console.error('결제 요청 중 오류:', error);
-		alert('결제 요청 중 오류가 발생했습니다: ' + error.message);
+    	console.error('Payment request failed:', error);
+    	alert('결제 요청 중 오류가 발생했습니다: ' + error.message);
     });
 }
 
 function generateOrderId() {
-    const date = new Date();
-    const timestamp = date.getTime();
-    return 'ORDER_' + 
-           date.getFullYear() +
-           String(date.getMonth() + 1).padStart(2, '0') +
-           String(date.getDate()).padStart(2, '0') + '_' +
-           timestamp.toString().slice(-6);
+	const date = new Date();
+	const timestamp = date.getTime();
+	return 'ORDER_' + 
+		date.getFullYear() +
+		String(date.getMonth() + 1).padStart(2, '0') +
+		String(date.getDate()).padStart(2, '0') + '_' +
+		timestamp.toString().slice(-6);
 }
 </script>
 </body>
