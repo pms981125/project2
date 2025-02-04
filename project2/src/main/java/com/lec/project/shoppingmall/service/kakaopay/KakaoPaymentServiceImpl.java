@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lec.project.shoppingmall.domain.payment.kakao.KakaoPayment;
 import com.lec.project.shoppingmall.domain.payment.kakao.KakaoPaymentStatus;
 import com.lec.project.shoppingmall.dto.payment.kakao.KakaoPayApproveRequest;
@@ -55,24 +56,34 @@ public class KakaoPaymentServiceImpl implements KakaoPaymentService {
 		parameters.add("cancel_url", baseUrl + "/cart/order/kakao/cancel");
 		parameters.add("fail_url", baseUrl + "/cart/order/kakao/fail");
 		
-		log.info("Kakao Pay Request Params: {}", parameters);
+		log.info("요청 파라미터: {}", parameters);
+		log.info("Admin Key: {}", adminKey.substring(0, 8) + "...");
 		
 	    try {
 	        String responseBody = webClient.post()
-	            .uri(KAKAO_PAY_HOST + "/v1/payment/ready")
-	            .header("Authorization", "KakaoAK " + adminKey)
-	            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-	            .body(BodyInserters.fromFormData(parameters))
-	            .retrieve()
-	            .bodyToMono(String.class)
-	            .block();
+				.uri(KAKAO_PAY_HOST + "/v1/payment/ready")
+				.header("Authorization", "KakaoAK " + adminKey)
+				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.body(BodyInserters.fromFormData(parameters))
+				.retrieve()
+				.onStatus(status -> status.is4xxClientError(),
+					response -> response.bodyToMono(String.class)
+						.flatMap(errorBody -> {
+				        	log.error("클라이언트 에러 응답: {} - {}", response.statusCode(), errorBody);
+				            return Mono.error(new RuntimeException("카카오페이 API 클라이언트 에러: " + errorBody));
+				        }))
+				.bodyToMono(String.class)
+				.doOnNext(body -> log.info("응답 본문: {}", body))
+				.block();
 
 	        log.info("카카오페이 원본 응답: {}", responseBody);
 
-	        ObjectMapper objectMapper = new ObjectMapper();
-	        KakaoPayReadyResponse kakaoPayResponse = objectMapper
-	            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-	            .readValue(responseBody, KakaoPayReadyResponse.class);
+			ObjectMapper objectMapper = new ObjectMapper()
+				.registerModule(new JavaTimeModule())
+				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			
+			    KakaoPayReadyResponse kakaoPayResponse = objectMapper
+					.readValue(responseBody, KakaoPayReadyResponse.class);
 
 	        if (kakaoPayResponse.getNextRedirectPcUrl() == null) {
 	            log.error("리다이렉트 URL이 null입니다. 응답 전체: {}", responseBody);

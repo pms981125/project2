@@ -56,6 +56,9 @@ dependencies {
 	
 	// KakaoPay
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	
+	// localDateTime등 Java의 날자/시간 <-> JSON으로 변화(직렬화/역직렬화)
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 }
 
 tasks.named('test') {

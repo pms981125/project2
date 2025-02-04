@@ -40,8 +40,8 @@ public class WebSecurityConfig {
         									   .requestMatchers("/sudo/**").hasRole("SUPER_ADMIN")
         									   
         								        // protoshop 관련 권한을 MANAGER에 부여
-        								       .requestMatchers("/protoshop/modify/**", "/protoshop/remove/**", "/protoshop/regist/**").hasRole("MANAGER")
-        								       .requestMatchers("/protoshop/list", "/protoshop/read/**", "/cart/**").permitAll()
+        								       .requestMatchers("/shop/modify/**", "/shop/remove/**", "/shop/regist/**").hasRole("MANAGER")
+        								       .requestMatchers("/shop/list", "/shop/read/**", "/cart/**").permitAll()
         								        
         									   // .requestMatchers("/user/**").hasRole("USER") // 없애도 될듯?
         								       // .requestMatchers("/login.html").permitAll()
