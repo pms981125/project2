@@ -10,6 +10,8 @@
     <meta name="keywords" content="" />
     <meta name="description" content="" />
     <meta name="author" content="" />
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <title>cart</title>
 
@@ -204,13 +206,14 @@
     <!-- 필요한 스크립트들 -->
     <script src="/js/jquery-3.4.1.min.js"></script>
     <script src="/js/bootstrap.js"></script>
-    <script src="/js/custom.js"></script>
 
 <script th:inline="javascript">
 function updateQuantity(element, change) {
+
     const cartItem = element.closest('.cart-item');
     const input = cartItem.querySelector('input[type="number"]');
     const id = input.dataset.id;
+    
     let newQuantity;
 
     if (change === 0) {
@@ -227,11 +230,14 @@ function updateQuantity(element, change) {
     }
     
     input.value = newQuantity;
+	const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
     
     fetch('/api/cart/updateQuantity', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
+            [header]: token
         },
         body: `id=${id}&quantity=${newQuantity}`
     })
@@ -272,11 +278,14 @@ function clearCart() {
     if(!confirm('장바구니를 비우시겠습니까?')) {
 		return;
     }
+	const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
     
     fetch('/api/cart/clear', {
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			[header]: token
 		}
 	})
 	.then(response => {

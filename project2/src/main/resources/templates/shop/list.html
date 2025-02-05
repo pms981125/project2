@@ -172,24 +172,37 @@
         <!-- 페이지네이션 -->
         <div class="pagination-container">
             <ul class="pagination justify-content-center" th:with="start=${responseDTO.start}, end=${responseDTO.end}">
+		        <!-- 첫 페이지로 이동 버튼 -->
+		        <li class="page-item" th:if="${responseDTO.prev}">
+					<a class="page-link" th:href="@{/shop/list(page=1, category=${category}, keyword=${keyword})}">
+						<i class="fa fa-angle-double-left"></i>
+					</a>
+		        </li>
+		        <!-- 이전 페이지로 이동 버튼 -->
                 <li class="page-item" th:if="${responseDTO.prev}">
                     <a class="page-link" th:href="@{/shop/list(page=${start - 1}, category=${category}, keyword=${keyword})}">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 </li>
-                
+                <!-- 페이지로 번호 -->
                 <li th:each="num : ${#numbers.sequence(start, end)}" 
                     th:class="${'page-item ' + (responseDTO.page == num ? 'active' : '')}">
                     <a class="page-link" th:href="@{/shop/list(page=${num}, category=${category}, keyword=${keyword})}">
                         [[${num}]]
                     </a>
                 </li>
-                
+                <!-- 다음 페이지로 이동 버튼 -->
                 <li class="page-item" th:if="${responseDTO.next}">
                     <a class="page-link" th:href="@{/shop/list(page=${end + 1}, category=${category}, keyword=${keyword})}">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 </li>
+				<!-- 마지막 페이지로 이동 버튼 -->
+				<li class="page-item" th:if="${responseDTO.next}">
+					<a class="page-link" th:href="@{/shop/list(page=${responseDTO.lastPage}, category=${category}, keyword=${keyword})}">
+						<i class="fa fa-angle-double-right"></i>
+					</a>
+				</li>
             </ul>
         </div>
     </div>
@@ -214,8 +227,6 @@
 	<script src="/js/jquery-3.4.1.min.js"></script>
 	<!-- bootstrap js -->
 	<script src="/js/bootstrap.js"></script>
-	<!-- custom js -->
-	<script src="/js/custom.js"></script>
 </body>
 </html>
     <!-- 스크롤 시 네비게이션 바 고정을 위한 스크립트 -->
