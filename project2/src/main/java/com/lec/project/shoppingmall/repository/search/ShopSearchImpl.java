@@ -33,12 +33,12 @@ public class ShopSearchImpl implements ShopSearch{
 		StringBuilder where= new StringBuilder();
         
 		if(category != null && !category.trim().isEmpty()) {
-			where.append(" WHERE p.product_category = :category");
+			where.append(" WHERE p.productCategory = :category");
 			if(keyword != null && !keyword.trim().isEmpty()) {
-				where.append(" AND (s.board_title LIKE :keyword OR p.product_name LIKE :keyword)");
+				where.append(" AND (s.boardTitle LIKE :keyword OR p.productName LIKE :keyword)");
 			}
 		} else if(keyword != null && !keyword.trim().isEmpty()) {
-			where.append(" WHERE s.board_title LIKE :keyword OR p.product_name LIKE :keyword");
+			where.append(" WHERE s.boardTitle LIKE :keyword OR p.productName LIKE :keyword");
 		}
 		
 		String orderBy = " ORDER BY s.bno DESC";
