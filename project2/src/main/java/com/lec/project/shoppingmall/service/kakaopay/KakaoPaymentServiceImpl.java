@@ -84,6 +84,7 @@ public class KakaoPaymentServiceImpl implements KakaoPaymentService {
 			
 			    KakaoPayReadyResponse kakaoPayResponse = objectMapper
 					.readValue(responseBody, KakaoPayReadyResponse.class);
+			    log.info("Mapped response object: {}", kakaoPayResponse);
 
 	        if (kakaoPayResponse.getNextRedirectPcUrl() == null) {
 	            log.error("리다이렉트 URL이 null입니다. 응답 전체: {}", responseBody);

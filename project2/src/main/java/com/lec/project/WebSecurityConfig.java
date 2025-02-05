@@ -44,7 +44,7 @@ public class WebSecurityConfig {
         									   
         								        // shop 관련 권한을 MANAGER에 부여
         								       .requestMatchers("/shop/modify/**", "/shop/remove/**", "/shop/regist/**", "/shop/deleteImage/**").hasRole("MANAGER")
-        								       .requestMatchers("/shop/list", "/shop/read/**", "/cart/**", "/api/**").permitAll()
+        								       .requestMatchers("/shop/list", "/shop/read/**", "/cart/**", "/api/kakao-pay/**","/api/**").permitAll()
         								        
         									   // .requestMatchers("/user/**").hasRole("USER") // 없애도 될듯?
         								       // .requestMatchers("/login.html").permitAll()

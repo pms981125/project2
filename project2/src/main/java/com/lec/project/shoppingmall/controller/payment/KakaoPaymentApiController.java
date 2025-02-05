@@ -29,42 +29,34 @@ public class KakaoPaymentApiController {
 
     @PostMapping("/ready")
     public ResponseEntity<KakaoPayReadyResponse> readyToPay(
-            @RequestBody KakaoPayReadyRequest request,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        
+            @RequestBody KakaoPayReadyRequest kakaoPayReadyRequest) {
     	try {
-            // 사용자 검증
-            if (!request.getPartnerUserId().equals(userDetails.getUsername())) {
-                log.warn("User ID mismatch: {} vs {}", request.getPartnerUserId(), userDetails.getUsername());
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(null);
-            }
-
-            // 결제 금액 검증 로직 추가
-            if (!validatePaymentAmount(request)) {
-                log.warn("Invalid payment amount for order: {}", request.getPartnerOrderId());
-                return ResponseEntity.badRequest()
-                    .body(null);
-            }
-
-            KakaoPayReadyResponse response = kakaoPaymentService.readyToPay(request);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("Payment preparation failed", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(null);
-        }
+    		log.info("Received payment request: {}", kakaoPayReadyRequest);
+    		
+            // 결제 금액 검증
+    		if(!validatePaymentAmount(kakaoPayReadyRequest)) {
+    			log.warn("Invalid payment amount for order: {}", kakaoPayReadyRequest.getPartnerOrderId());
+    			return ResponseEntity.badRequest().body(null);
+    		}
+    		
+    		log.info("Payment amount validaated successfully");
+    		KakaoPayReadyResponse kakaoPayReadyResponse = kakaoPaymentService.readyToPay(kakaoPayReadyRequest);
+    		log.info("Payment ready response: {}", kakaoPayReadyResponse);
+    		
+    		return ResponseEntity.ok(kakaoPayReadyResponse);
+    	} catch (Exception e) {
+    		log.error("Payment preparation failed", e);
+    		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    	}
     }
     
-    private boolean validatePaymentAmount(KakaoPayReadyRequest request) {
+    private boolean validatePaymentAmount(KakaoPayReadyRequest kakaoPayReadyRequest) {
         try {
-            int actualTotalPrice = cartService.getTotalPrice(request.getPartnerUserId());
-            if (actualTotalPrice != request.getTotalAmount()) {
-                log.warn("Payment amount mismatch. Expected: {}, Actual: {}", 
-                    actualTotalPrice, request.getTotalAmount());
-                return false;
-            }
-            return true;
+            int actualTotalPrice = cartService.getTotalPrice(kakaoPayReadyRequest.getPartnerUserId());
+			log.info("Actual total price: {}, Requested amount: {}", 
+					actualTotalPrice, kakaoPayReadyRequest.getTotalAmount());
+			
+            return actualTotalPrice == kakaoPayReadyRequest.getTotalAmount();
         } catch (Exception e) {
             log.error("Failed to validate payment amount", e);
             return false;
