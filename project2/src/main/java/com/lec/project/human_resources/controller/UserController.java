@@ -1,5 +1,7 @@
 package com.lec.project.human_resources.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -87,9 +89,27 @@ public class UserController {
 		return "redirect:/user/logout"; // 수정 필요?
 	}
 	
-	
 	@GetMapping("/logout")
 	public String logout() {
 		return "redirect:/logout";
+	}
+	
+	@GetMapping("/confirmId")
+	public ResponseEntity<Boolean> confirmId(@RequestParam("id") String id) {
+		log.info(213);
+		
+		boolean result = true;
+		
+		if (id.trim().isEmpty()) {
+			result = false;
+		} else {
+			if (hrService.confirmId(id)) {
+				result = false;
+			} else {
+				result = true;
+			}
+		}
+		
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 }

@@ -19,6 +19,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 	
 		if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER_ADMIN"))) {
 			response.sendRedirect("/sudo/allUserList");
+			// response.sendRedirect("/index.html");
 		} else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
 			// MemberSecurityDTO memberSecurityDTO = (MemberSecurityDTO) authentication.getPrincipal();
 			
@@ -27,7 +28,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 		} else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_MANAGER"))) {
 			response.sendRedirect("/shop/list");
 		} else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER"))) {
-			 response.sendRedirect("/index.html"); // static 폴더에 있는 html 파일로 접근 시
+			response.sendRedirect("/index.html"); // static 폴더에 있는 html 파일로 접근 시
 			//response.sendRedirect("/user/home");
 		} else {
 			response.sendRedirect("/contact");

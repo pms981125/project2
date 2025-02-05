@@ -41,9 +41,9 @@
 </div>
 <script layout:fragment="script" th:inline="javascript">
 	const error = /*[[${session.errorMessage}]]*/""
-	const token = /*[[${_csrf.token}]]*/"";
+	// const token = /*[[${_csrf.token}]]*/"";
 	
-	console.log(token)
+	// console.log(token)
 	
 	if(error != null) {
 		alert(error);
