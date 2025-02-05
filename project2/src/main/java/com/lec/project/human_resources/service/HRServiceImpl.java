@@ -181,7 +181,7 @@ public class HRServiceImpl implements HRService {
 
 		Member member = Member.builder().id(id).password(password).name(name).email(email).ssn(ssn).phone(phone).detailedAddress(address).annualSalary(annualSalary).build();
 
-		member.addRole(MemberRole.ADMIN);
+		member.addRole(MemberRole.SUPER_ADMIN);
 		
 		memberRepository.save(member); /* */
 		
