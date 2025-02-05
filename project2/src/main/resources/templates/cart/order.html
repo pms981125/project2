@@ -348,16 +348,16 @@ function requestPayment() {
 	
 	// 카카오페이 결제 준비 요청을 위한 데이터 구성
 	const paymentData = {
-		partnerOrderId: orderId,                                          // 가맹점 주문번호
-		partnerUserId: /*[[${member.id}]]*/ '',                          // 가맹점 회원 ID
-		itemName: /*[[${responseDTO.dtoList[0].productName}]]*/ '',      // 상품명
-		quantity: /*[[${responseDTO.dtoList[0].count}]]*/ 1,             // 수량
-		totalAmount: /*[[${totalPrice}]]*/ 0,                            // 총 결제금액
-		taxFreeAmount: 0,                                                // 비과세 금액
-		// 결제 처리 결과 redirect URL 설정
-		successUrl: `${window.location.origin}/cart/order/kakao/success`, // 결제 성공 시 URL
-		cancelUrl: `${window.location.origin}/cart/order/kakao/cancel`,   // 결제 취소 시 URL
-		failUrl: `${window.location.origin}/cart/order/kakao/fail`        // 결제 실패 시 URL
+		partnerOrderId: orderId,																		// 가맹점 주문번호
+		partnerUserId: /*[[${member.id}]]*/ '',															// 가맹점 회원 ID
+		itemName: /*[[${responseDTO.dtoList[0].productName}]]*/ '',										// 상품명
+		quantity: /*[[${totalCount}]]*/ 1,																// 전체 상품 수량 합계
+		totalAmount: /*[[${totalPrice}]]*/ 0,															// 총 결제금액
+		taxFreeAmount: 0,																				// 비과세 금액
+		// 결제 처리 결과 redirect URL 설정				
+		successUrl: `${window.location.origin}/cart/order/kakao/success`,								// 결제 성공 시 URL
+		cancelUrl: `${window.location.origin}/cart/order/kakao/cancel`,									// 결제 취소 시 URL
+		failUrl: `${window.location.origin}/cart/order/kakao/fail`										// 결제 실패 시 URL
 	};
 	
 	// 카카오페이 결제 준비 API 호출

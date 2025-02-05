@@ -47,6 +47,12 @@ public class OrderController {
 	        
 			PageResponseDTO<CartListDTO> responseDTO = cartService.list(pageRequestDTO, memberId);
 			int totalPrice = cartService.getTotalPrice(memberId);
+			
+			// totalCount 계산
+			int totalCount = responseDTO.getDtoList().stream()
+								.mapToInt(CartListDTO::getCount)
+								.sum();
+			model.addAttribute("totalCount", totalCount);
 	
 			// 장바구니가 비어있는 경우
 			if (responseDTO.getDtoList().isEmpty()) {

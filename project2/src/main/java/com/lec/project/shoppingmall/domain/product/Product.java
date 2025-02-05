@@ -1,10 +1,16 @@
 package com.lec.project.shoppingmall.domain.product;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.lec.project.shoppingmall.domain.product.productimage.ProductImage;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,4 +45,8 @@ public class Product {
 	
 	@Column
 	private String secondProductDetail;
+	
+	@Builder.Default
+	@OneToMany(mappedBy = "product")
+	private List<ProductImage> productImages = new ArrayList<>();
 }
