@@ -362,4 +362,9 @@ public class HRServiceImpl implements HRService {
 		remove(id, false);
 		addAdmin(id, member.getPassword(), member.getName(), member.getSsn(), member.getPhone(), member.getEmail(), member.getDetailedAddress(), annualSalary, region.getRegion()); // 계좌가 있으면 작동 X
 	}
+
+	@Override
+	public boolean confirmId(String id) {
+		return memberRepository.findById(id).isPresent();
+	}
 }

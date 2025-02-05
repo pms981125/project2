@@ -12,8 +12,9 @@
 					<h1>회원가입 페이지</h1>
 					<form th:action="@{/user/register}" method="post" id="form">
 						<div class="form-group input-group">
-							<input type="text" name="id" class="form-control mt-1" placeholder="ID" required>
+							<input type="text" name="id" id="id" class="form-control mt-1" placeholder="ID" required>
 						</div>
+						<label id="idLabel"></label>
 						<div class="form-group input-group">
 							<input type="text" name="password" class="form-control" placeholder="비밀번호" required>
 						</div>
@@ -56,6 +57,7 @@
 	</section>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script layout:fragment="script" th:inline="javascript">
 	document.querySelector(".ssnFront").addEventListener("keyup", function(e) {
@@ -163,4 +165,45 @@
             }
         }).open();
     }
+	
+	$(document).ready(function() {
+		$("#idLabel").css("display", "none");
+    	//ID 중복 확인
+    	//id를 입력할 수 있는 input text 영역을 벗어나면 동작한다.
+    	$("#id").on("focusout", function() {
+    		var id = $("#id").val();
+    		
+    		if(id == '' || id.length == 0) {
+    			$("#idLabel").css("color", "red").text("공백은 ID로 사용할 수 없습니다.");
+    			return false;
+    		}
+    		
+    		
+    		var csrfToken = $("input[name='_csrf']").val(); // CSRF 토큰 가져오기
+    		
+        	//Ajax로 전송
+        	$.ajax({
+        		url : '/user/confirmId',
+        		data : {
+        			id : id
+        		},
+        		type : 'GET',
+        		headers: { "X-CSRF-TOKEN": csrfToken }, // CSRF 토큰 추가
+        		// dataType : 'json',
+        		success : function(result) {
+        			$("#idLabel").css("display", "inline-block");
+        			
+        			if (result == true) {
+        				$("#idLabel").css("color", "blue").text("사용 가능한 ID 입니다.");
+        			} else{
+        				$("#idLabel").css("color", "red").text("사용 불가능한 ID 입니다.");
+        				$("#id").val('');
+        			}
+        		},
+        		error: function(xhr, status, error) {
+                    console.error("AJAX 오류:", error); // 오류 메시지 확인
+                }
+        	}); //End Ajax
+    	});
+    })
 </script>
