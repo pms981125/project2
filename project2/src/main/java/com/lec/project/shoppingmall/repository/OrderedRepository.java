@@ -20,7 +20,7 @@ public interface OrderedRepository extends JpaRepository<Ordered, Long> {
     List<Ordered> findByMemberOrderByOrderDateDesc(@Param("member") Member member);
     
     // 주문 상태별 조회
-    @Query("SELECT o FROM Ordered o WHERE o.status= :status ORDERED BY o.orderDate DESC")
+    @Query("SELECT o FROM Ordered o WHERE o.status= :status ORDER BY o.orderDate DESC")
     List<Ordered> findByStatus(@Param("status") String status);
     
     // 날짜 범위로 주문 조회
