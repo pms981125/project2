@@ -98,6 +98,11 @@
 				    <a href="/shop/regist" class="btn btn-info text-white" sec:authorize="hasRole('MANAGER')">
 				        <i class="fa fa-plus" aria-hidden="true"></i> 
 				    </a>
+				    
+					<!-- 주문 관리 버튼 - 관리자에게만 표시 -->
+					<a href="/manager/orders" class="btn btn-warning text-white" sec:authorize="hasRole('MANAGER')">
+					    <i class="fa fa-list-alt" aria-hidden="true"></i>
+					</a>
 				</div>
 			</div>
 		</header>

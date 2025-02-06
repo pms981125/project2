@@ -92,32 +92,38 @@
                     <table class="table table-striped table-hover">
                         <thead class="table-dark">
                             <tr>
-                                <th>주문 번호</th>
-                                <th>고객명</th>
-                                <th>주문 날짜</th>
-                                <th>총 금액</th>
-                                <th>상태</th>
-                                <th>액션</th>
+								<th>주문 번호</th>
+								<th>고객명</th>
+								<th>주문 날짜</th>
+								<th>총 금액</th>
+								<th>상태</th>
+								<th>액션</th>
                             </tr>
                         </thead>
                         <tbody id="orderTableBody">
-                            <tr>
-                                <td>ORD-2023-0001</td>
-                                <td>홍길동</td>
-                                <td>2023-12-15 14:30</td>
-                                <td>150,000원</td>
-                                <td>
-                                    <span class="badge status-badge status-PENDING">대기 중</span>
+                            <tr th:each="order : ${orderList.content}">
+								<td th:text="${order.orderId}">주문 번호</td>
+								<td th:text="${order.customerName}">고객명</td>
+								<td th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}">주문 날짜</td>
+								<td th:text="${#numbers.formatInteger(order.totalAmount, 0, 'COMMA') + '원'}">총 금액</td>
+								<td>
+									<span th:class="|badge status-badge status-${order.orderStatus}|"
+									      th:text="${order.orderStatus}">상태</span>
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#orderDetailsModal">
-                                            <i class="fas fa-eye"></i> 상세
+										<button class="btn btn-sm btn-success"
+												th:data-order-id="${order.orderId}"
+												data-bs-toggle="modal"
+												data-bs-target="#orderDetailsModal">
+											<i class="fas fa-eye"></i> 상세
                                         </button>
-                                        <button class="btn btn-sm btn-primary">
-                                            <i class="fas fa-check"></i> 승인
-                                        </button>
-                                        <button class="btn btn-sm btn-danger">
+                                        <button class="btn btn-sm btn-primary order-approve-btn"
+                                        		th:data-order-id="${order.orderId}">
+											<i class="fas fa-check"></i> 승인
+										</button>
+										<button class="btn btn-sm btn-danger order-reject-btn"
+												th:data-order-id="${order.orderId}">
                                             <i class="fas fa-times"></i> 거절
                                         </button>
                                     </div>
@@ -131,14 +137,16 @@
                 <!-- Pagination -->
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1">이전</a>
+						<li class="page-item" th:classappend="${!orderList.hasPrevoius} ? disabled">
+							<a class="page-link" th:href="@{/manager/orders(page=${orderlist.number -1})}">이전</a>
                         </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">다음</a>
+                        <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, orderList.totalPages - 1)}"
+                        	th:classappend="${pageNum == orderList.number} ? 'active'">
+							<a class="page-link" th:href="@{/manager/orders(page=${pageNum})}"
+								th:text="${pageNum + 1}">1</a>
+                        </li>
+						<li class="page-item" th:classappend="${!orderList.hasNext} ? disabled">
+							<a class="page-link" th:href="@{/manager/orders(page=${orderlist.number + 1})}">다음</a>
                         </li>
                     </ul>
                 </nav>
@@ -158,14 +166,14 @@
                     <div class="row">
                         <div class="col-md-6">
                             <h6>주문자 정보</h6>
-                            <p><strong>이름:</strong> 홍길동</p>
-                            <p><strong>연락처:</strong> 010-1234-5678</p>
-                            <p><strong>이메일:</strong> hong@example.com</p>
+                            <p><strong>이름:</strong> <span id="customerName"></span></p>
+                            <p><strong>연락처:</strong> <span id="customerPhone"></span></p>
+                            <p><strong>이메일:</strong> <span id="customerEmail"></span></p>
                         </div>
                         <div class="col-md-6">
                             <h6>배송 정보</h6>
-                            <p><strong>주소:</strong> 서울특별시 강남구 테헤란로</p>
-                            <p><strong>요청사항:</strong> 부재 시 경비실에 맡겨주세요</p>
+                            <p><strong>주소:</strong> <span id="deliveryAddress"></span></p>
+                            <p><strong>요청사항:</strong> <span id="specialRequests"></span></p>
                         </div>
                     </div>
 
@@ -179,24 +187,12 @@
                                 <th>소계</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>친환경 유기농 사과</td>
-                                <td>3</td>
-                                <td>5,000원</td>
-                                <td>15,000원</td>
-                            </tr>
-                            <tr>
-                                <td>무농약 양배추</td>
-                                <td>2</td>
-                                <td>3,000원</td>
-                                <td>6,000원</td>
-                            </tr>
+						<tbody id="orderProductsBody">
                         </tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="3" class="text-end"><strong>총 합계</strong></td>
-                                <td><strong>21,000원</strong></td>
+                                <td><strong id="totalOrderAmount"></strong></td>
                             </tr>
                         </tfoot>
                     </table>
@@ -245,70 +241,144 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     
-    <script>
-        // 필터링 및 검색 기능 (JavaScript)
-        document.addEventListener('DOMContentLoaded', function() {
-            const statusFilter = document.getElementById('statusFilter');
-            const startDateFilter = document.getElementById('startDateFilter');
-            const endDateFilter = document.getElementById('endDateFilter');
-            const searchInput = document.getElementById('searchInput');
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+	    const orderApproveButtons = document.querySelectorAll('.order-approve-btn');
+	    const orderRejectButtons = document.querySelectorAll('.order-reject-btn');
+	
+	    function updateOrderStatus(orderId, status) {
+	        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+	        
+	        fetch('/api/manager/orders/' + orderId + '/status', {
+	            method: 'PATCH',
+	            headers: {
+	                'Content-Type': 'application/json',
+	                [header]: token
+	            },
+	            body: JSON.stringify({
+	                status: status
+	            })
+	        })
+	        .then(response => response.json())
+	        .then(data => {
+	            // 화면 업데이트
+	            const row = document.querySelector(`[data-order-id="${orderId}"]`).closest('tr');
+	            const statusBadge = row.querySelector('.status-badge');
+	            statusBadge.textContent = data.orderStatus;
+	            statusBadge.className = `badge status-badge status-${data.orderStatus}`;
+	        })
+	        .catch(error => {
+	            console.error('Error:', error);
+	            alert('주문 상태 변경 중 오류가 발생했습니다.');
+	        });
+	    }
+	
+	    orderApproveButtons.forEach(btn => {
+	        btn.addEventListener('click', function() {
+	            const orderId = this.dataset.orderId;
+	            updateOrderStatus(orderId, 'APPROVED');
+	        });
+	    });
+	
+	    orderRejectButtons.forEach(btn => {
+	        btn.addEventListener('click', function() {
+	            const orderId = this.dataset.orderId;
+	            updateOrderStatus(orderId, 'REJECTED');
+	        });
+	    });
+	});
+	
+	
+	//Modal
+	const orderDetailsModal = document.getElementById('orderDetailsModal');
+	const detailButtons = document.querySelectorAll('[data-bs-target="#orderDetailsModal"]');
+	
+    detailButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const orderId = this.dataset.orderId;
+            
+            //서버에서 주문 상세정보 조회
+            fetch(`/api/manager/orders/${orderId}`)
+            	.then(response => response.json())
+            	.then(orderDetails => {
+					
+            		// 모달 내용 동적 업데이트
+            		document.getElementById('customerName').textContent = orderDetails.customerName;
+            		document.getElementById('customerPhone').textContent = orderDetails.phoneNumber;
+            		document.getElementById('customerEmail').textContent = orderDetails.email;
+            		document.getElementById('deliveryAddress').textContent = orderDetails.address;
+            		document.getElementById('specialRequests').textContent = orderDetails.specialRequests;
+            		
+            		// 주문 상품 목록 업데이트
+            		const productTableBody = document.getElementById('orderProductsBody');
+            		productTableBody.innerHTML = ''; // 목록 초기화
+            		
+            		let totalAmount = 0;
+            		orderDetails.products.forEach(product => {
+						const row = `
+							<tr>
+								<td>${product.productName}</td>
+								<td>${product.quantity}</td>
+								<td>${product.price.toLocaleString()}원</td>
+								<td>${product.totalPrice.toLocaleString()}원</td>
+							</tr>
+						`;
+						productTableBody.innterHTML += row;
+						totalAmount += product.totalPrice;
+            		});
+            		
+            		// 총 합계 업데이트
+            		document.getElementById('totalOrderAmount').textContent = 
+            			totalAmount.toLocaleString() + '원';
+            		
+            		// 모달 내 승인/거절 버튼에 orderId 설정
+            		const approveBtn = orderDetailsModal.querySelector('.btn-success');
+            		const rejectBtn = orderDetailsModal.querySelector('.btn-danger');
 
-            // 필터링 이벤트 리스너
-            [statusFilter, startDateFilter, endDateFilter, searchInput].forEach(el => {
-                el.addEventListener('change', applyFilters);
-            });
+            		approveBtn.dataset.orderId = orderId;
+            		rejectBtn.dataset.orderid = orderId;
+            	})
+            	.catch(error => {
+					console.error('주문 상세 정보 조회 중 오류: ', error);
+					alert('주문 정보를 불러오는 중 오류가 발생했습니다.');
+            	});
+		});
+	});
+    
+    // 주문 상세 모달 내 승인/거절 버튼 이벤트
+    const modalApproveBtn = document.querySelector('#orderDetailsModal .btn-success');
+    const modalRejectBtn = document.querySelector('#orderDetailsModal .btn-danger');
 
-            function applyFilters() {
-                const status = statusFilter.value;
-                const startDate = startDateFilter.value;
-                const endDate = endDateFilter.value;
-                const searchTerm = searchInput.value.toLowerCase();
+    [modalApproveBtn, modalRejectBtn].forEach(btn => {
+        btn.addEventListener('click', function() {
+            const orderId = this.dataset.orderId;
+            const status = this.classList.contains('btn-success') ? 'APPROVED' : 'REJECTED';
 
-                // 실제 구현 시 서버 사이드 필터링 또는 클라이언트 사이드 필터링
-                const rows = document.querySelectorAll('#orderTableBody tr');
-                
-                rows.forEach(row => {
-                    const statusCell = row.querySelector('.status-badge');
-                    const customerCell = row.cells[1];
-                    const dateCell = row.cells[2];
+            fetch(`/api/manager/orders/${orderId}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: status })
+            })
+            .then(response => response.json())
+            .then(updatedOrder => {
+                // 해당 주문의 상태 뱃지 업데이트
+                const orderRow = document.querySelector(`[data-order-id="${orderId}"]`).closest('tr');
+                const statusBadge = orderRow.querySelector('.status-badge');
+                statusBadge.textContent = updatedOrder.orderStatus;
+                statusBadge.className = `badge status-badge status-${updatedOrder.orderStatus}`;
 
-                    const matchesStatus = !status || statusCell.textContent.includes(status);
-                    const matchesSearch = !searchTerm || 
-                        customerCell.textContent.toLowerCase().includes(searchTerm) ||
-                        row.cells[0].textContent.toLowerCase().includes(searchTerm);
-                    
-                    // 날짜 필터링 로직 추가 필요
-                    
-                    row.style.display = matchesStatus && matchesSearch ? '' : 'none';
-                });
-            }
-
-            // 주문 승인/거절 버튼 이벤트
-            const approveButtons = document.querySelectorAll('.btn-primary');
-            const rejectButtons = document.querySelectorAll('.btn-danger');
-
-            approveButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // 주문 승인 로직
-                    const row = this.closest('tr');
-                    const statusBadge = row.querySelector('.status-badge');
-                    statusBadge.textContent = '승인됨';
-                    statusBadge.classList.remove('status-PENDING');
-                    statusBadge.classList.add('status-APPROVED');
-                });
-            });
-
-            rejectButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // 주문 거절 로직
-                    const row = this.closest('tr');
-                    const statusBadge = row.querySelector('.status-badge');
-                    statusBadge.textContent = '거절됨';
-                    statusBadge.classList.remove('status-PENDING');
-                    statusBadge.classList.add('status-REJECTED');
-                });
+                // 모달 닫기
+                bootstrap.Modal.getInstance(orderDetailsModal).hide();
+            })
+            .catch(error => {
+                console.error('주문 상태 변경 중 오류:', error);
+                alert('주문 상태 변경 중 오류가 발생했습니다.');
             });
         });
-    </script>
+    });
+	</script>
 </body>
 </html>
