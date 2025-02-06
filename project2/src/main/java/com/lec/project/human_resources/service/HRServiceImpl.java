@@ -172,7 +172,7 @@ public class HRServiceImpl implements HRService {
 	}
 
 	@Override
-	public void addAdmin(String id, String password, String name, String ssn, String phone, String email, String address, int annualSalary, String location) {
+	public void addAdmin(String id, String password, String name, String ssn, String phone, String email, String address, int annualSalary, String location, String job) {
 		String[] nums = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
 		String numberString = "";
 
@@ -192,9 +192,13 @@ public class HRServiceImpl implements HRService {
 
 		Member member = Member.builder().id(id).password(password).name(name).email(email).ssn(ssn).phone(phone).detailedAddress(address).annualSalary(annualSalary).build();
 
-		member.addRole(MemberRole.SUPER_ADMIN);
+		if (job.equals("hr")) {
+			member.addRole(MemberRole.SUPER_ADMIN);
+		} else if (job.equals("manager")) {
+			member.addRole(MemberRole.MANAGER);
+		}
 		
-		memberRepository.save(member); /* */
+		memberRepository.save(member);
 		
 		MemberRegion memberRegion = MemberRegion.builder().member(member).region(location).build();
 		
@@ -371,7 +375,7 @@ public class HRServiceImpl implements HRService {
 		MemberRegion region = memberRegionRepository.findByMember(member);
 		
 		remove(id, false);
-		addAdmin(id, member.getPassword(), member.getName(), member.getSsn(), member.getPhone(), member.getEmail(), member.getDetailedAddress(), annualSalary, region.getRegion()); // 계좌가 있으면 작동 X
+		addAdmin(id, member.getPassword(), member.getName(), member.getSsn(), member.getPhone(), member.getEmail(), member.getDetailedAddress(), annualSalary, region.getRegion(), "hr"); // 계좌가 있으면 작동 X
 	}
 
 	@Override
