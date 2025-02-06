@@ -16,7 +16,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import com.lec.project.human_resources.LoginFailureHandler;
 import com.lec.project.human_resources.LoginSuccessHandler;
 
 import lombok.RequiredArgsConstructor;
