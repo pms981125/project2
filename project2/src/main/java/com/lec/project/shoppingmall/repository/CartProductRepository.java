@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 import com.lec.project.shoppingmall.domain.cart.Cart;
 import com.lec.project.shoppingmall.domain.cart.CartProduct;
 import com.lec.project.shoppingmall.domain.product.Product;
-//test
+
 public interface CartProductRepository extends JpaRepository<CartProduct, Long>{
 	Page<CartProduct> findByCart(Cart cart, Pageable pageable);
 	List<CartProduct> findByCart(Cart cart);
