@@ -87,52 +87,55 @@
         </div>
     </div>
 
-    <script layout:fragment="script" th:inline="javascript">
-        const error = /*[[${session.errorMessage}]]*/""
-        
-        if(error != null) {
-            alert(error);
-        }
-        
-        document.addEventListener('DOMContentLoaded', function () {
-        	const usernameInput = document.querySelector("input[name='username']");
-        	const passwordInput = document.querySelector("input[name='password']");
-        	const saveUserInfoCheckbox = document.querySelector("#saveUserInfo");
-        	const rememberMe = document.querySelector('#rememberMe');
-        	
-        	document.querySelector("form").addEventListener("submit", function () {
-        		if(rememberMe.checked) {
-        			sessionStorage.setItem("rememberMe", "true");
-        			sessionStorage.setItem("username", usernameInput.value);
-        			sessionStorage.setItem("password", passwordInput.value);
-        		} else {
-        			sessionStorage.removeItem("rememberMe");
-        			sessionStorage.removeItem("username");
-        			sessionStorage.removeItem("password");
-        		}
-        		
-        		
-        		if(saveUserInfoCheckbox.checked) {
-        			localStorage.setItem("saveUser", "true");
-                    localStorage.setItem("username", usernameInput.value);
-                    localStorage.setItem("password", passwordInput.value);
-        		} else {
-        			localStorage.removeItem("saveUser");
-                    localStorage.removeItem("username");
-                    localStorage.removeItem("password");
-        		}
-        	})
-        	
-        	if(localStorage.getItem("saveUser") === "true") {
-        		usernameInput.value = localStorage.getItem("username") || "";
-        		passwordInput.value = localStorage.getItem("password") || "";
-        		saveUserInfoCheckbox.checked = true;
-        	}
-        	
-        	if(sessionStorage.getItem("rememberMe") === "true") {
-        		rememberMe.checked = true;
-        	}
-        })
-    </script>
 </body>
+<script layout:fragment="script" th:inline="javascript">
+	const error = /*[[${session.errorMessage}]]*/""
+	// const token = /*[[${_csrf.token}]]*/"";
+	
+	// console.log(token)
+	
+	if(error != null) {
+		alert(error);
+	}
+    
+    document.addEventListener('DOMContentLoaded', function () {
+    	const usernameInput = document.querySelector("input[name='username']");
+    	const passwordInput = document.querySelector("input[name='password']");
+    	const saveUserInfoCheckbox = document.querySelector("#saveUserInfo");
+    	const rememberMe = document.querySelector('#rememberMe');
+    	
+    	document.querySelector("form").addEventListener("submit", function () {
+    		if(rememberMe.checked) {
+    			sessionStorage.setItem("rememberMe", "true");
+    			sessionStorage.setItem("username", usernameInput.value);
+    			sessionStorage.setItem("password", passwordInput.value);
+    		} else {
+    			sessionStorage.removeItem("rememberMe");
+    			sessionStorage.removeItem("username");
+    			sessionStorage.removeItem("password");
+    		}
+    		
+    		
+    		if(saveUserInfoCheckbox.checked) {
+    			localStorage.setItem("saveUser", "true");
+                localStorage.setItem("username", usernameInput.value);
+                localStorage.setItem("password", passwordInput.value);
+    		} else {
+    			localStorage.removeItem("saveUser");
+                localStorage.removeItem("username");
+                localStorage.removeItem("password");
+    		}
+    	})
+    	
+    	if(localStorage.getItem("saveUser") === "true") {
+    		usernameInput.value = localStorage.getItem("username") || "";
+    		passwordInput.value = localStorage.getItem("password") || "";
+    		saveUserInfoCheckbox.checked = true;
+    	}
+    	
+    	if(sessionStorage.getItem("rememberMe") === "true") {
+    		rememberMe.checked = true;
+    	}
+    })
+</script>
 </html>

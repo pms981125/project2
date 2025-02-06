@@ -1,5 +1,7 @@
 package com.lec.project.shoppingmall.controller.payment;
 
+import java.util.Arrays;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -11,23 +13,32 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.lec.project.shoppingmall.dto.payment.kakao.KakaoPayApproveRequest;
 import com.lec.project.shoppingmall.service.kakaopay.KakaoPaymentService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Controller
 @RequestMapping("/cart/order/kakao")
 @RequiredArgsConstructor
+@Log4j2
 public class KakaoPaymentController {
     
     private final KakaoPaymentService kakaoPaymentService;
-    //11
+    
     @GetMapping("/success")
     public String paymentSuccess(
+    		HttpServletRequest httpServletRequest,
             @RequestParam("pg_token") String pgToken,
-            @RequestParam("partner_order_id") String partnerOrderId,
-            @RequestParam("tid") String tid,
+            @RequestParam(value = "partner_order_id", required = false) String partnerOrderId,
+            @RequestParam(value = "tid", required = false) String tid,
             @AuthenticationPrincipal UserDetails userDetails,
             RedirectAttributes redirectAttributes) {
         
+    	log.info("Payment success callback - All parameters:");
+    	httpServletRequest.getParameterMap().forEach((key, value) -> {
+		    log.info("{}={}", key, Arrays.toString(value));
+		});
+    	
         try {
             KakaoPayApproveRequest request = KakaoPayApproveRequest.builder()
                 .pgToken(pgToken)

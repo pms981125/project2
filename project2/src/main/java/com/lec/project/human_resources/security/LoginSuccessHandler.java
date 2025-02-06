@@ -24,9 +24,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 		MemberSecurityDTO memberSecurityDTO = (MemberSecurityDTO) authentication.getPrincipal();
 		log.info(authentication.getAuthorities() + "-=-=-=-=-=-=-=-=-=");	
+		
+		log.info(authentication.getAuthorities() + "-=-=-=-=-=-=-=-=-=-");	
 	
 		if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER_ADMIN"))) {
 			response.sendRedirect("/sudo/allUserList");
+			// response.sendRedirect("/index.html");
 		} else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
 			// MemberSecurityDTO memberSecurityDTO = (MemberSecurityDTO) authentication.getPrincipal();
 			
@@ -35,7 +38,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 		} else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_MANAGER"))) {
 			response.sendRedirect("/shop/list");
 		} else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER"))) {
-			 response.sendRedirect("/index.html"); // static 폴더에 있는 html 파일로 접근 시
+			response.sendRedirect("/index.html"); // static 폴더에 있는 html 파일로 접근 시
 			//response.sendRedirect("/user/home");
 		} else {
             // 기본 권한이 없는 경우 USER 권한으로 간주하고 index.html로 리다이렉트

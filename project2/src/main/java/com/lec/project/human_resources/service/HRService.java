@@ -1,5 +1,6 @@
 package com.lec.project.human_resources.service;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import javax.mail.MessagingException;
@@ -21,9 +22,12 @@ public interface HRService {
 	Page<MemberSecurityDTO> getAdminListWithPaging(int p, Pageable pageable, int size);
 	void update(String id, String name, String ssn, String phone, String email, String address, int annualSalary);
 	void remove(String id, boolean isAdmin);
-	void addAdmin(String id, String password, String name, String ssn, String phone, String email, String address, int salary, String location);
+	void addAdmin(String id, String password, String name, String ssn, String phone, String email, String address, int salary, String location, String job);
 	void delagateAuthority(String superAdminId, String adminId);
 	void initializePassword(String memberId) throws AddressException, MessagingException;
 	void addMember(String id, String password, String name, String ssn, String phone, String email, String address, String location);
 	void exaltation(String id, int salary);
+	boolean confirmId(String id);
+	void attendance(String id, LocalTime localTime);
+	void leave(String id, LocalTime localTime);
 }

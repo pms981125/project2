@@ -12,6 +12,8 @@
     <meta name="keywords" content="" />
     <meta name="description" content="" />
     <meta name="author" content="" />
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <title>order</title>
 
@@ -21,6 +23,11 @@
     <link href="/css/font-awesome.min.css" rel="stylesheet" />
     <link href="/css/style.css" rel="stylesheet" />
     <link href="/css/responsive.css" rel="stylesheet" />
+
+	 <!-- jQuery -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <!-- iamport.payment.js -->
+    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 
     <!-- 기존 스타일들 -->
     <style>
@@ -285,77 +292,152 @@
     <!-- Scripts -->
     <script src="/js/jquery-3.4.1.min.js"></script>
     <script src="/js/bootstrap.js"></script>
-    <script src="/js/custom.js"></script>
 
 <script th:inline="javascript">
 document.addEventListener('DOMContentLoaded', function() {
-    const kakaoPayBtn = document.getElementById('kakaoPayBtn');
-    
-    if(kakaoPayBtn) {
-        kakaoPayBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log("KakaoPay button clicked");
-            requestKakaoPay();
-        });
-    }
+	const kakaoPayBtn = document.getElementById('kakaoPayBtn');
+	
+	// IMP 초기화
+	const IMP = window.IMP;
+	IMP.init("imp26252757"); // 포트원 관리자 페이지에서 발급받은 가맹점 식별코드
+	
+	if(kakaoPayBtn) {
+		kakaoPayBtn.addEventListener('click', function(e) {
+			e.preventDefault();
+			requestPayment();
+		});
+	}
 });
 
-function requestKakaoPay() {
-	console.log("KakaoPay button clicked");
+function requestPayment() {
+//	// portOne 결제방식
+//	// 주문 번호 생성
+//	const orderId = generateOrderId();
 	
-    const orderData = {
-		partnerOrderId: generateOrderId(),  
-		partnerUserId: /*[[${member.id}]]*/ '',
-		itemName: /*[[${responseDTO.dtoList[0].productName}]]*/ '' + 
-		         (/*[[${responseDTO.dtoList.size()}]]*/ 0 > 1 ? 
-		          ' 외 ' + (/*[[${responseDTO.dtoList.size()}]]*/ 0 - 1) + '건' : ''),
-		quantity: /*[[${responseDTO.dtoList.size()}]]*/ 0,
-		totalAmount: /*[[${totalPrice}]]*/ 0,
-		taxFreeAmount: 0,
-		successUrl: window.location.origin + '/cart/order/kakao/success',
-		cancelUrl: window.location.origin + '/cart/order/kakao/cancel',
-		failUrl: window.location.origin + '/cart/order/kakao/fail'
-    };
+//	//결제 데이터 준비
+//	IMP.request_pay({
+//			pg: "kakaopay",												// PG사 코드
+//			pay_method: "card",											// 결제 수단
+//			merchant_uid: orderId,										// 주문번호
+//			name: /*[[${responseDTO.dtoList[0].productName}]]*/ '', 	// 상품명
+//			amount: /*[[${totalPrice}]]*/ 0,							// 결제금액
+//			buyer_email: /*[[${member.email}]]*/ '',					// 구매자 이메일
+//			buyer_name: /*[[${member.name}]]*/ '',						// 구매자 이름
+//			buyer_tel: /*[[${member.phone}]]*/ '',						// 구매자 전화번호
+//			buyer_addr: /*[[${member.detailedAddress}]]*/ '',			// 구매자 주소
+//		}, function(rsp) { // callback
+//			if(rsp.success) {
+//			//결제 성공 시 : 결제 승인 또는 가상계좌 발급에 성공한 경우
+//			alert("결제가 완료되었습니다.");
+//			window.location.herf = '/cart/order/success';
+//		} else {
+//			// 결제 실패 시
+//			alert("결제에 실패했습니다. 에러 내용: ${rsp.error_msg}");
+//		}
+//	});
 
-    console.log("결제 요청 데이터:", orderData);
-    
-    fetch('/api/kakao-pay/ready', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData)
-    })
-    .then(response => {
-        if (!response.ok) {
-			return response.text().then(errorText => {
-				throw new Error(`HTTP 오류! 상태: ${response.status}, 메시지: ${errorText}`);
-        	});
-        }
-        return response.json();
-    })
-    .then(data => {
-    	console.log("결제 준비 응답:", data);
-        if (data && data.nextRedirectPcUrl) {
-            window.location.href = data.nextRedirectPcUrl;
-        } else {
-        	throw new Error('유효하지 않은 응답 데이터');
-        }
-    })
-    .catch(error => {
-		console.error('결제 요청 중 오류:', error);
-		alert('결제 요청 중 오류가 발생했습니다: ' + error.message);
-    });
+
+
+	// 카카오페이
+	
+	// 주문번호 생성
+	const orderId = generateOrderId();
+	
+	const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+	
+	// 카카오페이 결제 준비 요청을 위한 데이터 구성
+	const paymentData = {
+		partnerOrderId: orderId,																		// 가맹점 주문번호
+		partnerUserId: /*[[${member.id}]]*/ '',															// 가맹점 회원 ID
+		itemName: /*[[${responseDTO.dtoList[0].productName}]]*/ '',										// 상품명
+		quantity: /*[[${totalCount}]]*/ 1,																// 전체 상품 수량 합계
+		totalAmount: /*[[${totalPrice}]]*/ 0,															// 총 결제금액
+		taxFreeAmount: 0,																				// 비과세 금액
+		// 결제 처리 결과 redirect URL 설정				
+		successUrl: `${window.location.origin}/cart/order/kakao/success`,								// 결제 성공 시 URL
+		cancelUrl: `${window.location.origin}/cart/order/kakao/cancel`,									// 결제 취소 시 URL
+		failUrl: `${window.location.origin}/cart/order/kakao/fail`										// 결제 실패 시 URL
+	};
+	
+	// 카카오페이 결제 준비 API 호출
+	fetch('/api/kakao-pay/ready', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			[header]: token
+		},
+		body: JSON.stringify(paymentData)
+	})
+	.then(response => {
+		// 원본 응답 확인
+		console.log('Raw response:', response);
+		return response.json();
+	})
+	.then(data => {
+		// 파싱된 데이터 확인
+		console.log('Response data:', data);
+		
+		const pcUrl = data.next_redirect_pc_url;
+		// URL 값 확인
+		console.log('PC URL: ', pcUrl);
+		
+		if (pcUrl) {
+			// 카카오페이 결제 페이지로 리다이렉트
+			window.location.href = pcUrl;
+		} else {
+			// URL이 없는 경우 전체 데이터 확인
+			console.error('Missing URL in response:', data);
+			throw new Error('결제 페이지 URL을 받지 못했습니다.');
+		}
+	})
+	.catch(error => {
+		// 상세 에러 정보 확인
+		console.error('Full error details:', error);
+		alert('결제 준비 중 오류가 발생했습니다.');
+	});
+}
+
+//카카오페이 - 결제 취소 함수
+function cancelKakaoPay(tid, amount, reason) {
+	// 결제 취소 요청 데이터
+	const cancelData = {
+		tid: tid,              // 결제 고유 번호
+		cancelAmount: amount,   // 취소 금액
+		cancelReason: reason   // 취소 사유
+	};
+
+	// 카카오페이 취소 API 호출
+	fetch('/api/kakao-pay/cancel', {
+		method: 'POST',
+		headers: {
+		'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(cancelData)
+	})
+	.then(response => {
+		if (response.ok) {
+			alert('결제가 취소되었습니다.');
+			window.location.reload();
+		} else {
+			throw new Error('취소 처리 중 오류가 발생했습니다.');
+		}
+	})
+	.catch(error => {
+		console.error('취소 처리 중 오류:', error);
+		alert('취소 처리 중 오류가 발생했습니다.');
+	});
 }
 
 function generateOrderId() {
-    const date = new Date();
-    const timestamp = date.getTime();
-    return 'ORDER_' + 
-           date.getFullYear() +
-           String(date.getMonth() + 1).padStart(2, '0') +
-           String(date.getDate()).padStart(2, '0') + '_' +
-           timestamp.toString().slice(-6);
+	// 주문번호 생성
+	const date = new Date();
+	const timestamp = date.getTime();
+	return 'ORDER_' + 
+		date.getFullYear() +
+		String(date.getMonth() + 1).padStart(2, '0') +
+		String(date.getDate()).padStart(2, '0') + '_' +
+		timestamp.toString().slice(-6);
 }
 </script>
 </body>

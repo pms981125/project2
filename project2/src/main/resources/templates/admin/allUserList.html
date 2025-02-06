@@ -14,7 +14,7 @@
 					<option value="20" th:selected="${size == 20}">20개씩 보기</option>
 					<option value="50" th:selected="${size == 50}">50개씩 보기</option>
 				</select>
-				관리자만 보기 <input type="checkbox" class="ml-2" value="관리자만 보기" name="onlyAdmin" id="onlyAdmin" th:checked="${onlyAdmin}"/> <!-- css 수정 -->
+				직원만 보기 <input type="checkbox" class="ml-2" value="관리자만 보기" name="onlyAdmin" id="onlyAdmin" th:checked="${onlyAdmin}"/> <!-- css 수정 -->
 			</div>
 		</div>
 		<table class="table table-hover mt-3">
@@ -50,7 +50,10 @@
 		<hr />	
 		<div class="button">
 			<a th:href="|@{/sudo/addAdmin}|" class="text-decoration-none">
-				<button type="button" class="btn btn-primary">관리자 추가</button>
+				<button type="button" class="btn btn-primary">직원 등록</button>
+			</a>
+			<a th:href="|@{/sudo/goAttendance}|" class="text-decoration-none">
+				<button type="button" class="btn btn-primary">출퇴근</button>
 			</a>
 			<a th:href="|@{/sudo/logout}|" class="text-decoration-none">
 				<button type="button" class="btn btn-secondary">로그 아웃</button>

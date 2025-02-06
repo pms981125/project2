@@ -33,6 +33,8 @@
 <!-- responsive style -->
 <link href="/css/responsive.css" rel="stylesheet" />
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 </head>
 <body class="sub_page">
 	<div class="hero_area">
@@ -71,16 +73,16 @@
 					</div>
 					
 	            <div class="quote_btn-container">
+	            	<button class="btn  my-2 my-sm-0 userInfoBtn" type="button" onclick="javascript:getUserInfo()">
 	                <span style="color: black; margin-right: 15px;">
 	                    <i class="fa fa-user" aria-hidden="true"></i>
 	                    <span sec:authentication="name"></span>
 	                </span>
+	                </button>
 	                <div class="d-flex flex-column">
-	                	<form th:action="@{/logout}" method="post"style="margin: 0;">
-		                    <button type="submit" class="btn btn-outline-info mb-2" style="color: #6bb7be; border-color: #6bb7be;">
-		                        <i class="fa fa-unlock" aria-hidden="true"></i>
-							</button>
-	                    </form>
+	                    <a th:href="@{/logout}" class="btn btn-outline-info mb-2" style="color: #6bb7be; border-color: #6bb7be;">
+	                        <i class="fa fa-unlock" aria-hidden="true"></i>
+	                    </a>
 	                </div>
 	            </div>
 			</nav>
@@ -172,24 +174,37 @@
         <!-- 페이지네이션 -->
         <div class="pagination-container">
             <ul class="pagination justify-content-center" th:with="start=${responseDTO.start}, end=${responseDTO.end}">
+		        <!-- 첫 페이지로 이동 버튼 -->
+		        <li class="page-item" th:if="${responseDTO.prev}">
+					<a class="page-link" th:href="@{/shop/list(page=1, category=${category}, keyword=${keyword})}">
+						<i class="fas fa-angle-double-left"></i>
+					</a>
+		        </li>
+		        <!-- 이전 페이지로 이동 버튼 -->
                 <li class="page-item" th:if="${responseDTO.prev}">
                     <a class="page-link" th:href="@{/shop/list(page=${start - 1}, category=${category}, keyword=${keyword})}">
-                        <i class="fa fa-angle-left"></i>
+                        <i class="fas fa-angle-left"></i>
                     </a>
                 </li>
-                
+                <!-- 페이지로 번호 -->
                 <li th:each="num : ${#numbers.sequence(start, end)}" 
                     th:class="${'page-item ' + (responseDTO.page == num ? 'active' : '')}">
                     <a class="page-link" th:href="@{/shop/list(page=${num}, category=${category}, keyword=${keyword})}">
                         [[${num}]]
                     </a>
                 </li>
-                
+                <!-- 다음 페이지로 이동 버튼 -->
                 <li class="page-item" th:if="${responseDTO.next}">
                     <a class="page-link" th:href="@{/shop/list(page=${end + 1}, category=${category}, keyword=${keyword})}">
-                        <i class="fa fa-angle-right"></i>
+                        <i class="fas fa-angle-right"></i>
                     </a>
                 </li>
+				<!-- 마지막 페이지로 이동 버튼 -->
+				<li class="page-item" th:if="${responseDTO.next}">
+					<a class="page-link" th:href="@{/shop/list(page=${responseDTO.lastPage}, category=${category}, keyword=${keyword})}">
+						<i class="fas fa-angle-double-right"></i>
+					</a>
+				</li>
             </ul>
         </div>
     </div>
@@ -214,8 +229,6 @@
 	<script src="/js/jquery-3.4.1.min.js"></script>
 	<!-- bootstrap js -->
 	<script src="/js/bootstrap.js"></script>
-	<!-- custom js -->
-	<script src="/js/custom.js"></script>
 </body>
 </html>
     <!-- 스크롤 시 네비게이션 바 고정을 위한 스크립트 -->
@@ -257,4 +270,16 @@
         // 초기 로드시 한번 체크
         handleScroll();
     });
+    
+   	document.querySelector(".userInfoBtn").addEventListener("click", function(e) {
+   		e.preventDefault()
+   		e.stopPropagation()
+   		    
+   		const form = document.createElement('form')
+   		    
+   		form.action = `/user/userInfo`
+   		form.method = 'get'
+   		document.body.appendChild(form)
+   		form.submit()
+	}, false)
     </script>

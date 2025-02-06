@@ -1,157 +1,171 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    
-    <!-- Site Metas -->
-    <link rel="icon" href="images/fevicon.png" type="image/gif" />
-    <meta name="keywords" content="" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <title>shop</title>
+<!-- Site Metas -->
+<link rel="icon" href="images/fevicon.png" type="image/gif" />
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+<meta name="_csrf" th:content="${_csrf.token}" />
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
 
-    <!-- 기존 CSS links -->
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
-    <link href="/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="/css/style.css" rel="stylesheet" />
-    <link href="/css/responsive.css" rel="stylesheet" />
+<title>shop</title>
+
+<!-- 기존 CSS links -->
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+<link
+	href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap"
+	rel="stylesheet" />
+<link href="/css/font-awesome.min.css" rel="stylesheet" />
+<link href="/css/style.css" rel="stylesheet" />
+<link href="/css/responsive.css" rel="stylesheet" />
 </head>
 
 <body class="sub_page">
-    <div class="hero_area">
-        <!-- header section -->
-        <header class="header_section long_section px-0">
-            <!-- 네비게이션 바 내용 -->
-        </header>
-    </div>
+	<div class="hero_area">
+		<!-- header section -->
+		<header class="header_section long_section px-0">
+			<!-- 네비게이션 바 내용 -->
+		</header>
+	</div>
 
-    <!-- shop modify section -->
-    <section class="shop_section layout_padding px-5">
-        <div class="container-fluid px-5">
-            <!-- 상품 조회 영역 -->
-            <div class="text-right mb-4">
-                <div>
-                    <label class="me-2">상품 코드를 입력하세요</label></br>
-                    <input type="text" id="searchProductCode" placeholder="상품 코드" class="form-control d-inline-block" style="width: 200px;">
-                    <button type="button" class="btn btn-primary" onclick="searchProduct()">
-                    	<i class="fa fa-search" aria-hidden="true">  상품 조회</i>
-                    </button>
-                </div>
-            </div>
+	<!-- shop modify section -->
+	<section class="shop_section layout_padding px-5">
+		<div class="container-fluid px-5">
+			<!-- 상품 조회 영역 -->
+			<div class="text-right mb-4">
+				<div>
+					<label class="me-2">상품 코드를 입력하세요</label></br> <input type="text"
+						id="searchProductCode" placeholder="상품 코드"
+						class="form-control d-inline-block" style="width: 200px;">
+					<button type="button" class="btn btn-primary"
+						onclick="searchProduct()">
+						<i class="fa fa-search" aria-hidden="true"> 상품 조회</i>
+					</button>
+				</div>
+			</div>
 
-		<form id="modifyForm" action="/shop/modify" method="post" enctype="multipart/form-data" onreset="resetForm()">
-            <!-- 상품 수정 폼 -->
-            <div class="product-detail-container">
-                <!-- 왼쪽: 이미지 영역 -->
-                <div class="product-image">
-		            <div style="width: 100%; height: 500px; background: #fff; display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
-		                <img th:if="${productImages != null and !productImages.isEmpty()}"
-		                     th:src="@{/display(filename=${productImages[0].thumbnailPath})}"
-		                     alt="메인 이미지"
-		                     style="max-width: 100%; max-height: 100%; object-fit: contain;">
-		                <p th:unless="${productImages != null and !productImages.isEmpty()}" 
-		                   class="text-center text-muted">이미지 없음</p>
-		            </div>
-                    
-		            <!-- 썸네일 이미지들 -->
-		            <div style="display: flex; gap: 10px; margin-bottom: 30px; justify-content: center; flex-wrap: wrap;">
-		                <div th:each="image : ${productImages}" style="position: relative;">
-		                    <img th:src="@{/display(filename=${image.thumbnailPath})}"
-		                         style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
-		                    <button type="button"
-		                            th:data-image-id="${image.imgId}"
-		                            onclick="removeExistingImage(this, this.getAttribute('data-image-id'))"
-		                            style="position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; 
-		                                   background-color: #ff4444; color: white; border: none; 
-		                                   border-radius: 50%; cursor: pointer; font-size: 16px; 
-		                                   display: flex; align-items: center; justify-content: center; 
-		                                   box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-		                        ×
-		                    </button>
-		                </div>
-		            </div>
-		
-		            <!-- 파일 선택 영역 -->
-		            <div class="mb-4" style="text-align: center;">
-		                <label for="productImages" class="btn btn-outline-primary" style="cursor: pointer; position: relative; overflow: hidden;">
-		                    <i class="fa fa-upload me-2"></i>이미지 추가
-		                    <input type="file" id="productImages" name="productImages" 
-		                           multiple accept="image/*" onchange="previewImages(this)"
-		                           style="position: absolute; left: -9999px;">
-		                </label>
-		                <p class="text-muted small mt-2">* 첫 번째 업로드되는 이미지가 대표 이미지로 설정됩니다.</p>
-		            </div>
-		                    
-                    <!-- 이미지 미리보기 -->
-                    <div id="imagePreviewContainer" class="mt-3"></div>
-                </div>
+			<form id="modifyForm" action="/shop/modify" method="post"
+				enctype="multipart/form-data" onreset="resetForm()">
+				<input type="hidden" th:name="${_csrf.parameterName}"
+					th:value="${_csrf.token}" />
+				<!-- 상품 수정 폼 -->
+				<div class="product-detail-container">
+					<!-- 왼쪽: 이미지 영역 -->
+					<div class="product-image">
+						<div
+							style="width: 100%; height: 500px; background: #fff; display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+							<img
+								th:if="${productImages != null and !productImages.isEmpty()}"
+								th:src="@{/display(filename=${productImages[0].thumbnailPath})}"
+								alt="메인 이미지"
+								style="max-width: 100%; max-height: 100%; object-fit: contain;">
+							<p
+								th:unless="${productImages != null and !productImages.isEmpty()}"
+								class="text-center text-muted">이미지 없음</p>
+						</div>
 
-                <!-- 오른쪽: 상품 정보 폼 -->
-                <div class="product-info">
-                    
-                        <input type="hidden" name="bno" th:value="${dto.bno}">
-            			<input type="hidden" name="productCode" id="productCode" th:value="${dto.productCode}">
-                        
-                        <div class="info-section">
-                            <div class="title-section text-right mb-4">
-                                <span class="category">
-                                    <input type="text" name="productCategory" id="productCategory" 
-                                           th:value="${dto.productCategory}" readonly 
-                                           class="form-control text-right">
+						<!-- 썸네일 이미지들 -->
+						<div
+							style="display: flex; gap: 10px; margin-bottom: 30px; justify-content: center; flex-wrap: wrap;">
+							<div th:each="image : ${productImages}"
+								style="position: relative;">
+								<img th:src="@{/display(filename=${image.thumbnailPath})}"
+									style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
+								<button type="button" th:data-image-id="${image.imgId}"
+									onclick="removeExistingImage(this, this.getAttribute('data-image-id'))"
+									style="position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; background-color: #ff4444; color: white; border: none; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
+									×</button>
+							</div>
+						</div>
+
+						<!-- 파일 선택 영역 -->
+						<div class="mb-4" style="text-align: center;">
+							<label for="productImages" class="btn btn-outline-primary"
+								style="cursor: pointer; position: relative; overflow: hidden;">
+								<i class="fa fa-upload me-2"></i>이미지 추가 <input type="file"
+								id="productImages" name="productImages" multiple
+								accept="image/*" onchange="previewImages(this)"
+								style="position: absolute; left: -9999px;">
+							</label>
+							<p class="text-muted small mt-2">* 첫 번째 업로드되는 이미지가 대표 이미지로
+								설정됩니다.</p>
+						</div>
+
+						<!-- 이미지 미리보기 -->
+						<div id="imagePreviewContainer" class="mt-3"></div>
+					</div>
+
+					<!-- 오른쪽: 상품 정보 폼 -->
+					<div class="product-info">
+
+						<input type="hidden" name="bno" th:value="${dto.bno}"> <input
+							type="hidden" name="productCode" id="productCode"
+							th:value="${dto.productCode}">
+
+						<div class="info-section">
+							<div class="title-section text-right mb-4">
+								<span class="category"> <input type="text"
+									name="productCategory" id="productCategory"
+									th:value="${dto.productCategory}" readonly
+									class="form-control text-right">
 								</span>
 								<h2 class="product-name">
-									<input type="text" name="boardTitle" id="boardTitle" 
-											th:value="${dto.boardTitle}" readonly 
-											class="form-control text-right">
-                                </h2>
-                            </div>
+									<input type="text" name="boardTitle" id="boardTitle"
+										th:value="${dto.boardTitle}" readonly
+										class="form-control text-right">
+								</h2>
+							</div>
 
-                            <div class="info-row text-right">
-                                <strong>상품 코드:</strong>
-                                <span id="productCodeDisplay">[[${dto.productCode}]]</span>
-                            </div>
-                            
-                            <div class="info-row text-right">
-                                <strong>가격:</strong>
-                                <input type="number" name="productPrice" id="productPrice" 
-                                       th:value="${dto.productPrice}" class="form-control text-right">
-                            </div>
+							<div class="info-row text-right">
+								<strong>상품 코드:</strong> <span id="productCodeDisplay">[[${dto.productCode}]]</span>
+							</div>
 
-                            <div class="content-section text-right">
-                                <h4>상세 설명</h4>
-                                <textarea name="firstBoardContent" id="firstboardContent" 
-                                          class="form-control text-right mb-3" rows="4">[[${dto.firstBoardContent}]]</textarea>
-                                <textarea name="secondBoardContent" id="secondBoardContent" 
-                                          class="form-control text-right" rows="4">[[${dto.secondBoardContent}]]</textarea>
-                            </div>
+							<div class="info-row text-right">
+								<strong>가격:</strong> <input type="number" name="productPrice"
+									id="productPrice" th:value="${dto.productPrice}"
+									class="form-control text-right">
+							</div>
 
-                            <!-- 버튼 영역 -->
-					    <div class="action-buttons text-right mt-4">
-					        <button type="submit" class="btn btn-primary me-2">수정 완료</button>
-					        <a th:href="@{/shop/read(bno=${dto.bno})}" class="btn btn-secondary me-2">취소</a>
-					        <a th:href="@{/shop/list}" class="btn btn-secondary">목록</a>
-					    </div>
-					</form>
-                </div>
-            </div>
-        </div>
-    </section>
+							<div class="content-section text-right">
+								<h4>상세 설명</h4>
+								<textarea name="firstBoardContent" id="firstboardContent"
+									class="form-control text-right mb-3" rows="4">[[${dto.firstBoardContent}]]</textarea>
+								<textarea name="secondBoardContent" id="secondBoardContent"
+									class="form-control text-right" rows="4">[[${dto.secondBoardContent}]]</textarea>
+							</div>
 
-    <!-- footer section -->
-    <footer class="footer_section">
-        <div class="container">
-            <p>&copy; <span id="displayYear"></span> All Rights Reserved By <a href="https://html.design/">Free Html Templates</a></p>
-        </div>
-    </footer>
+							<!-- 버튼 영역 -->
+							<div class="action-buttons text-right mt-4">
+								<button type="submit" class="btn btn-primary me-2">수정
+									완료</button>
+								<a th:href="@{/shop/read(bno=${dto.bno})}"
+									class="btn btn-secondary me-2">취소</a> <a
+									th:href="@{/shop/list}" class="btn btn-secondary">목록</a>
+							</div>
+						</div>
+			</form>
+		</div>
+		</div>
+	</section>
 
-    <!-- 필요한 스크립트들 -->
-    <script src="/js/jquery-3.4.1.min.js"></script>
-    <script src="/js/bootstrap.js"></script>
-    <script src="/js/custom.js"></script>
+	<!-- footer section -->
+	<footer class="footer_section">
+		<div class="container">
+			<p>
+				&copy; <span id="displayYear"></span> All Rights Reserved By <a
+					href="https://html.design/">Free Html Templates</a>
+			</p>
+		</div>
+	</footer>
+
+	<!-- 필요한 스크립트들 -->
+	<script src="/js/jquery-3.4.1.min.js"></script>
+	<script src="/js/bootstrap.js"></script>
 
 	<script>
 		// 페이지 로드 시 에러 메시지 확인
@@ -252,11 +266,14 @@
 			
 			if(confirm('이 이미지를 삭제하겠습니까?')){
 				const productCode = document.getElementById('productCode').value;
+				const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+				const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 				
 				fetch('/shop/deleteImage', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded',
+						[header]: token
 					},
 					body: `imageId=${imageId}&productCode=${productCode}`
 				})

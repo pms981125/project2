@@ -1,0 +1,101 @@
+/*
+ * package com.lec.project.shoppingmall.service.magement;
+ * 
+ * import java.time.LocalDateTime; import java.util.List; import java.util.Map;
+ * import java.util.stream.Collectors;
+ * 
+ * import org.springframework.data.domain.Page; import
+ * org.springframework.data.domain.Pageable; import
+ * org.springframework.stereotype.Service;
+ * 
+ * import com.lec.project.shoppingmall.domain.cart.order.Ordered; import
+ * com.lec.project.shoppingmall.domain.payment.kakao.KakaoPayment; import
+ * com.lec.project.shoppingmall.domain.payment.kakao.KakaoPaymentStatus; import
+ * com.lec.project.shoppingmall.dto.magement.OrderManagementDTO; import
+ * com.lec.project.shoppingmall.dto.magement.RefundRequestDTO; import
+ * com.lec.project.shoppingmall.repository.KakaoPaymentRepository; import
+ * com.lec.project.shoppingmall.repository.OrderedRepository;
+ * 
+ * import jakarta.transaction.Transactional; import
+ * lombok.RequiredArgsConstructor; import lombok.extern.log4j.Log4j2;
+ * 
+ * @Service
+ * 
+ * @RequiredArgsConstructor
+ * 
+ * @Transactional
+ * 
+ * @Log4j2 public class OrderManagementService implements OrderMagementService{
+ * private final OrderedRepository orderedRepository; private final
+ * KakaoPaymentRepository kakaoPaymentRepository;
+ * 
+ * // 주문 목록 조회 (필터링 및 페이징)
+ * 
+ * @Transactional(readOnly = true) public Page<OrderManagementDTO> getOrderList(
+ * String status, LocalDateTime startDate, LocalDateTime endDate, String
+ * searchTerm, Pageable pageable ) { Page<Ordered> orders =
+ * orderedRepository.searchOrders( status, startDate, endDate, searchTerm,
+ * pageable );
+ * 
+ * return orders.map(OrderManagementDTO::fromEntity); }
+ * 
+ * // 주문 상세 조회
+ * 
+ * @Transactional(readOnly = true) public OrderManagementDTO
+ * getOrderDetails(Long orderId) { Ordered order =
+ * orderedRepository.findById(orderId) .orElseThrow(() -> new
+ * IllegalArgumentException("주문을 찾을 수 없습니다."));
+ * 
+ * return OrderManagementDTO.fromEntity(order); }
+ * 
+ * // 주문 상태 변경 public OrderManagementDTO updateOrderStatus(Long orderId, String
+ * status) { Ordered order = orderedRepository.findById(orderId) .orElseThrow(()
+ * -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
+ * 
+ * // 주문 상태 업데이트 order.setStatus(status);
+ * 
+ * return OrderManagementDTO.fromEntity( orderedRepository.save(order) ); }
+ * 
+ * // 환불 요청 목록 조회
+ * 
+ * @Transactional(readOnly = true) public List<RefundRequestDTO>
+ * getRefundRequests() { List<KakaoPayment> refundRequests =
+ * kakaoPaymentRepository .findByStatus(KakaoPaymentStatus.REFUND_REQUESTED);
+ * 
+ * return refundRequests.stream() .map(payment -> RefundRequestDTO.builder()
+ * .orderId(payment.getOrder().getId()) .customerId(payment.getPartnerUserId())
+ * .customerName(payment.getOrder().getMember().getName())
+ * .refundAmount(payment.getTotalAmount()) .status(payment.getStatus())
+ * .requestDate(payment.getCreatedAt()) .build()) .collect(Collectors.toList());
+ * }
+ * 
+ * // 환불 요청 처리 public RefundRequestDTO processRefundRequest( Long orderId,
+ * boolean approve, String managerComment ) { KakaoPayment payment =
+ * kakaoPaymentRepository.findByOrder_Id(orderId) .orElseThrow(() -> new
+ * IllegalArgumentException("결제 정보를 찾을 수 없습니다."));
+ * 
+ * Ordered order = payment.getOrder();
+ * 
+ * if (approve) { // 환불 승인 처리 payment.setStatus(KakaoPaymentStatus.CANCELLED);
+ * order.setStatus("REFUNDED");
+ * 
+ * // 실제 환불 처리 로직 추가 (결제 시스템 API 호출 등) // 예: 카카오페이 환불 API 호출
+ * kakaoPayService.refundPayment(payment.getTid(), payment.getTotalAmount()); }
+ * else { // 환불 거절 처리 payment.setStatus(KakaoPaymentStatus.APPROVED);
+ * order.setStatus("REFUND_REJECTED"); }
+ * 
+ * // 엔티티 저장 kakaoPaymentRepository.save(payment);
+ * orderedRepository.save(order);
+ * 
+ * return RefundRequestDTO.builder() .orderId(orderId)
+ * .status(payment.getStatus()) .build(); }
+ * 
+ * // 주문 상태별 통계
+ * 
+ * @Transactional(readOnly = true) public Map<String, Long>
+ * getOrderStatusStatistics() { List<Ordered> orders =
+ * orderedRepository.findAll();
+ * 
+ * return orders.stream() .collect(Collectors.groupingBy( Ordered::getStatus,
+ * Collectors.counting() )); } }
+ */

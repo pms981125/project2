@@ -10,6 +10,8 @@
     <meta name="keywords" content="" />
     <meta name="description" content="" />
     <meta name="author" content="" />
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <title>shop</title>
 
@@ -46,6 +48,7 @@
 
 			<!-- 상품 등록 폼 -->
 			<form id="registForm" action="/shop/regist" method="post" enctype="multipart/form-data">
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 			    <!-- 숨겨진 상품 코드 입력 필드 -->
 			    <input type="hidden" name="productCode" id="productCode">
 			    
@@ -137,15 +140,20 @@
     <!-- 필요한 스크립트들 -->
     <script src="/js/jquery-3.4.1.min.js"></script>
     <script src="/js/bootstrap.js"></script>
-    <script src="/js/custom.js"></script>
 
 	<script>
 		function searchProduct() {
 			const productCode = document.getElementById('searchProductCode').value;
+			const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+		    const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+			
 			// ProductCode중복확인
 			$.ajax({
 				url : '/api/shop/checkProductCode',
 				method : 'GET',
+				headers: {
+				    [header]: token
+				},
 				data : {
 					productCode : productCode
 				},

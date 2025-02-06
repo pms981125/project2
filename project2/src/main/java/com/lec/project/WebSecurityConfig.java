@@ -20,8 +20,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.lec.project.human_resources.security.LoginSuccessHandler;
 
@@ -44,23 +48,28 @@ public class WebSecurityConfig {
 	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
 		log.info("filter1 =-=-=-==-=");
 		http.oauth2Login(login -> login.loginPage("/user/login").successHandler(successHandler()));
 		
 		
-        http.csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> csrf.disable());
+
+        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+        // http.csrf(csrf -> csrf.disable())
+
         	.authorizeHttpRequests(auth -> auth.requestMatchers("/admin/**").hasRole("ADMIN") // 효과 X
         									   .requestMatchers("/hr/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
         									   .requestMatchers("/sudo/**").hasRole("SUPER_ADMIN")
         									   
-        								        // protoshop 관련 권한을 MANAGER에 부여
-        								       .requestMatchers("/protoshop/modify/**", "/protoshop/remove/**", "/protoshop/regist/**").hasRole("MANAGER")
-        								       .requestMatchers("/protoshop/list", "/protoshop/read/**", "/cart/**").permitAll()
+        								        // shop 관련 권한을 MANAGER에 부여
+        								       .requestMatchers("/shop/modify/**", "/shop/remove/**", "/shop/regist/**", "/shop/deleteImage/**").hasRole("MANAGER")
+        								       .requestMatchers("/shop/list", "/shop/read/**", "/cart/**", "/api/kakao-pay/**","/api/**").permitAll()
         								        
         									   // .requestMatchers("/user/**").hasRole("USER") // 없애도 될듯?
         								       // .requestMatchers("/login.html").permitAll()
         								       .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // 정적 리소스 접근 허용
-        								       .requestMatchers("user/register", "user/goRegisterForm").permitAll() //123
+        								       .requestMatchers("/user/register", "/user/goRegisterForm", "/user/confirmId").permitAll() //123
         									   .anyRequest().authenticated())
         	// .formLogin(form -> form.loginPage("/login.html")
         	.formLogin(form -> form.loginPage("/user/login")
@@ -76,17 +85,16 @@ public class WebSecurityConfig {
     	     )
         	.logout(out -> out.logoutUrl("/logout")
         					  .deleteCookies("remember-me")
+        					  .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // GET 요청 허용
+        					  .logoutSuccessUrl("/login")  // 로그아웃 성공 후 이동할 URL
+        					  .invalidateHttpSession(true) // 세션 삭제
+        					  .deleteCookies("JSESSIONID") // 쿠키 삭제
 							  // .logoutSuccessHandler(custom)
 							  .permitAll()
         );
         
 		return http.build();
 	}
-	
-
-	
-	
-	
 
 	//바로 위 코드에 kakaoPay csrf_token 예외 처리한 코드
 //	@Bean
@@ -120,6 +128,7 @@ public class WebSecurityConfig {
 //        
 //		return http.build();
 //	}
+
 	
 	private PersistentTokenRepository persistentTokenRepository() {
 		JdbcTokenRepositoryImpl repo = new JdbcTokenRepositoryImpl();

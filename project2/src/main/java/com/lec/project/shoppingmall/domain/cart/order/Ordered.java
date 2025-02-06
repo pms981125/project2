@@ -46,4 +46,15 @@ public class Ordered extends BaseEntity {
 	@Builder.Default
 	@OneToMany(mappedBy = "ordered", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderedProduct> orderedProducts = new ArrayList<>();
+	
+	@Column(length = 50)
+	private String status = "PENDING";
+	
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
+	public String getStatus(String status) {
+		return this.status;
+	}
 }

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+<meta charset="UTF-8">
+<title>주문 관리 대시보드</title>
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- Font Awesome for Icons -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    
+       <style>
+		.status-badge {
+			font-size: 0.8em;
+			padding: 0.3em 0.6em;
+		}
+		.status-PENDING { background-color: #ffc107; color: black; }
+		.status-APPROVED { background-color: #28a745; color: white; }
+		.status-REJECTED { background-color: #dc3545; color: white; }
+		.status-REFUND_REQUESTED { background-color: #17a2b8; color: white; }
+        
+		.action-buttons {
+			display: flex;
+			gap: 0.5rem;
+		}
+		.filter-section {
+			background-color: #f8f9fa;
+			padding: 1rem;
+			margin-bottom: 1rem;
+			border-radius: 0.5rem;
+		}
+	</style>
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<!-- Sidebar Navigation -->
+			<nav class="col-md-2 d-md-block bg-light sidebar">
+				<div class="position-sticky">
+					<ul class="nav flex-column">
+						<li class="nav-item">
+							<a class="nav-link active" href="#">
+								<i class="fas fa-shopping-cart"></i> 주문 관리
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#">
+								<i class="fas fa-undo"></i> 환불 관리
+							</a>
+						</li>
+						<li class="nav-item">
+						<a class="nav-link" href="#">
+							<i class="fas fa-chart-bar"></i> 매출 통계
+							</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+
+            <!-- Main Content -->
+            <main class="col-md-10 ms-sm-auto px-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">주문 관리 대시보드</h1>
+                </div>
+
+                <!-- Filters -->
+                <div class="filter-section">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <select class="form-select" id="statusFilter">
+                                <option value="">전체 상태</option>
+                                <option value="PENDING">대기 중</option>
+                                <option value="APPROVED">승인됨</option>
+                                <option value="REJECTED">거절됨</option>
+                                <option value="REFUND_REQUESTED">환불 요청</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" class="form-control" id="startDateFilter">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" class="form-control" id="endDateFilter">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" placeholder="주문번호 또는 고객명 검색" id="searchInput">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order List -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>주문 번호</th>
+                                <th>고객명</th>
+                                <th>주문 날짜</th>
+                                <th>총 금액</th>
+                                <th>상태</th>
+                                <th>액션</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTableBody">
+                            <tr>
+                                <td>ORD-2023-0001</td>
+                                <td>홍길동</td>
+                                <td>2023-12-15 14:30</td>
+                                <td>150,000원</td>
+                                <td>
+                                    <span class="badge status-badge status-PENDING">대기 중</span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#orderDetailsModal">
+                                            <i class="fas fa-eye"></i> 상세
+                                        </button>
+                                        <button class="btn btn-sm btn-primary">
+                                            <i class="fas fa-check"></i> 승인
+                                        </button>
+                                        <button class="btn btn-sm btn-danger">
+                                            <i class="fas fa-times"></i> 거절
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- More rows will be dynamically added -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">이전</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">다음</a>
+                        </li>
+                    </ul>
+                </nav>
+            </main>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderDetailsModalLabel">주문 상세 정보</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>주문자 정보</h6>
+                            <p><strong>이름:</strong> 홍길동</p>
+                            <p><strong>연락처:</strong> 010-1234-5678</p>
+                            <p><strong>이메일:</strong> hong@example.com</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>배송 정보</h6>
+                            <p><strong>주소:</strong> 서울특별시 강남구 테헤란로</p>
+                            <p><strong>요청사항:</strong> 부재 시 경비실에 맡겨주세요</p>
+                        </div>
+                    </div>
+
+                    <h6 class="mt-3">주문 상품 목록</h6>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>상품명</th>
+                                <th>수량</th>
+                                <th>가격</th>
+                                <th>소계</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>친환경 유기농 사과</td>
+                                <td>3</td>
+                                <td>5,000원</td>
+                                <td>15,000원</td>
+                            </tr>
+                            <tr>
+                                <td>무농약 양배추</td>
+                                <td>2</td>
+                                <td>3,000원</td>
+                                <td>6,000원</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>총 합계</strong></td>
+                                <td><strong>21,000원</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-success">승인</button>
+                    <button type="button" class="btn btn-danger">거절</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Refund Request Modal -->
+    <div class="modal fade" id="refundRequestModal" tabindex="-1" aria-labelledby="refundRequestModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="refundRequestModalLabel">환불 요청 처리</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="refundReason" class="form-label">환불 사유</label>
+                        <textarea class="form-control" id="refundReason" rows="3" readonly></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="refundAmount" class="form-label">환불 금액</label>
+                        <input type="text" class="form-control" id="refundAmount" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="managerComment" class="form-label">관리자 코멘트</label>
+                        <textarea class="form-control" id="managerComment" rows="3" placeholder="환불 승인/거절에 대한 코멘트를 입력하세요"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-success">환불 승인</button>
+                    <button type="button" class="btn btn-danger">환불 거절</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    
+    <script>
+        // 필터링 및 검색 기능 (JavaScript)
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusFilter = document.getElementById('statusFilter');
+            const startDateFilter = document.getElementById('startDateFilter');
+            const endDateFilter = document.getElementById('endDateFilter');
+            const searchInput = document.getElementById('searchInput');
+
+            // 필터링 이벤트 리스너
+            [statusFilter, startDateFilter, endDateFilter, searchInput].forEach(el => {
+                el.addEventListener('change', applyFilters);
+            });
+
+            function applyFilters() {
+                const status = statusFilter.value;
+                const startDate = startDateFilter.value;
+                const endDate = endDateFilter.value;
+                const searchTerm = searchInput.value.toLowerCase();
+
+                // 실제 구현 시 서버 사이드 필터링 또는 클라이언트 사이드 필터링
+                const rows = document.querySelectorAll('#orderTableBody tr');
+                
+                rows.forEach(row => {
+                    const statusCell = row.querySelector('.status-badge');
+                    const customerCell = row.cells[1];
+                    const dateCell = row.cells[2];
+
+                    const matchesStatus = !status || statusCell.textContent.includes(status);
+                    const matchesSearch = !searchTerm || 
+                        customerCell.textContent.toLowerCase().includes(searchTerm) ||
+                        row.cells[0].textContent.toLowerCase().includes(searchTerm);
+                    
+                    // 날짜 필터링 로직 추가 필요
+                    
+                    row.style.display = matchesStatus && matchesSearch ? '' : 'none';
+                });
+            }
+
+            // 주문 승인/거절 버튼 이벤트
+            const approveButtons = document.querySelectorAll('.btn-primary');
+            const rejectButtons = document.querySelectorAll('.btn-danger');
+
+            approveButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 주문 승인 로직
+                    const row = this.closest('tr');
+                    const statusBadge = row.querySelector('.status-badge');
+                    statusBadge.textContent = '승인됨';
+                    statusBadge.classList.remove('status-PENDING');
+                    statusBadge.classList.add('status-APPROVED');
+                });
+            });
+
+            rejectButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 주문 거절 로직
+                    const row = this.closest('tr');
+                    const statusBadge = row.querySelector('.status-badge');
+                    statusBadge.textContent = '거절됨';
+                    statusBadge.classList.remove('status-PENDING');
+                    statusBadge.classList.add('status-REJECTED');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

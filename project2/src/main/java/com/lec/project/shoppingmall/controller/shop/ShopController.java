@@ -94,7 +94,7 @@ public class ShopController {
 	@GetMapping({ "/read", "/modify" })
 	public void read(
 			@RequestParam(value = "bno", required = false) Long bno,
-			@RequestParam(value = "product_code", required = false) String productCode,
+			@RequestParam(value = "productCode", required = false) String productCode,
 			Model model) {
 		log.info("read or modify..........");
 		ShopDTO shopDTO;

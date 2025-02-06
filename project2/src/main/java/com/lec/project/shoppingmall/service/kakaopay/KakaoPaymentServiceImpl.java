@@ -11,6 +11,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lec.project.shoppingmall.domain.payment.kakao.KakaoPayment;
 import com.lec.project.shoppingmall.domain.payment.kakao.KakaoPaymentStatus;
 import com.lec.project.shoppingmall.dto.payment.kakao.KakaoPayApproveRequest;
@@ -40,61 +43,72 @@ public class KakaoPaymentServiceImpl implements KakaoPaymentService {
 	@Override
 	public KakaoPayReadyResponse readyToPay(KakaoPayReadyRequest KakaoPayReadyRequest) {
 		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-		parameters.add("cid", "TC0ONETIME");		// 가맹점 코드
+		parameters.add("cid", "TC0ONETIME");     // 가맹점 코드
 		parameters.add("partner_order_id", KakaoPayReadyRequest.getPartnerOrderId());
 		parameters.add("partner_user_id", KakaoPayReadyRequest.getPartnerUserId());
 		parameters.add("item_name", KakaoPayReadyRequest.getItemName());
 		parameters.add("quantity", String.valueOf(KakaoPayReadyRequest.getQuantity()));
 		parameters.add("total_amount", String.valueOf(KakaoPayReadyRequest.getTotalAmount()));
 		parameters.add("tax_free_amount", String.valueOf(KakaoPayReadyRequest.getTaxFreeAmount()));
-		parameters.add("approval_url", KakaoPayReadyRequest.getSuccessUrl());
-		parameters.add("cancel_url", KakaoPayReadyRequest.getCancelUrl());
-		parameters.add("fail_url", KakaoPayReadyRequest.getFailUrl());
 		
-		log.info("Kakao Pay Request Params: {}", parameters);
+		String baseUrl = "http://localhost:8090";
+		parameters.add("approval_url", baseUrl + "/cart/order/kakao/success");
+		parameters.add("cancel_url", baseUrl + "/cart/order/kakao/cancel");
+		parameters.add("fail_url", baseUrl + "/cart/order/kakao/fail");
 		
-		try {
-			KakaoPayReadyResponse kakaoPayResponse = webClient.post()
+		log.info("요청 파라미터: {}", parameters);
+		log.info("Admin Key: {}", adminKey.substring(0, 8) + "...");
+		
+	    try {
+	        String responseBody = webClient.post()
 				.uri(KAKAO_PAY_HOST + "/v1/payment/ready")
 				.header("Authorization", "KakaoAK " + adminKey)
 				.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 				.body(BodyInserters.fromFormData(parameters))
 				.retrieve()
-				.onStatus(status -> status.is4xxClientError(), 
+				.onStatus(status -> status.is4xxClientError(),
 					response -> response.bodyToMono(String.class)
-				    	.flatMap(errorBody -> {
-				        	log.error("Kakao Pay Client Error: {}", errorBody);
-				            return Mono.error(new RuntimeException("카카오페이 클라이언트 오류: " + errorBody));
+						.flatMap(errorBody -> {
+				        	log.error("클라이언트 에러 응답: {} - {}", response.statusCode(), errorBody);
+				            return Mono.error(new RuntimeException("카카오페이 API 클라이언트 에러: " + errorBody));
 				        }))
-				.onStatus(status -> status.is5xxServerError(), 
-				    response -> response.bodyToMono(String.class)
-				    	.flatMap(errorBody -> {
-				        	log.error("Kakao Pay Server Error: {}", errorBody);
-				        	return Mono.error(new RuntimeException("카카오페이 서버 오류: " + errorBody));
-				        }))
-			        .bodyToMono(KakaoPayReadyResponse.class)
-			        .block();
-			
-			log.info("Kakao Pay Response: {}", kakaoPayResponse);
+				.bodyToMono(String.class)
+				.doOnNext(body -> log.info("응답 본문: {}", body))
+				.block();
 
-		// 결제 정보 저장
-		KakaoPayment Kakaopay = KakaoPayment.builder()
-			.tid(kakaoPayResponse.getTid())
-			.partnerOrderId(KakaoPayReadyRequest.getPartnerOrderId())
-			.partnerUserId(KakaoPayReadyRequest.getPartnerUserId())
-			.totalAmount(KakaoPayReadyRequest.getTotalAmount())
-			.itemName(KakaoPayReadyRequest.getItemName())
-			.quantity(KakaoPayReadyRequest.getQuantity())
-			.status(KakaoPaymentStatus.READY)
-			.build();
-		    
-		kakaoPaymentRepository.save(Kakaopay);
-		
-		return kakaoPayResponse;
-		} catch (Exception e) {
-			log.error("Kakao Pay Ready API Error", e);
-			throw new RuntimeException("결제 준비 중 오류가 발생했습니다.");
-		}
+	        log.info("카카오페이 원본 응답: {}", responseBody);
+
+			ObjectMapper objectMapper = new ObjectMapper()
+				.registerModule(new JavaTimeModule())
+				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			
+			    KakaoPayReadyResponse kakaoPayResponse = objectMapper
+					.readValue(responseBody, KakaoPayReadyResponse.class);
+			    log.info("Mapped response object: {}", kakaoPayResponse);
+
+	        if (kakaoPayResponse.getNextRedirectPcUrl() == null) {
+	            log.error("리다이렉트 URL이 null입니다. 응답 전체: {}", responseBody);
+	            throw new RuntimeException("카카오페이 응답에 리다이렉트 URL이 없습니다");
+	        }
+
+	        // 결제 정보 저장
+	        KakaoPayment Kakaopay = KakaoPayment.builder()
+	            .tid(kakaoPayResponse.getTid())
+	            .partnerOrderId(KakaoPayReadyRequest.getPartnerOrderId())
+	            .partnerUserId(KakaoPayReadyRequest.getPartnerUserId())
+	            .totalAmount(KakaoPayReadyRequest.getTotalAmount())
+	            .itemName(KakaoPayReadyRequest.getItemName())
+	            .quantity(KakaoPayReadyRequest.getQuantity())
+	            .status(KakaoPaymentStatus.READY)
+	            .build();
+	            
+	        kakaoPaymentRepository.save(Kakaopay);
+	        
+	        return kakaoPayResponse;
+	    } catch (Exception e) {
+	        log.error("Kakao Pay Ready API Error", e);
+	        throw new RuntimeException("결제 준비 중 오류가 발생했습니다.");
+	    }
 	}
 	
 	@Override
