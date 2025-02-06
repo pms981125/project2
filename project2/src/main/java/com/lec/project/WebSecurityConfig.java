@@ -2,17 +2,13 @@ package com.lec.project;
 
 import javax.sql.DataSource;
 
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,10 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -34,7 +28,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Configuration
-@EnableMethodSecurity(prePostEnabled = true)
+// @EnableMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
@@ -48,16 +42,9 @@ public class WebSecurityConfig {
 	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-		log.info("filter1 =-=-=-==-=");
-		http.oauth2Login(login -> login.loginPage("/user/login").successHandler(successHandler()));
-		
-		
-        http.csrf(csrf -> csrf.disable());
-
-        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-        // http.csrf(csrf -> csrf.disable())
-
+			http.oauth2Login(login -> login.loginPage("/user/login").successHandler(successHandler()));
+			http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+			// http.csrf(csrf -> csrf.disable())
         	.authorizeHttpRequests(auth -> auth.requestMatchers("/admin/**").hasRole("ADMIN") // 효과 X
         									   .requestMatchers("/hr/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
         									   .requestMatchers("/sudo/**").hasRole("SUPER_ADMIN")
@@ -77,14 +64,7 @@ public class WebSecurityConfig {
         						   .successHandler(successHandler())
         						   .failureHandler(failureHandler())
         						   .permitAll())
-    	   .rememberMe(remember -> remember  // Remember Me 설정 추가
-    	           .key("12345678")       // 쿠키를 암호화하기 위한 키
-    	           .tokenRepository(persistentTokenRepository())  // 토큰 저장소 설정
-    	           .tokenValiditySeconds(60 * 60 * 24 * 30)      // 30일간 유효
-    	           .userDetailsService(detailsService)           // UserDetailsService 설정
-    	     )
         	.logout(out -> out.logoutUrl("/logout")
-        					  .deleteCookies("remember-me")
         					  .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // GET 요청 허용
         					  .logoutSuccessUrl("/login")  // 로그아웃 성공 후 이동할 URL
         					  .invalidateHttpSession(true) // 세션 삭제
@@ -95,40 +75,6 @@ public class WebSecurityConfig {
         
 		return http.build();
 	}
-
-	//바로 위 코드에 kakaoPay csrf_token 예외 처리한 코드
-//	@Bean
-//	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//		log.info("filter1 =-=-=-==-=");
-//
-//        http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/kakao-pay/**"))		// 카카오페이 API는 CSRF 검사 제외
-//        	.authorizeHttpRequests(auth -> auth.requestMatchers("/admin/**").hasRole("ADMIN") // 효과 X
-//        									   .requestMatchers("/hr/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
-//        									   .requestMatchers("/sudo/**").hasRole("SUPER_ADMIN")
-//        									   
-//        								        // shop 관련 권한을 MANAGER에 부여
-//        								       .requestMatchers("/shop/modify/**", "/shop/remove/**", "/shop/regist/**").hasRole("MANAGER")
-//        								       .requestMatchers("/shop/list", "/shop/read/**", "/cart/**").permitAll()
-//        								        
-//        									   // .requestMatchers("/user/**").hasRole("USER") // 없애도 될듯?
-//        								       // .requestMatchers("/login.html").permitAll()
-//        								       .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // 정적 리소스 접근 허용
-//        								       .requestMatchers("user/register", "user/goRegisterForm").permitAll() //123
-//        									   .anyRequest().authenticated())
-//        	// .formLogin(form -> form.loginPage("/login.html")
-//        	.formLogin(form -> form.loginPage("/user/login")
-//        						   .loginProcessingUrl("/loginProcess")
-//        						   .successHandler(successHandler())
-//        						   .failureHandler(failureHandler())
-//        						   .permitAll())
-//        	.logout(out -> out.logoutUrl("/logout")
-//							  // .logoutSuccessHandler(custom)
-//							  .permitAll()
-//        );
-//        
-//		return http.build();
-//	}
-
 	
 	private PersistentTokenRepository persistentTokenRepository() {
 		JdbcTokenRepositoryImpl repo = new JdbcTokenRepositoryImpl();
@@ -141,9 +87,8 @@ public class WebSecurityConfig {
 		return new LoginSuccessHandler(passwordEncoder());
 	}
 	
-	
 	@Bean
-	public AuthenticationFailureHandler failureHandler() {
+	AuthenticationFailureHandler failureHandler() {
 		// return new LoginFailureHandler();
 		return (request, response, exception) -> {
 			String errorMessage;
@@ -164,6 +109,4 @@ public class WebSecurityConfig {
             response.sendRedirect("/login?error");
         };
 	}
-	
-
 }
