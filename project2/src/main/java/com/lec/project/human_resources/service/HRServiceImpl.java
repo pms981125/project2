@@ -274,10 +274,10 @@ public class HRServiceImpl implements HRService {
 		int page = pageable.getPageNumber() - 1;
 		int limit = size;
 		
-		List<Member> listSize = memberRepository.findAll().stream().filter(member -> member.getRoleSet().contains(MemberRole.ADMIN)).collect(Collectors.toList()); // SuperAdmin으로 변경
+		List<Member> listSize = memberRepository.findAll().stream().filter(member -> member.getRoleSet().contains(MemberRole.SUPER_ADMIN) || member.getRoleSet().contains(MemberRole.MANAGER)).collect(Collectors.toList());
 		Page<Member> pages = memberRepository.findAll(PageRequest.of(page, limit));
 		List<MemberSecurityDTO> DTOPages = pages.getContent().stream()
-												.filter(member -> member.getRoleSet().contains(MemberRole.ADMIN))
+												.filter(member -> member.getRoleSet().contains(MemberRole.SUPER_ADMIN) || member.getRoleSet().contains(MemberRole.MANAGER))
 												.map(member -> new MemberSecurityDTO(
 													 member.getId(),
 													 member.getPassword(),
