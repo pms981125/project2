@@ -1,4 +1,4 @@
-package com.lec.project.shoppingmall.controller.api;
+package com.lec.project.shoppingmall.controller.shop.api;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

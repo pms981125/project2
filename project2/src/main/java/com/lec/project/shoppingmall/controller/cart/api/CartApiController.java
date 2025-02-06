@@ -1,4 +1,4 @@
-package com.lec.project.shoppingmall.controller.api;
+package com.lec.project.shoppingmall.controller.cart.api;
 
 import java.util.Map;
 
