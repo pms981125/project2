@@ -55,6 +55,17 @@
 							<div class="input-group-prepend"><span class="input-group-text">연봉</span></div>
 							<input type="text" name="annualSalary" class="form-control" placeholder="연봉" required>
 						</div>
+						<div class="form-group input-group justify-content-center">
+							<!-- <div class="input-group-prepend"><span class="input-group-text">직원 유형</span></div> -->
+							<div class="form-check form-check-inline">
+								<input type="radio" name="job" value="hr" required class="form-check-input" id="job1"/>
+								<label for="job1" class="form-check-label">인사</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input type="radio" name="job" value="manager" class="form-check-input" id="job2" required/>
+								<label for="job2" class="form-check-label">쇼핑몰 매니저</label>
+							</div>
+						</div>
 						<div class="form-group input-group mt-sm-1 justify-content-center">
 							<!-- <button class="btn btn-primary addAdminBtn">관리자 추가</button> -->
 							<input type="submit" class="btn btn-primary buttonSubmit" value="직원 등록" />
