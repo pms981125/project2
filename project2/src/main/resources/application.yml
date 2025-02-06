@@ -28,25 +28,25 @@ spring:
       client:
         registration:
           kakao:
-            authorization-grant-type: authorization_code
-            client-id: ffca64b3547f1a11dcfef2187ea330eb
-            client-secret: 8DaVpaa7JHIMeXqJ7RNkAmnnwHhcTn7x
-            scope: profile_nickname
-            client-authentication-method: client_secret_post
+            client-id: ab8323fae2f0119772ecb3325e49c2f1
+            client-secret: gGYuxvVK7onx49BuBlN66nSwh6mqBNvP
             redirect-uri: http://localhost:8090/login/oauth2/code/kakao
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
             client-name: kakao
+            scope: profile_nickname, profile_image, account_email
         provider:
           kakao:
-            token-uri: https://kauth.kakao.com/oauth/token
-            user-name-attribute: id
-            user-info-uri: https://kapi.kakao.com/v2/user/me
             authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
 logging:
   level:
     org:
       hibernate: info
       springframework:
-        security: info
+        security: DEBUG   
     com:
       lec: debug
 server:
@@ -70,4 +70,4 @@ com:
 kakao:
   pay:
     admin:
-      key: 662243decad4a12b970ab6e252196768
+      key: 39be40d6c3ef8a6760c78a558f93c15e

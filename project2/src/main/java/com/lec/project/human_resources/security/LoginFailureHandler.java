@@ -1,4 +1,4 @@
-package com.lec.project.human_resources;
+package com.lec.project.human_resources.security;
 
 import java.io.IOException;
 import java.net.URLEncoder;

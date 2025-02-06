@@ -1,10 +1,12 @@
 package com.lec.project;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +20,7 @@ import lombok.extern.log4j.Log4j2;
 @Getter
 @Setter
 @ToString
-public class MemberSecurityDTO extends User{
+public class MemberSecurityDTO extends User implements OAuth2User{
 	private String id;
 	private String password;
 	private String name;
@@ -29,6 +31,8 @@ public class MemberSecurityDTO extends User{
 	private int annualSalary;
 	private int totalSpent;
 	private MemberRank memberRank;
+	
+	private Map<String, Object> props; // SSN(kakao) 로그인정보
 	
 	public MemberSecurityDTO(String username, String password, Collection<? extends GrantedAuthority> authorities) {
 		super(username, password, authorities);
@@ -61,5 +65,11 @@ public class MemberSecurityDTO extends User{
 	
 	public boolean isAdmin() {
 		return this.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+	}
+
+
+	@Override
+	public Map<String, Object> getAttributes() {
+		return this.getProps();
 	}
 }

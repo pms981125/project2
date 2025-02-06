@@ -1,20 +1,28 @@
-package com.lec.project.human_resources;
+package com.lec.project.human_resources.security;
 
 import java.io.IOException;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
+import com.lec.project.MemberSecurityDTO;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
+@RequiredArgsConstructor
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
+	private final PasswordEncoder passwordEncoder;
+	
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+		MemberSecurityDTO memberSecurityDTO = (MemberSecurityDTO) authentication.getPrincipal();
 		log.info(authentication.getAuthorities() + "-=-=-=-=-=-=-=-=-=");	
 	
 		if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER_ADMIN"))) {
@@ -30,7 +38,11 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 			 response.sendRedirect("/index.html"); // static 폴더에 있는 html 파일로 접근 시
 			//response.sendRedirect("/user/home");
 		} else {
-			response.sendRedirect("/contact");
-		}
+            // 기본 권한이 없는 경우 USER 권한으로 간주하고 index.html로 리다이렉트
+            response.sendRedirect("/index.html");
+        }
+		
+		
 	}
+	
 }
