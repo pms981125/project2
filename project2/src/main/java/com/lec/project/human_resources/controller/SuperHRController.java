@@ -165,5 +165,6 @@ public class SuperHRController {
 		hrService.leave(id, localTime);
 		
 		return "admin/attendance";
+		// ?
 	}
 }
