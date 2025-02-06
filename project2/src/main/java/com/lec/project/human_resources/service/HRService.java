@@ -1,5 +1,6 @@
 package com.lec.project.human_resources.service;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import javax.mail.MessagingException;
@@ -27,4 +28,6 @@ public interface HRService {
 	void addMember(String id, String password, String name, String ssn, String phone, String email, String address, String location);
 	void exaltation(String id, int salary);
 	boolean confirmId(String id);
+	void attendance(String id, LocalTime localTime);
+	void leave(String id, LocalTime localTime);
 }

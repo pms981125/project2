@@ -1,6 +1,9 @@
 package com.lec.project.human_resources.service;
 
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +30,13 @@ import com.lec.project.MemberRepository;
 import com.lec.project.MemberRole;
 import com.lec.project.MemberSecurityDTO;
 import com.lec.project.human_resources.domain.Admin;
+import com.lec.project.human_resources.domain.Attendance;
+import com.lec.project.human_resources.domain.AttendanceEnum;
+import com.lec.project.human_resources.domain.WorkLog;
+import com.lec.project.human_resources.domain.WorkLogEnum;
 import com.lec.project.human_resources.repository.AdminRepository;
+import com.lec.project.human_resources.repository.AttendanceRepository;
+import com.lec.project.human_resources.repository.WorkLogRepository;
 import com.lec.project.regionboard.model.MemberRegion;
 import com.lec.project.regionboard.repository.MemberRegionRepository;
 
@@ -43,6 +52,8 @@ public class HRServiceImpl implements HRService {
 	private final MemberRepository memberRepository;
 	private final MemberRegionRepository memberRegionRepository;
 	private final AdminRepository adminRepository;
+	private final AttendanceRepository attendanceRepository;
+	private final WorkLogRepository workLogRepository;
 	private final ModelMapper modelMapper;
 	private final PasswordEncoder passwordEncoder;
 
@@ -259,7 +270,7 @@ public class HRServiceImpl implements HRService {
 		int page = pageable.getPageNumber() - 1;
 		int limit = size;
 		
-		List<Member> listSize = memberRepository.findAll().stream().filter(member -> member.getRoleSet().contains(MemberRole.ADMIN)).collect(Collectors.toList());
+		List<Member> listSize = memberRepository.findAll().stream().filter(member -> member.getRoleSet().contains(MemberRole.ADMIN)).collect(Collectors.toList()); // SuperAdmin으로 변경
 		Page<Member> pages = memberRepository.findAll(PageRequest.of(page, limit));
 		List<MemberSecurityDTO> DTOPages = pages.getContent().stream()
 												.filter(member -> member.getRoleSet().contains(MemberRole.ADMIN))
@@ -366,5 +377,72 @@ public class HRServiceImpl implements HRService {
 	@Override
 	public boolean confirmId(String id) {
 		return memberRepository.findById(id).isPresent();
+	}
+
+	@Override
+	public void attendance(String id, LocalTime localTime) {
+		Optional<Admin> result = adminRepository.findById(id);
+		Admin admin = result.orElseThrow();
+		LocalTime normalityAttendanceTime = LocalTime.of(10, 30);
+		AttendanceEnum attendanceEnum;
+		
+		if (localTime.isAfter(normalityAttendanceTime)) {
+			attendanceEnum = AttendanceEnum.지각;
+		} else {
+			attendanceEnum = AttendanceEnum.출근;
+		}
+		
+		Attendance attendance = Attendance.builder().employee(admin).inTime(localTime).status(attendanceEnum).build();
+		
+		attendanceRepository.save(attendance);
+	}
+
+	@Override
+	public void leave(String id, LocalTime localTime) {
+		Optional<Admin> result = adminRepository.findById(id);
+		Admin admin = result.orElseThrow();
+		LocalTime normalityLeaveTime = LocalTime.of(18, 00);
+		AttendanceEnum attendanceEnum;
+		
+		if (localTime.isBefore(normalityLeaveTime)) {
+			attendanceEnum = AttendanceEnum.조퇴;
+		} else {
+			attendanceEnum = AttendanceEnum.퇴근;
+		}
+		
+		AttendanceEnum status = AttendanceEnum.출근;
+		Optional<Attendance> result2 = attendanceRepository.findByIdWithAttendance(admin, status);
+		Attendance attendance;
+		
+		try {
+			attendance = result2.orElseThrow();
+		} catch (Exception e) {
+			status = AttendanceEnum.지각;
+			
+			result2 = attendanceRepository.findByIdWithAttendance(admin, status);
+			attendance = result2.orElseThrow();
+		}
+
+		Attendance leave = Attendance.builder().id(attendance.getId()).employee(admin).inTime(attendance.getInTime()).outTime(localTime).status(attendanceEnum).build();
+
+		attendanceRepository.save(leave);
+		
+		Date date = new Date();
+		int time = (int) ChronoUnit.HOURS.between(leave.getInTime(), leave.getOutTime());
+		WorkLogEnum workLogEnum;
+		
+		if (leave.getOutTime().isBefore(normalityLeaveTime)) {
+			workLogEnum = WorkLogEnum.조퇴;
+		} else if (leave.getInTime().isAfter(LocalTime.of(10, 30))) {
+			workLogEnum = WorkLogEnum.지각;
+		} else if (leave.getOutTime().isAfter(LocalTime.of(19, 00))) {
+			workLogEnum = WorkLogEnum.야근;
+		} else {
+			workLogEnum = WorkLogEnum.정상;
+		}
+		
+		WorkLog workLog = WorkLog.builder().employee(admin).workDate(date).workTime(time).status(workLogEnum).build();
+		
+		workLogRepository.save(workLog);
 	}
 }

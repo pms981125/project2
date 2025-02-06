@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+
+<div layout:fragment="content">
+	<div class="container mt-4">
+		<button onclick="attendance()">출근</button>
+		<button onclick="leave()">퇴근</button>
+	</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+<script layout:fragment="script" th:inline="javascript">
+	function attendance() {
+		const form = document.createElement('form')
+		const tokenName = /*[[${_csrf.parameterName}]]*/""
+		const token = /*[[${_csrf.token}]]*/""
+		const id = /*[[${#authentication.name}]]*/""
+		
+		let input1 = document.createElement('input')
+		let input2 = document.createElement('input')
+
+		input1.type = 'hidden'
+	    input1.name = tokenName
+	    input1.value = token
+	    
+		input2.type = 'hidden'
+	    input2.name = 'id'
+	    input2.value = id
+		
+	    form.appendChild(input1)
+	    form.appendChild(input2)
+		
+		form.action = `/sudo/attendance`
+		form.method = 'post'
+		document.body.appendChild(form)
+		form.submit()
+	}
+	
+	function leave() {
+		const form = document.createElement('form')
+		const tokenName = /*[[${_csrf.parameterName}]]*/""
+		const token = /*[[${_csrf.token}]]*/""
+		const id = /*[[${#authentication.name}]]*/""
+		
+		let input1 = document.createElement('input')
+		let input2 = document.createElement('input')
+
+		input1.type = 'hidden'
+	    input1.name = tokenName
+	    input1.value = token
+	    
+		input2.type = 'hidden'
+	    input2.name = 'id'
+	    input2.value = id
+		
+	    form.appendChild(input1)
+	    form.appendChild(input2)
+		
+		form.action = `/sudo/leave`
+		form.method = 'post'
+		document.body.appendChild(form)
+		form.submit()
+	}
+</script>

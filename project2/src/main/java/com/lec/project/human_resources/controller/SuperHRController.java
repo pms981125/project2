@@ -1,5 +1,7 @@
 package com.lec.project.human_resources.controller;
 
+import java.time.LocalTime;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 
@@ -138,5 +140,29 @@ public class SuperHRController {
 	@GetMapping("/logout")
 	public String logout() {
 		return "redirect:/logout";
+	}
+	
+	@GetMapping("/goAttendance")
+	public String goAttendance() {
+		return "admin/attendance";
+	}
+	
+	@PostMapping("/attendance")
+	public String attendance(@RequestParam(name = "id") String id) {
+		LocalTime localTime = LocalTime.now();
+		
+		// log.info("345678jhrebr " + id + " " + localTime);
+		hrService.attendance(id, localTime);
+		
+		return "admin/attendance";
+	}
+	
+	@PostMapping("/leave")
+	public String leave(@RequestParam(name = "id") String id) {
+		LocalTime localTime = LocalTime.now();
+		
+		hrService.leave(id, localTime);
+		
+		return "admin/attendance";
 	}
 }

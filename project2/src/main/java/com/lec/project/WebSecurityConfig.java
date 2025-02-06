@@ -48,7 +48,7 @@ public class WebSecurityConfig {
         									   // .requestMatchers("/user/**").hasRole("USER") // 없애도 될듯?
         								       // .requestMatchers("/login.html").permitAll()
         								       .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // 정적 리소스 접근 허용
-        								       .requestMatchers("user/register", "user/goRegisterForm", "/user/confirmId").permitAll() //123
+        								       .requestMatchers("/user/register", "/user/goRegisterForm", "/user/confirmId").permitAll() //123
         									   .anyRequest().authenticated())
         	// .formLogin(form -> form.loginPage("/login.html")
         	.formLogin(form -> form.loginPage("/user/login")
