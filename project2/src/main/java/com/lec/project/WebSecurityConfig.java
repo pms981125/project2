@@ -53,11 +53,10 @@ public class WebSecurityConfig {
 		http.oauth2Login(login -> login.loginPage("/user/login").successHandler(successHandler()));
 		
 		
-        http.csrf(csrf -> csrf.disable());
 
-        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-        // http.csrf(csrf -> csrf.disable())
+			//http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
 
+			http.csrf(csrf -> csrf.disable())
         	.authorizeHttpRequests(auth -> auth.requestMatchers("/admin/**").hasRole("ADMIN") // 효과 X
         									   .requestMatchers("/hr/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
         									   .requestMatchers("/sudo/**").hasRole("SUPER_ADMIN")
@@ -77,7 +76,7 @@ public class WebSecurityConfig {
         						   .successHandler(successHandler())
         						   .failureHandler(failureHandler())
         						   .permitAll())
-    	   .rememberMe(remember -> remember  // Remember Me 설정 추가
+        	.rememberMe(remember -> remember  // Remember Me 설정 추가
     	           .key("12345678")       // 쿠키를 암호화하기 위한 키
     	           .tokenRepository(persistentTokenRepository())  // 토큰 저장소 설정
     	           .tokenValiditySeconds(60 * 60 * 24 * 30)      // 30일간 유효
