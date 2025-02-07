@@ -1,6 +1,9 @@
 package com.lec.project.human_resources.controller;
 
 import java.time.LocalTime;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
@@ -8,6 +11,8 @@ import javax.mail.internet.AddressException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lec.project.MemberSecurityDTO;
+import com.lec.project.human_resources.dto.CalendarDTO;
 import com.lec.project.human_resources.service.HRService;
 
 import lombok.RequiredArgsConstructor;
@@ -165,5 +171,12 @@ public class SuperHRController {
 		hrService.leave(id, localTime);
 		
 		return "admin/attendance";
+	}
+	
+	@GetMapping("/getWorkLog")
+	public ResponseEntity<CalendarDTO[]> getWorkLog(@RequestParam(name = "id") String id) {
+		CalendarDTO[] calendar = hrService.getWorkLog(id);
+		
+		return new ResponseEntity<>(calendar, HttpStatus.OK);
 	}
 }

@@ -1,5 +1,6 @@
 package com.lec.project.human_resources.service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import com.lec.project.human_resources.domain.Attendance;
 import com.lec.project.human_resources.domain.AttendanceEnum;
 import com.lec.project.human_resources.domain.WorkLog;
 import com.lec.project.human_resources.domain.WorkLogEnum;
+import com.lec.project.human_resources.dto.CalendarDTO;
 import com.lec.project.human_resources.repository.AdminRepository;
 import com.lec.project.human_resources.repository.AttendanceRepository;
 import com.lec.project.human_resources.repository.WorkLogRepository;
@@ -387,7 +389,7 @@ public class HRServiceImpl implements HRService {
 	public void attendance(String id, LocalTime localTime) {
 		Optional<Admin> result = adminRepository.findById(id);
 		Admin admin = result.orElseThrow();
-		LocalTime normalityAttendanceTime = LocalTime.of(10, 30);
+		LocalTime normalityAttendanceTime = LocalTime.of(10, 00);
 		AttendanceEnum attendanceEnum;
 		
 		if (localTime.isAfter(normalityAttendanceTime)) {
@@ -442,11 +444,28 @@ public class HRServiceImpl implements HRService {
 		} else if (leave.getOutTime().isAfter(LocalTime.of(19, 00))) {
 			workLogEnum = WorkLogEnum.야근;
 		} else {
-			workLogEnum = WorkLogEnum.정상;
+			workLogEnum = WorkLogEnum.근무;
 		}
 		
 		WorkLog workLog = WorkLog.builder().employee(admin).workDate(date).workTime(time).status(workLogEnum).build();
 		
 		workLogRepository.save(workLog);
+	}
+
+	@Override
+	public CalendarDTO[] getWorkLog(String id) {
+		Optional<Admin> result = adminRepository.findById(id);
+		Admin admin = result.orElseThrow();
+		List<WorkLog> workLogList = workLogRepository.findAllById(admin);
+		CalendarDTO[] calendarDTOs = new CalendarDTO[workLogList.size()];
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+		for (int i = 0; i < calendarDTOs.length; i++) {
+			WorkLog workLog = workLogList.get(i);
+			
+			calendarDTOs[i] = CalendarDTO.builder().start(simpleDateFormat.format(workLog.getWorkDate())).title(workLog.getStatus().toString()).build();
+		}
+		
+		return calendarDTOs;
 	}
 }

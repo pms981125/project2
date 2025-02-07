@@ -22,11 +22,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 	
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-		MemberSecurityDTO memberSecurityDTO = (MemberSecurityDTO) authentication.getPrincipal();
-		log.info(authentication.getAuthorities() + "-=-=-=-=-=-=-=-=-=");	
-		
-		log.info(authentication.getAuthorities() + "-=-=-=-=-=-=-=-=-=-");	
-	
 		if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER_ADMIN"))) {
 			response.sendRedirect("/sudo/allUserList");
 			// response.sendRedirect("/index.html");
@@ -44,8 +39,5 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             // 기본 권한이 없는 경우 USER 권한으로 간주하고 index.html로 리다이렉트
             response.sendRedirect("/index.html");
         }
-		
-		
 	}
-	
 }

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.lec.project.MemberSecurityDTO;
 import com.lec.project.human_resources.dto.AdminDTO;
+import com.lec.project.human_resources.dto.CalendarDTO;
 
 public interface HRService {
 	MemberSecurityDTO getUser(String id);
@@ -30,4 +31,5 @@ public interface HRService {
 	boolean confirmId(String id);
 	void attendance(String id, LocalTime localTime);
 	void leave(String id, LocalTime localTime);
+	CalendarDTO[] getWorkLog(String id);
 }
