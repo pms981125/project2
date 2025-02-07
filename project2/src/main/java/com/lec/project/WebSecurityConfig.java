@@ -56,17 +56,25 @@ public class WebSecurityConfig {
         									   // .requestMatchers("/user/**").hasRole("USER") // 없애도 될듯?
         								       // .requestMatchers("/login.html").permitAll()
         								       .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // 정적 리소스 접근 허용
+        								       .requestMatchers("/user/loginStatus").permitAll() 
+        								       .requestMatchers("/", "/index.html").permitAll()
         								       .requestMatchers("/user/register", "/user/goRegisterForm", "/user/confirmId").permitAll() //123
-        									   .anyRequest().authenticated())
+        									   .anyRequest().permitAll()) 
         	// .formLogin(form -> form.loginPage("/login.html")
         	.formLogin(form -> form.loginPage("/user/login")
         						   .loginProcessingUrl("/loginProcess")
         						   .successHandler(successHandler())
         						   .failureHandler(failureHandler())
         						   .permitAll())
+    	   .rememberMe(remember -> remember  // Remember Me 설정 추가
+    	           .key("12345678")       // 쿠키를 암호화하기 위한 키
+    	           .tokenRepository(persistentTokenRepository())  // 토큰 저장소 설정
+    	           .tokenValiditySeconds(60 * 60 * 24 * 30)      // 30일간 유효
+    	           .userDetailsService(detailsService)           // UserDetailsService 설정
+    	     )
         	.logout(out -> out.logoutUrl("/logout")
         					  .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // GET 요청 허용
-        					  .logoutSuccessUrl("/login")  // 로그아웃 성공 후 이동할 URL
+        					  .logoutSuccessUrl("/")  // 로그아웃 성공 후 이동할 URL
         					  .invalidateHttpSession(true) // 세션 삭제
         					  .deleteCookies("JSESSIONID") // 쿠키 삭제
 							  // .logoutSuccessHandler(custom)

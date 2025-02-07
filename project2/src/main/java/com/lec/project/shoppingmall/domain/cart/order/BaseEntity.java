@@ -1,9 +1,8 @@
-package com.lec.project.accountHistory.domain;
+package com.lec.project.shoppingmall.domain.cart.order;
 
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Column;
@@ -11,11 +10,11 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 
-@MappedSuperclass
 @Getter
+@MappedSuperclass
 @EntityListeners(value = { AuditingEntityListener.class})
 public class BaseEntity {
-	@LastModifiedDate
-	@Column(name = "transferDate", updatable = false)
-	private LocalDateTime transferDate;
+	@CreatedDate
+	@Column(name = "createDate", updatable = false)
+	private LocalDateTime createDate;
 }

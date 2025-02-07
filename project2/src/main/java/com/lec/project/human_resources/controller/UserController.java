@@ -1,5 +1,9 @@
 package com.lec.project.human_resources.controller;
 
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -11,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.lec.project.MemberSecurityDTO;
 import com.lec.project.human_resources.service.HRService;
@@ -35,6 +40,18 @@ public class UserController {
 		} else {
 			return "user/login";
 		}
+	}
+
+	@GetMapping("/loginStatus")
+	public ResponseEntity<Map<String, Boolean>> getLoginStatus() {
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    boolean isLoggedIn = auth != null && auth.isAuthenticated() && 
+	                        !auth.getPrincipal().equals("anonymousUser");
+	    
+	    Map<String, Boolean> response = new HashMap<>();
+	    response.put("isLoggedIn", isLoggedIn);
+	    
+	    return ResponseEntity.ok(response);
 	}
 	
 	/*	

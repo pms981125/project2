@@ -22,6 +22,12 @@
     <link href="/css/style.css" rel="stylesheet" />
     <link href="/css/responsive.css" rel="stylesheet" />
     <link rel="icon" href="images/fevicon.png" type="image/gif" />
+
+<style>
+.userInfoBtn, #loginLogoutBtn {
+	margin-left: 15px;
+}
+</style>
 </head>
 <body class="sub_page">
     <div class="hero_area">
@@ -29,7 +35,7 @@
 <!-- header section strats -->
 <header class="header_section long_section px-0">
 			<nav class="navbar navbar-expand-lg custom_nav-container ">
-				<a class="navbar-brand" href="index.html">
+				<a class="navbar-brand" href="/index.html">
 				<span> Green Project </span>
 				</a>
 				
@@ -54,23 +60,23 @@
 							<li class="nav-item active">
 								<a class="nav-link"	href="/shop/list">Shopping Mall</a>
 							</li>
-							<li class="nav-item">
-                				<a class="nav-link" href="/account/list">Account</a>
-							</li>
 						</ul>
 					</div>
-					
-	            <div class="quote_btn-container">
-	                <span style="color: black; margin-right: 15px;">
-	                    <i class="fa fa-user" aria-hidden="true"></i>
-	                    <span sec:authentication="name"></span>
-	                </span>
-	                <div class="d-flex flex-column">
-	                    <a th:href="@{/logout}" class="btn btn-outline-info mb-2" style="color: #6bb7be; border-color: #6bb7be;">
-	                        <i class="fa fa-unlock" aria-hidden="true"></i>
-	                    </a>
-	                </div>
-	            </div>
+				</div>
+				<div class="quote_btn-container">
+					<div class="btn-wrapper">
+						<button class="btn my-2 my-sm-0 userInfoBtn" type="button"
+							onclick="javascript:getUserInfo()">
+							<span style="color: black; margin-right: 15px;"> <i
+								class="fa fa-user" aria-hidden="true"></i> <span
+								sec:authorize="isAuthenticated()" sec:authentication="name"></span>
+							</span>
+						</button>
+						<span class="divider">|</span> <a id="loginLogoutBtn"> <b><span
+								id="buttonText" class="info">로그인</span></b>
+						</a>
+					</div>
+				</div>
 			</nav>
 			<!-- 하단 네비게이션 (마우스 오버시 보이는 부분) -->
 			<div class="bottom-nav">
@@ -103,7 +109,7 @@
                     </div>
                 </div>
             </div>
-
+		</div>
             <!-- 장바구니 아이템 리스트 -->
             <div class="cart-items">
                 <div th:each="item : ${responseDTO.dtoList}" class="cart-item card mb-3">
@@ -340,4 +346,66 @@ function clearCart() {
         // 초기 로드시 한번 체크
         handleScroll();
     });
+    // Update login status and button text
+    function updateLoginButton() {
+        fetch('/user/loginStatus')
+            .then(response => response.json())
+            .then(data => {
+                const button = document.getElementById('loginLogoutBtn');
+                const buttonText = document.getElementById('buttonText');
+                
+                if (data.isLoggedIn) {
+                    buttonText.textContent = '로그아웃';
+                    button.href = '/user/logout';
+                } else {
+                    buttonText.textContent = '로그인';
+                    button.href = '/user/login';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+	    // User info button click handler
+	    document.querySelector(".userInfoBtn").addEventListener("click", function(e) {
+	        e.preventDefault();
+	        e.stopPropagation();
+	        
+	     // 로그인 상태 확인
+	        fetch('/user/loginStatus')
+	            .then(response => response.json())
+	            .then(data => {
+	                const form = document.createElement('form');
+	                
+	                if (data.isLoggedIn) {
+	                    // 로그인된 상태면 유저 정보 페이지로
+	                    form.action = '/user/userInfo';
+	                } else {
+	                    // 로그인되지 않은 상태면 로그인 페이지로
+	                    form.action = '/user/login';
+	                }
+	                
+	                form.method = 'get';
+	                document.body.appendChild(form);
+	                form.submit();
+	            })
+	            .catch(error => console.error('Error:', error));
+	    });
+
+	    // Login/Logout button click handler
+	    document.getElementById("loginLogoutBtn").addEventListener("click", function(e) {
+	        e.preventDefault();
+	        e.stopPropagation();
+	        
+	        const form = document.createElement('form');
+	        form.action = this.href;
+	        form.method = 'get';
+	        document.body.appendChild(form);
+	        form.submit();
+	    });
+
+	    // Check login status when page loads
+	    document.addEventListener('DOMContentLoaded', function() {
+	        updateLoginButton();
+	    });
+
 </script>

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.lec.project.Member;
-import com.lec.project.account.domain.BaseEntity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
