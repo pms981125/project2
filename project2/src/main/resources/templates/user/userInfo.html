@@ -1,55 +1,69 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-	  
-<link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
-
-<!-- [[${member}]] -->
-<div layout:fragment="content">
-	<div class="container mt-4">
-		<form th:action="@{/user/update}" method="post" id="form">
-			<div class="form-group input-group">
-				<div class="input-group-prepend"><span class="input-group-text">ID</span></div>
-				<input type="text" name="id" class="form-control" th:value="${member.id}" readonly>
-			</div>
-			<div class="form-group input-group">
-				<div class="input-group-prepend"><span class="input-group-text">name</span></div>
-				<input type="text" name="name" class="form-control" th:value="${member.name}">
-			</div>
-			<div class="form-group input-group">
-				<div class="input-group-prepend"><span class="input-group-text">주민등록번호</span></div>
-				<input type="text" name="ssn" class="form-control" th:value="${member.ssn}" readonly>
-			</div>
-			<div class="form-group input-group">
-				<div class="input-group-prepend"><span class="input-group-text">핸드폰 번호</span></div>
-				<input type="text" name="phone" class="form-control" th:value="${member.phone}">
-			</div>
-			<div class="form-group input-group">
-				<div class="input-group-prepend"><span class="input-group-text">이메일</span></div>
-				<input type="email" name="email" class="form-control" th:value="${member.email}">
-			</div>
-			<div class="form-group input-group">
-				<div class="input-group-prepend"><span class="input-group-text">주소</span></div>
-				<input type="text" name="address" id="address" class="form-control" th:value="${member.address}" readonly="readonly">
-				<button type="button" class="btn btn-success ml-2" onclick="searchAddress()">주소 검색</button>
-			</div>
-			<th:block th:if="${member.annualSalary > 0}">
-				<div class="form-group input-group">
-					<div class="input-group-prepend"><span class="input-group-text">연봉</span></div>
-					<input type="text" name="annualSalary" class="form-control" th:value="${member.annualSalary}" readonly>
-				</div>
-			</th:block>
-			<div class="form-group input-group mt-sm-1 justify-content-center">
-				<button class="btn btn-primary memUpdateBtn">정보 수정</button>
-				<button class="btn btn-danger memWithdrawalBtn ml-2">회원 탈퇴</button>
-				<!-- <a th:href="|@{/user/home}|" class="text-decoration-none"> -->
-				<a href="/index.html" class="text-decoration-none">
-					<button type="button" class="btn btn-success ml-2">홈으로</button>
-				</a>
-			</div>
-		</form>	
-	</div>
-</div>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/ms/userInfo.css" />
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container mt-4">
+            <h2>회원정보 수정</h2>
+            <form th:action="@{/user/update}" method="post" id="form">
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">아이디<span class="asterisk">*</span></span>
+                    </div>
+                    <input type="text" name="id" class="form-control" th:value="${member.id}" readonly>
+                </div>
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">이름<span class="asterisk">*</span></span>
+                    </div>
+                    <input type="text" name="name" class="form-control" th:value="${member.name}">
+                </div>
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">주민등록번호<span class="asterisk">*</span></span>
+                    </div>
+                    <input type="text" name="ssn" class="form-control" th:value="${member.ssn}" readonly>
+                </div>
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">휴대전화<span class="asterisk">*</span></span>
+                    </div>
+                    <input type="text" name="phone" class="form-control" th:value="${member.phone}">
+                </div>
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">이메일<span class="asterisk">*</span></span>
+                    </div>
+                    <input type="email" name="email" class="form-control" th:value="${member.email}">
+                </div>
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">주소</span>
+                    </div>
+                    <input type="text" name="address" id="address" class="form-control" th:value="${member.address}" readonly="readonly">
+                    <button type="button" class="btn btn-success ml-2" onclick="searchAddress()">주소 검색</button>
+                </div>
+                <th:block th:if="${member.annualSalary > 0}">
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">연봉</span>
+                        </div>
+                        <input type="text" name="annualSalary" class="form-control" th:value="${member.annualSalary}" readonly>
+                    </div>
+                </th:block>
+                <div class="form-group input-group mt-4 justify-content-center">
+                    <button class="btn btn-primary memUpdateBtn">정보 수정</button>
+                    <button class="btn btn-danger memWithdrawalBtn ml-2">회원 탈퇴</button>
+                    <a href="/index.html" class="text-decoration-none">
+                        <button type="button" class="btn btn-success ml-2">홈으로</button>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
 
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script layout:fragment="script" th:inline="javascript">
