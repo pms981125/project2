@@ -40,11 +40,15 @@ public class Ordered extends BaseEntity {
 	@Builder.Default
 	private LocalDateTime orderDate = LocalDateTime.now();
 	
-	private int totalAmount;
+	private int totalAmount;	
+	private String customerName;
+	private String phoneNumber;
+	private String address;
 	
 	@Builder.Default
 	@OneToMany(mappedBy = "ordered", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderedProduct> orderedProducts = new ArrayList<>();
+
 	
 	@Column(length = 50)
 	private String status = "PENDING";

@@ -14,7 +14,7 @@ import com.lec.project.shoppingmall.domain.payment.kakao.KakaoPaymentStatus;
 @Repository
 public interface KakaoPaymentRepository extends JpaRepository<KakaoPayment, Long> {
 	Optional<KakaoPayment> findByTid(String tid);
-	Optional<KakaoPayment> findByPartnerOrderId(String partnerOrderId);
+	Optional<KakaoPayment> findByPartnerOrderId(String partnerOrderId);	
 	List<KakaoPayment> findByPartnerUserIdOrderByCreatedAtDesc(String partnerUserId);
 	List<KakaoPayment> findByStatus(KakaoPaymentStatus status);
 	Optional<KakaoPayment> findByOrderId(Long orderId);
