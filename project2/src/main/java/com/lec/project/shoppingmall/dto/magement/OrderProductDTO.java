@@ -3,11 +3,15 @@ package com.lec.project.shoppingmall.dto.magement;
 import com.lec.project.shoppingmall.domain.cart.order.OrderedProduct;
 import com.lec.project.shoppingmall.domain.product.productimage.ProductImage;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderProductDTO {
 	
 	private String productCode;

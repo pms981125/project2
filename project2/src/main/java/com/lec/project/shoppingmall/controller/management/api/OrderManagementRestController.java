@@ -28,11 +28,17 @@ public class OrderManagementRestController {
 
 	private final OrderManagementService orderManagementService;
 	
+	@GetMapping("/{orderId}")
+	public ResponseEntity<OrderManagementDTO> getOrderDetails(@PathVariable("orderId") Long orderId) {
+	    OrderManagementDTO orderDetails = orderManagementService.getOrderDetails(orderId);
+	    return ResponseEntity.ok(orderDetails);
+	}
+	
 	// 주문상태 변경
 	//@PatchMapping: HTTP PATCH 매서드 처리, 리소스의 일부(특정필드)만 수정할 떄 사용
 	@PatchMapping("/{orderId}/status")
 	public ResponseEntity<OrderManagementDTO> updateOrderStatus(
-		@PathVariable Long orderId,
+		@PathVariable("orderId") Long orderId,
 		@RequestBody Map<String, String> payload
 	) {
 		String status = payload.get("status");
@@ -50,7 +56,7 @@ public class OrderManagementRestController {
     // 환불 요청 처리
     @PostMapping("/refunds/{orderId}/process")
     public ResponseEntity<RefundRequestDTO> processRefundRequest(
-        @PathVariable Long orderId,
+        @PathVariable("orderId") Long orderId,
         @RequestBody RefundProcessRequestDTO RefundProcessRequest
     ) {
         RefundRequestDTO processedRefund = orderManagementService.processRefundRequest(

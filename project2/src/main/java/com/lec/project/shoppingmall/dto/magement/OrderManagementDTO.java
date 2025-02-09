@@ -7,11 +7,15 @@ import java.util.stream.Collectors;
 import com.lec.project.Member;
 import com.lec.project.shoppingmall.domain.cart.order.Ordered;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderManagementDTO {
     private Long orderId;
     private String customerId;
@@ -28,6 +32,15 @@ public class OrderManagementDTO {
     // Ordered 엔티티로부터 DTO 변환 메서드
     public static OrderManagementDTO fromEntity(Ordered ordered) {
         Member member = ordered.getMember();
+        
+        // null 체크를 포함한 products 매핑
+        List<OrderProductDTO> productDTOs = ordered.getOrderedProducts() != null ?
+            ordered.getOrderedProducts().stream()
+                .filter(product -> product != null)  // null 상품 필터링
+                .map(OrderProductDTO::fromEntity)
+                .collect(Collectors.toList()) :
+            List.of();  // 비어있는 리스트 반환
+        
         return OrderManagementDTO.builder()
             .orderId(ordered.getId())
             .customerId(member.getId())
@@ -38,10 +51,8 @@ public class OrderManagementDTO {
             .specialRequests(ordered.getSpecialRequests())
             .orderDate(ordered.getOrderDate())
             .totalAmount(ordered.getTotalAmount())
-            .orderStatus(determineOrderStatus(ordered)) // 주문 상태 결정 로직
-            .products(ordered.getOrderedProducts().stream()
-                .map(OrderProductDTO::fromEntity)
-                .collect(Collectors.toList()))
+            .orderStatus(ordered.getStatus())
+            .products(productDTOs)
             .build();
     }
 
