@@ -71,10 +71,10 @@
                         <div class="col-md-3">
                             <select class="form-select" id="statusFilter">
                                 <option value="">전체 상태</option>
-                                <option value="PENDING">대기 중</option>
-                                <option value="APPROVED">승인됨</option>
-                                <option value="REJECTED">거절됨</option>
-                                <option value="REFUND_REQUESTED">환불 요청</option>
+                                <option value="PENDING">대기</option>
+                                <option value="APPROVED">승인</option>
+                                <option value="REJECTED">거절</option>
+                                <option value="REFUND_REQUESTED">환불요청</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -265,26 +265,23 @@
 	        .then(response => response.json())
 	        .then(data => {
 	            // 화면 업데이트
-	            const button = document.querySelector(`button[data-order-id="${orderId}"]`);
-	            const row = document.querySelector(`[data-order-id="${orderId}"]`).closest('tr');
-	            const statusBadge = row.querySelector('.status-badge');
+				const statusBadge = document.querySelector(`button[data-order-id="${orderId}"]`)
+					.closest('tr')
+					.querySelector('.status-badge');
 	            
 	            statusBadge.classList.remove('status-PENDING', 'status-APPROVED', 'status-REJECTED', 'status-REFUND_REQUESTED');
 	            statusBadge.classList.add(`status-${status}`);
 	            
-	            statusBadge.textContent = status === 'APPROVED' ? 'APPROVED' : 'REJECTED';
-	            
-	            switch(status) {
-	            	case 'APPROVED':
-	            		statusBadge.classList.add('bg-success', 'text-white');
-	            		break;
-	            	case 'REJECTED':
-	            		statusBadge.classList.add('bg-danger', 'text-white');
-	            		break;
-	            	default:
-	            		break;
-	            
-	            }
+	         // 상태 텍스트 업데이트
+				const statusText = {
+					'PENDING': 'PENDING',
+					'APPROVED': 'APPROVED',
+					'REJECTED': 'REJECTED',
+					'REFUND_REQUESTED': 'REFUND_REQUESTED'
+				};
+				statusBadge.textContent = statusText[status];
+				
+				alert('주문 상태가 변경되었습니다.');
 	        })
 	        .catch(error => {
 	            console.error('Error:', error);
@@ -419,18 +416,22 @@
 	});
     
     // 주문 상세 모달 내 승인/거절 버튼 이벤트
-    const modalApproveBtn = document.querySelector('#orderDetailsModal .btn-success');
-    const modalRejectBtn = document.querySelector('#orderDetailsModal .btn-danger');
+	const modalApproveBtn = document.querySelector('#orderDetailsModal .btn-success');
+	const modalRejectBtn = document.querySelector('#orderDetailsModal .btn-danger');
 
     [modalApproveBtn, modalRejectBtn].forEach(btn => {
         btn.addEventListener('click', function() {
             const orderId = this.dataset.orderId;
             const status = this.classList.contains('btn-success') ? 'APPROVED' : 'REJECTED';
 
+            const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+            
             fetch(`/api/manager/orders/${orderId}/status`, {
                 method: 'PATCH',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    [header]: token
                 },
                 body: JSON.stringify({ status: status })
             })
@@ -439,9 +440,21 @@
                 // 해당 주문의 상태 뱃지 업데이트
                 const orderRow = document.querySelector(`[data-order-id="${orderId}"]`).closest('tr');
                 const statusBadge = orderRow.querySelector('.status-badge');
-                statusBadge.textContent = updatedOrder.orderStatus;
-                statusBadge.className = `badge status-badge status-${updatedOrder.orderStatus}`;
+                
+                statusBadge.classList.remove('status-PENDING', 'status-APPROVED', 'status-REJECTED', 'status-REFUND_REQUESTED');
+                statusBadge.classList.add(`status-${status}`);
 
+                // 상태 텍스트 업데이트
+                const statusText = {
+                    'PENDING': 'PENDING',
+                    'APPROVED': 'APPROVED',
+                    'REJECTED': 'REJECTED',
+                    'REFUND_REQUESTED': 'REFUND_REQUESTED'
+                };
+                statusBadge.textContent = statusText[status];
+
+                alert('주문 상태가 변경되었습니다.');
+                
                 // 모달 닫기
                 bootstrap.Modal.getInstance(orderDetailsModal).hide();
             })

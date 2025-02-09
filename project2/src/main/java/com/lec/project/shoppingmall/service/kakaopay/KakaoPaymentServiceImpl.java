@@ -183,7 +183,6 @@ public class KakaoPaymentServiceImpl implements KakaoPaymentService {
 				.specialRequests(orderSubmitDTO.getSpecialRequests())
 				.orderDate(LocalDateTime.now())
 				.totalAmount(Kakaopayment.getTotalAmount())
-				.status("APPROVED")
 				.build();
 		    
 		    log.info("Creating Ordered entity with data: {}", ordered);

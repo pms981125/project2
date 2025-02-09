@@ -51,13 +51,14 @@ public class Ordered extends BaseEntity {
 
 	
 	@Column(length = 50)
+	@Builder.Default
 	private String status = "PENDING";
 	
 	public void setStatus(String status) {
 		this.status = status;
 	}
 	
-	public String getStatus(String status) {
-		return this.status;
-	}
+    public String getStatus() {
+        return this.status;
+    }
 }
