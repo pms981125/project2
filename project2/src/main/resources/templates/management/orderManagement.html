@@ -265,10 +265,26 @@
 	        .then(response => response.json())
 	        .then(data => {
 	            // 화면 업데이트
+	            const button = document.querySelector(`button[data-order-id="${orderId}"]`);
 	            const row = document.querySelector(`[data-order-id="${orderId}"]`).closest('tr');
 	            const statusBadge = row.querySelector('.status-badge');
-	            statusBadge.textContent = data.orderStatus;
-	            statusBadge.className = `badge status-badge status-${data.orderStatus}`;
+	            
+	            statusBadge.classList.remove('status-PENDING', 'status-APPROVED', 'status-REJECTED', 'status-REFUND_REQUESTED');
+	            statusBadge.classList.add(`status-${status}`);
+	            
+	            statusBadge.textContent = status === 'APPROVED' ? 'APPROVED' : 'REJECTED';
+	            
+	            switch(status) {
+	            	case 'APPROVED':
+	            		statusBadge.classList.add('bg-success', 'text-white');
+	            		break;
+	            	case 'REJECTED':
+	            		statusBadge.classList.add('bg-danger', 'text-white');
+	            		break;
+	            	default:
+	            		break;
+	            
+	            }
 	        })
 	        .catch(error => {
 	            console.error('Error:', error);

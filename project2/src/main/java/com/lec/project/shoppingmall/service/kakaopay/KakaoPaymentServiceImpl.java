@@ -205,6 +205,8 @@ public class KakaoPaymentServiceImpl implements KakaoPaymentService {
 	            ordered.getOrderedProducts().add(orderedProduct);
 	        }
 		    
+	        
+	        // 주문 정보 생성 및 저장
 	        orderedRepository.save(ordered);
 	        
 	        log.info("Saved Ordered entity: {}", ordered);
@@ -213,7 +215,12 @@ public class KakaoPaymentServiceImpl implements KakaoPaymentService {
 	        Kakaopayment.setStatus(KakaoPaymentStatus.APPROVED);
 	        Kakaopayment.setApprovedAt(LocalDateTime.now());
 	        
+	        // 장바구니 비우기
+	        cartService.removeAll(member.getId());
+	        
 	        log.info("Completing payment process");
+	        
+	        
 	        
 	        return kakaoPaymentRepository.save(Kakaopayment);
 	        
