@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>주문 내역</title>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome for Icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    
+<style>
+	/* 상태에 따른 배지 스타일 */
+	.status-badge {
+		font-size: 0.8em;
+		padding: 0.3em 0.6em;
+	}
+	.status-PENDING { background-color: #ffc107; color: black; }
+	.status-APPROVED { background-color: #28a745; color: white; }
+	.status-REJECTED, .status-REFUND_SUCCESS { background-color: #dc3545; color: white; }
+	.status-REFUND_REQUESTED { background-color: #17a2b8; color: white; }
+</style>
+</head>
+<body>
+	<div class="container my-4">
+		<h2>주문 내역</h2>
+        
+		<!-- 주문 목록 테이블 -->
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>주문번호</th>
+					<th>고객명</th>
+					<th>주문날짜</th>
+					<th>총금액</th>
+					<th>상태</th>
+					<th>액션</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="order : ${orders}">
+					<td th:text="${order.id}"></td>
+					<td th:text="${order.customerName}"></td>
+					<td th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
+					<td th:text="${#numbers.formatInteger(order.totalAmount, 0, 'COMMA') + '원'}"></td>
+					<td>
+						<span th:class="|badge status-badge status-${order.status}|">
+							<span th:if="${order.status == 'PENDING'}">배송대기중</span>
+							<span th:if="${order.status == 'APPROVED'}">배송중</span>
+							<span th:if="${order.status == 'REJECTED'}">주문취소</span>
+							<span th:if="${order.status == 'REFUND_REQUESTED'}">환불 요청</span>
+							<span th:if="${order.status == 'REFUND_SUCCESS'}">환불완료</span>
+						</span>
+					</td>
+					<td>
+						<button class="btn btn-sm btn-primary" data-bs-toggle="modal" 
+								th:data-bs-target="'#detailsModal' + ${order.id}">상세</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<!-- 상세 모달 -->
+	<div th:each="order : ${orders}" th:id="'detailsModal' + ${order.id}" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">주문 상세</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<!-- 모달에 주문 상세 내용 표시 -->
+					<h6>주문 정보</h6>
+					<p>주문번호: <span th:text="${order.id}"></span></p>
+					<p>주문날짜: <span th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span></p>
+					
+					<h6>고객 정보</h6>  
+					<p>고객명: <span th:text="${order.customerName}"></span></p>
+					<p>연락처: <span th:text="${order.phoneNumber}"></span></p>
+					<p>주소: <span th:text="${order.address}"></span></p>
+					
+					<h6>주문 상품</h6>
+					<table class="table">
+						<thead>
+							<tr>
+								<th>상품명</th>
+								<th>수량</th>
+								<th>가격</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="product : ${order.products}">
+								<td th:text="${product.productName}"></td>
+								<td th:text="${product.quantity}"></td>
+								<td th:text="${#numbers.formatInteger(product.price, 0, 'COMMA') + '원'}"></td>
+							</tr>
+						</tbody>
+					</table>
+					
+					<h6>결제 정보</h6>
+					<p>총금액: <span th:text="${#numbers.formatInteger(order.totalAmount, 0, 'COMMA') + '원'}"></span></p>
+					<p>
+						상태:
+						<span th:class="|badge status-badge status-${order.status}|">
+							<span th:if="${order.status == 'PENDING'}">배송대기중</span>
+							<span th:if="${order.status == 'APPROVED'}">배송중</span>
+							<span th:if="${order.status == 'REJECTED'}">주문취소</span>
+							<span th:if="${order.status == 'REFUND_REQUESTED'}">환불 요청</span>
+							<span th:if="${order.status == 'REFUND_SUCCESS'}">환불완료</span>
+						</span>
+					</p>
+					
+					<h6>요청사항</h6>
+					<p th:text="${order.specialRequests}"></p>
+					
+				</div>
+				<div class="modal-footer">
+					<!-- 환불 버튼은 pending이나 approved 상태에서만 보이도록 함 -->
+					<button th:if="${order.status == 'PENDING' || order.status == 'APPROVED'}"
+						class="btn btn-danger" th:data-order-id="${order.id}">환불 요청</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Bootstrap JS -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	
+	<script>
+		// 환불 요청 버튼 클릭 이벤트 처리
+		document.querySelectorAll('.btn-danger').forEach(btn => {
+			btn.addEventListener('click', function() {
+				const orderId = this.dataset.orderId;
+				// 여기서 서버에 orderId에 해당하는 주문에 대해 환불 요청 전송
+				// 전송 후 모달 닫기
+				bootstrap.Modal.getInstance(this.closest('.modal')).hide();
+				// 필요하다면 전체 페이지 새로고침
+			});
+		});
+	</script>
+</body>  
+</html>
