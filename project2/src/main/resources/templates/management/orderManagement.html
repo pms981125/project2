@@ -84,7 +84,7 @@
                             <input type="date" class="form-control" id="endDateFilter">
                         </div>
                         <div class="col-md-3">
-                            <input type="text" class="form-control" placeholder="주문번호 또는 고객명 검색" id="searchInput">
+                            <input type="text" class="form-control" placeholder="고객명 검색" id="searchInput">
                         </div>
                     </div>
                 </div>
@@ -302,8 +302,148 @@
 	            updateOrderStatus(orderId, 'REJECTED');
 	        });
 	    });
+	    
+		const statusFilter = document.getElementById('statusFilter');
+		const startDateFilter = document.getElementById('startDateFilter');
+		const endDateFilter = document.getElementById('endDateFilter');
+		const searchInput = document.getElementById('searchInput');
+		
+		function applyFilters() {
+			const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+			const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+			
+			const params = new URLSearchParams();
+			
+			if (statusFilter.value) {
+				params.append('status', statusFilter.value);
+			}
+			if (startDateFilter.value) {
+				params.append('startDate', startDateFilter.value + 'T00:00:00');
+			}
+			if (endDateFilter.value) {
+				params.append('endDate', endDateFilter.value + 'T23:59:59');
+			}
+			if (searchInput.value.trim()) {
+				params.append('search', searchInput.value.trim());
+			}
+			
+		    // 페이징 파라미터 추가
+		    params.append('page', '0'); // 필터링 시 첫 페이지부터 시작
+		    params.append('size', '10'); // 페이지당 10개 항목
+			
+		    fetch(`/api/manager/orders/management?${params.toString()}`, {
+				method: 'GET',
+				headers: {
+					[header]: token
+				}
+			})
+			.then(response => response.json())
+			.then(data => {
+				const orderTableBody = document.getElementById('orderTableBody');
+				orderTableBody.innerHTML = ''; // 테이블 초기화
+				
+		        // 검색 결과가 없는 경우 처리
+		         if (!data || !data.content || data.content.length === 0) {
+		            orderTableBody.innerHTML = `
+		                <tr>
+		                    <td colspan="6" class="text-center">검색 결과가 없습니다.</td>
+		                </tr>
+		            `;
+		            return;
+		        }
+				
+				data.content.forEach(order => {
+					const row = document.createElement('tr');
+					row.innerHTML = `
+	                    <td>${order.orderId}</td>
+	                    <td>${order.customerName}</td>
+	                    <td>${new Date(order.orderDate).toLocaleString()}</td>
+	                    <td>${order.totalAmount.toLocaleString()}원</td>
+	                    <td>
+	                        <span class="badge status-badge status-${order.orderStatus}">
+	                            ${order.orderStatus}
+	                        </span>
+	                    </td>
+	                    <td>
+	                        <div class="action-buttons">
+	                            <button class="btn btn-sm btn-success" 
+	                                    data-order-id="${order.orderId}"
+	                                    data-bs-toggle="modal"
+	                                    data-bs-target="#orderDetailsModal">
+	                                <i class="fas fa-eye"></i> 상세
+	                            </button>
+	                            <button class="btn btn-sm btn-primary order-approve-btn"
+	                                    data-order-id="${order.orderId}">
+	                                <i class="fas fa-check"></i> 승인
+	                            </button>
+	                            <button class="btn btn-sm btn-danger order-reject-btn"
+	                                    data-order-id="${order.orderId}">
+	                                <i class="fas fa-times"></i> 거절
+	                            </button>
+	                        </div>
+	                    </td>
+	                `;
+					orderTableBody.appendChild(row);
+				});
+				attachEventListeners();
+			})
+			.catch(error => {
+			    console.error('필터링 중 오류:', error);
+			    const orderTableBody = document.getElementById('orderTableBody');
+			    orderTableBody.innerHTML = `
+			        <tr>
+			            <td colspan="6" class="text-center text-danger">
+			                데이터를 불러오는 중 오류가 발생했습니다.<br>
+			                잠시 후 다시 시도해주세요.
+			            </td>
+			        </tr>
+			    `;
+			})
+		}
+		
+	    // 이벤트 리스너 등록 함수
+	    function attachEventListeners() {
+	        const orderApproveButtons = document.querySelectorAll('.order-approve-btn');
+	        const orderRejectButtons = document.querySelectorAll('.order-reject-btn');
+	        const detailButtons = document.querySelectorAll('[data-bs-target="#orderDetailsModal"]');
+
+	        // 승인/거절 버튼 이벤트 리스너
+	        orderApproveButtons.forEach(btn => {
+	            btn.addEventListener('click', function() {
+	                const orderId = this.dataset.orderId;
+	                updateOrderStatus(orderId, 'APPROVED');
+	            });
+	        });
+
+	        orderRejectButtons.forEach(btn => {
+	            btn.addEventListener('click', function() {
+	                const orderId = this.dataset.orderId;
+	                updateOrderStatus(orderId, 'REJECTED');
+	            });
+	        });
+
+	        // 상세 버튼 이벤트 리스너
+	        detailButtons.forEach(btn => {
+	            btn.addEventListener('click', function() {
+	                const orderId = this.dataset.orderId;
+	                // 기존의 상세 보기 로직
+	                // ...
+	            });
+	        });
+	    }
+
+	    // 필터 변경 이벤트 리스너
+	    statusFilter.addEventListener('change', applyFilters);
+	    startDateFilter.addEventListener('change', applyFilters);
+	    endDateFilter.addEventListener('change', applyFilters);
+	    
+	    // 검색어 입력 디바운싱
+	    let searchTimeout;
+	    searchInput.addEventListener('input', function() {
+	        clearTimeout(searchTimeout);
+	        searchTimeout = setTimeout(applyFilters, 300); // 300ms 후에 검색 실행
+	    });
 	});
-	
 	
 	//Modal
 	const orderDetailsModal = document.getElementById('orderDetailsModal');

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 
 import com.lec.project.shoppingmall.dto.magement.OrderManagementDTO;
 import com.lec.project.shoppingmall.dto.magement.RefundRequestDTO;
@@ -13,11 +14,11 @@ import com.lec.project.shoppingmall.dto.magement.RefundRequestDTO;
 public interface OrderMagementService {
     // 주문 목록 조회 (필터링 및 페이징)
     Page<OrderManagementDTO> getOrderList(
-        String status, 
-        LocalDateTime startDate, 
-        LocalDateTime endDate,
-        String searchTerm, 
-        Pageable pageable
+		@Param("status")String status,
+		@Param("startDate")LocalDateTime startDate,
+		@Param("endDate") LocalDateTime endDate,
+		@Param("search") String search,
+		Pageable pageable
     );
 
     // 주문 상세 조회

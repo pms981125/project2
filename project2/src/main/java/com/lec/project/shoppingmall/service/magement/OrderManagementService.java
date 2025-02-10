@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,11 +40,11 @@ public class OrderManagementService implements OrderMagementService {
 		String status,
 		LocalDateTime startDate,
 		LocalDateTime endDate,
-		String searchTerm,
+		String search,
 		Pageable pageable
 	) {
 		Page<Ordered> orders = orderedRepository.searchOrders(
-			status, startDate, endDate, searchTerm, pageable
+			status, startDate, endDate, search, pageable
 		);
 
 		return orders.map(OrderManagementDTO::fromEntity);

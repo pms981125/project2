@@ -1,8 +1,13 @@
 package com.lec.project.shoppingmall.controller.management.api;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -10,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lec.project.shoppingmall.dto.magement.OrderManagementDTO;
@@ -65,5 +71,19 @@ public class OrderManagementRestController {
             RefundProcessRequest.getManagerComment()
         );
         return ResponseEntity.ok(processedRefund);
+    }
+    
+    @GetMapping("/management")  
+    public ResponseEntity<Page<OrderManagementDTO>> filterOrders(
+		@RequestParam(name = "status", required = false) String status,
+		@RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+		@RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+		@RequestParam(name = "search", required = false) String search, 
+		@PageableDefault(size = 10) Pageable pageable
+    ) {
+        Page<OrderManagementDTO> filteredOrders = orderManagementService.getOrderList(
+            status, startDate, endDate, search, pageable
+        );
+        return ResponseEntity.ok(filteredOrders);
     }
 }

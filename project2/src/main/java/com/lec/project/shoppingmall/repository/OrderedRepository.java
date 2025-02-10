@@ -32,14 +32,14 @@ public interface OrderedRepository extends JpaRepository<Ordered, Long> {
 			"(:status IS NULL OR o.status = :status) AND " +
 			"(:startDate IS NULL OR o.orderDate >= :startDate) AND " +
 			"(:endDate IS NULL OR o.orderDate <= :endDate) AND " +
-			"(:searchTerm IS NULL OR " +
-			"LOWER(o.member.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-			"LOWER(CAST(o.id AS string)) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
+			"(:search IS NULL OR " +
+			"LOWER(o.member.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+			"LOWER(CAST(o.id AS string)) LIKE LOWER(CONCAT('%', :search, '%')))")
 	 Page<Ordered> searchOrders(
 		 @Param("status") String status,
 		 @Param("startDate") LocalDateTime startDate,
 		 @Param("endDate") LocalDateTime endDate,
-		 @Param("searchTerm") String searchTerm,
+		 @Param("search") String search,
 		 Pageable pageable
 	 );
     

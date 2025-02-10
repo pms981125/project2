@@ -55,7 +55,7 @@ public class ProductServiceTests {
 					.secondProductDetail(String.format("세부정보 %03d", i))
 					.productName(String.format("상품 %03d", i))
 					.productPrice(i*100)
-					.productStock(i)
+					.productStock(100)
 					.build();
 			
 			String product_name = productService.register(productDTO);
