@@ -172,6 +172,10 @@
 			                                <h6 class="price_heading">
 			                                    <span>￦</span> [[${#numbers.formatInteger(dto.productPrice, 0, 'COMMA')}]]
 			                                </h6>
+			                                <p class="stock-status" 
+												th:text="${dto.productStock == 0 ? '품절' : ''}"
+												th:style="${dto.productStock == 0 ? 'color: red; font-weight: bold;' : ''}">
+											</p>
 			                            </div>
 			                            <p class="content1">[[${dto.firstBoardContent}]]</p>
 			                        </div>

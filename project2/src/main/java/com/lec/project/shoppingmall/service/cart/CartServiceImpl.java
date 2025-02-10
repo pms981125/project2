@@ -106,6 +106,26 @@ public class CartServiceImpl implements CartService {
 			throw new IllegalArgumentException("접근 권한이 없습니다.");
 		}
 
+		Product product = cartProduct.getProduct();
+	    int currentStock = product.getProductStock();
+	    int currentCartQuantity = cartProduct.getCount();
+		
+	    // 수량 변경에 따른 재고 조정
+	    if (count > currentCartQuantity) {
+	        // 수량 증가
+	        int additionalQuantity = count - currentCartQuantity;
+	        if (additionalQuantity > currentStock) {
+	            throw new IllegalArgumentException("재고가 부족합니다.");
+	        }
+	        product.setProductStock(currentStock - additionalQuantity);
+	    } else if (count < currentCartQuantity) {
+	        // 수량 감소
+	        int reducedQuantity = currentCartQuantity - count;
+	        product.setProductStock(currentStock + reducedQuantity);
+	    }
+
+	    productRepository.save(product);
+	    
 		cartProduct.setCount(count);
 		cartProduct.setTotalPrice(count * cartProduct.getProduct().getProductPrice());
 
@@ -121,12 +141,32 @@ public class CartServiceImpl implements CartService {
 		if (!cartProduct.getCart().getMember().getId().equals(memberId)) {
 			throw new IllegalArgumentException("접근 권한이 없습니다.");
 		}
+		
+	    Product product = cartProduct.getProduct();
+	    int currentStock = product.getProductStock();
+	    int cartQuantity = cartProduct.getCount();
+	    
+	    product.setProductStock(currentStock + cartQuantity);
+	    productRepository.save(product);
+		
 		cartProductRepository.deleteById(id);
 	}
 
 	@Override
 	public void removeAll(String memberId) {
 		Cart cart = getOrCreateCart(memberId);
+		List<CartProduct> cartProducts = cartProductRepository.findByCart(cart);
+		
+	    // 각 장바구니 상품의 재고 복원
+	    for (CartProduct cartProduct : cartProducts) {
+	        Product product = cartProduct.getProduct();
+	        int currentStock = product.getProductStock();
+	        int cartQuantity = cartProduct.getCount();
+	        
+	        product.setProductStock(currentStock + cartQuantity);
+	        productRepository.save(product);
+	    }
+		
 		cartProductRepository.deleteByCart(cart);
 	}
 
@@ -136,8 +176,30 @@ public class CartServiceImpl implements CartService {
 		Product product = productRepository.findById(productCode)
 				.orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
+		// 남은 재고 확인
+		int remainingStock = product.getProductStock();
+		
 		Optional<CartProduct> exsitingProduct = cartProductRepository.findByCartAndProduct(cart, product);
-
+		int currentCartQuantity = exsitingProduct.map(CartProduct::getCount).orElse(0);
+		
+		int totalRequestedQuantity = currentCartQuantity + count;
+		
+		if (totalRequestedQuantity > remainingStock) {
+			count = remainingStock - currentCartQuantity;
+	        if (count <= 0) {
+	            throw new IllegalArgumentException("더 이상 상품을 담을 수 없습니다. 재고가 부족합니다.");
+	        }
+	        
+	        throw new IllegalArgumentException(
+	        	String.format("요청하신 수량(%d개)은 재고를 초과합니다. %d개만 장바구니에 담겼습니다.", 
+	        	totalRequestedQuantity, count)
+	        );
+		}
+		
+	    // 상품 재고 감소
+	    product.setProductStock(remainingStock - count);
+	    productRepository.save(product);
+		
 		if (exsitingProduct.isPresent()) {
 			CartProduct cartProduct = exsitingProduct.get();
 			int newCount = cartProduct.getCount() + count;

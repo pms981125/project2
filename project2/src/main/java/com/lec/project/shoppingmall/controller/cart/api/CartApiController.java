@@ -33,16 +33,18 @@ public class CartApiController {
 	}
 
 	@PostMapping("/add")
-	public ResponseEntity<Void> addToCart(
+	public ResponseEntity<Object> addToCart(
 			@AuthenticationPrincipal UserDetails userDetails,
 			@RequestParam("productCode") String productCode,
-			@RequestParam("count") int count) {
+			@RequestParam("count") int count
+	) {
 		 try {
 		        String memberId = userDetails.getUsername();
 		        cartService.addToCart(memberId, productCode, count);
 		        return ResponseEntity.ok().build();
 		    } catch (IllegalArgumentException e) {
-		        return ResponseEntity.badRequest().build();
+		        // 재고 초과 시 메시지와 함께 400 상태 코드 반환
+		        return ResponseEntity.badRequest().body(e.getMessage());
 		    }
 	}
 	

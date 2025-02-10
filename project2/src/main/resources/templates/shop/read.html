@@ -222,7 +222,10 @@
 	                window.location.href = '/cart/list';
 	            }
 	        } else {
-	            throw new Error('장바구니 담기 실패');
+	            return response.text().then(errorMessage => {
+	                alert(errorMessage);
+	                location.reload();
+	            });
 	        }
 	    })
 	    .catch(error => {
