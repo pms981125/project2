@@ -30,9 +30,19 @@ public class CartController {
 	private final MemberRepository memberRepository;
 
 	@GetMapping("/list")
-	public void list(PageRequestDTO pageRequestDTO
-			, @AuthenticationPrincipal UserDetails userDetails
-			, Model model) {
+	public String list(
+			PageRequestDTO pageRequestDTO,
+			@AuthenticationPrincipal UserDetails userDetails,
+			Model model,
+			RedirectAttributes redirectAttributes
+	) {
+		
+	    // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+	    if (userDetails == null) {
+	        redirectAttributes.addFlashAttribute("loginRequiredMessage", "로그인이 필요합니다.");
+	        return "redirect:/user/login";
+	    }
+		
 		String memberId = userDetails.getUsername();
 		model.addAttribute("memberId", memberId);
 		
@@ -41,6 +51,8 @@ public class CartController {
 
 		model.addAttribute("responseDTO", responseDTO);
 		model.addAttribute("totalPrice", totalPrice);
+		
+		return "cart/list";
 	}
 
 	@GetMapping("/read")
