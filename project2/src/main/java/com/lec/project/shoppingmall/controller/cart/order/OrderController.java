@@ -91,7 +91,11 @@ public class OrderController {
 			 
 			redirectAttributes.addFlashAttribute("message", "주문이 완료되었습니다.");
 			return "redirect:/shop/list";
-			 
+		
+		} catch (IllegalArgumentException e) {
+			log.error("주문 처리 중 오류 발생", e);
+			redirectAttributes.addFlashAttribute("error", e.getMessage());
+			return "redirect:/cart/order";
 		} catch (Exception e) {
 			log.error("주문 처리 중 오류 발생", e);
 			redirectAttributes.addFlashAttribute("error", "주문 처리 중 오류가 발생했습니다.");

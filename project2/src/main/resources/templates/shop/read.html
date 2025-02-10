@@ -131,9 +131,9 @@
                     </div>
 
                     <div class="info-section">
-						<div class="info-row" sec:authorize="hasRole('MANAGER')">
+						<div class="info-row">
 							<strong>상품 재고:</strong>
-							<span>[[${dto.productStock}]]</span>
+							<span th:text="${dto.productStock == 0 ? '품절' : dto.productStock}">[[${dto.productStock}]]</span>
 						</div>
                         <div class="info-row">
                             <strong>상품 코드:</strong>
@@ -166,11 +166,13 @@
 						</div>
 					<!-- 카트에 담기 -->
 					<div style="text-align: right;">
-			            <button class="btn btn-success text-white" onclick="addToCart()">
-			                <i class="fa fa-shopping-cart"></i>
-			                <span>장바구니에 담기</span>
-			            </button>
-			        </div>
+					    <button class="btn btn-success text-white" 
+					            onclick="addToCart()"
+					            th:disabled="${dto.productStock == 0}">
+					        <i class="fa fa-shopping-cart"></i>
+					        <span th:text="${dto.productStock == 0 ? '품절' : '장바구니에 담기'}">장바구니에 담기</span>
+					    </button>
+					</div>
                 </div>
             </div>
         </div>
@@ -194,6 +196,13 @@
 	function addToCart() {
 	    const quantity = document.getElementById('quantity').value;
 	    const productCode = /*[[${dto.productCode}]]*/ '';
+	    const currentStock = /*[[${dto.productStock}]]*/ 0;
+	    
+	    // 재고 확인 로직 추가
+	    if (currentStock === 0) {
+	        alert('품절된 상품입니다.');
+	        return;
+	    }
 	    
 		// CSRF 토큰 가져오기
 		const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');

@@ -51,6 +51,19 @@ public class OrderServiceImpl implements OrderService{
         // 장바구니 조회
         List<CartListDTO> cartItems = cartService.list(new PageRequestDTO(), memberId).getDtoList();
         
+        for(CartListDTO item : cartItems) {
+        	Product product = productRepository.findById(item.getProductCode())
+        			.orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+        	
+        	// 재고 감소 유효성 검사
+        	int newStock = product.getProductStock() - item.getCount();
+        	if(newStock < 0) {
+        		throw new IllegalArgumentException(product.getProductName() + " 상품의 재고가 부족합니다.");
+        	}
+        	product.setProductStock(newStock);
+        	productRepository.save(product);
+        }
+        
         // 주문 상품 정보 생성
         for(CartListDTO item : cartItems) {
         	Product product = productRepository.findById(item.getProductCode())
