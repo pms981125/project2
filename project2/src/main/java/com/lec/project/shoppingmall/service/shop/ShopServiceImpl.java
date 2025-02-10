@@ -137,6 +137,8 @@ public class ShopServiceImpl implements ShopService {
 		Product product = productRepository.findById(shopDTO.getProductCode())
 				.orElseThrow(() -> new IllegalArgumentException("해당 상품 코드의 상품이 존재하지 않습니다."));
 
+		// 재고 수정
+		product.setProductStock(shopDTO.getProductStock());
 		
 		//shop에서 수정된 가격과 내용 업데이트
 		product	.setProductPrice(shopDTO.getProductPrice());

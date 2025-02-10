@@ -120,7 +120,15 @@
 										class="form-control text-right">
 								</h2>
 							</div>
-
+							<div class="info-row text-right">
+							    <strong>상품 재고:</strong> 
+							    <input type="number"
+							    		name="productStock"
+							    		id="productStock" 
+										th:value="${dto.productStock}" 
+										min="0" 
+										class="form-control text-right">
+							</div>
 							<div class="info-row text-right">
 								<strong>상품 코드:</strong> <span id="productCodeDisplay">[[${dto.productCode}]]</span>
 							</div>
@@ -186,6 +194,7 @@
 					document.getElementById('productCode').value = product.productCode;
 					document.getElementById('productCodeDisplay').textContent = product.productCode;
 					document.getElementById('boardTitle').value = product.productName;
+					document.getElementById('productStock').value = product.productStock;
 					document.getElementById('productPrice').value = product.productPrice;
 					document.getElementById('productCategory').value = product.productCategory;
 					document.getElementById('productStock').value = product.productStock;

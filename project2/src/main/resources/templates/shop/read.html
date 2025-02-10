@@ -131,6 +131,10 @@
                     </div>
 
                     <div class="info-section">
+						<div class="info-row" sec:authorize="hasRole('MANAGER')">
+							<strong>상품 재고:</strong>
+							<span>[[${dto.productStock}]]</span>
+						</div>
                         <div class="info-row">
                             <strong>상품 코드:</strong>
                             <span>[[${dto.productCode}]]</span>
