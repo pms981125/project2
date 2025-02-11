@@ -2,6 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+
 <title>주문 내역</title>
 <!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,13 +19,19 @@
 	}
 	.status-PENDING { background-color: #ffc107; color: black; }
 	.status-APPROVED { background-color: #28a745; color: white; }
-	.status-REJECTED, .status-REFUND_SUCCESS { background-color: #dc3545; color: white; }
+	.status-REJECTED{ background-color: #dc3545; color: white; }
 	.status-REFUND_REQUESTED { background-color: #17a2b8; color: white; }
+	.status-REFUND_SUCCESS { background-color: #4B0082; color: white; }
+	.status-REFUND_REJECTED { background-color: #dc3545; color: white; }
 </style>
 </head>
 <body>
 	<div class="container my-4">
 		<h2>주문 내역</h2>
+		
+		<div th:if="${!hasOrders}" class="alert alert-info text-center">
+	        주문 내역이 없습니다.
+	    </div>
         
 		<!-- 주문 목록 테이블 -->
 		<table class="table table-striped">
@@ -49,6 +58,7 @@
 							<span th:if="${order.status == 'REJECTED'}">주문취소</span>
 							<span th:if="${order.status == 'REFUND_REQUESTED'}">환불 요청</span>
 							<span th:if="${order.status == 'REFUND_SUCCESS'}">환불완료</span>
+							<span th:if="${order.status == 'REFUND_REJECTED'}">환불거절</span>
 						</span>
 					</td>
 					<td>
@@ -89,9 +99,9 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr th:each="product : ${order.products}">
-								<td th:text="${product.productName}"></td>
-								<td th:text="${product.quantity}"></td>
+							<tr th:each="product : ${order.orderedProducts}">
+								<td th:text="${product.product.productName}"></td>
+								<td th:text="${product.count}"></td>
 								<td th:text="${#numbers.formatInteger(product.price, 0, 'COMMA') + '원'}"></td>
 							</tr>
 						</tbody>
@@ -106,7 +116,6 @@
 							<span th:if="${order.status == 'APPROVED'}">배송중</span>
 							<span th:if="${order.status == 'REJECTED'}">주문취소</span>
 							<span th:if="${order.status == 'REFUND_REQUESTED'}">환불 요청</span>
-							<span th:if="${order.status == 'REFUND_SUCCESS'}">환불완료</span>
 						</span>
 					</p>
 					
@@ -130,9 +139,32 @@
 	<script>
 		// 환불 요청 버튼 클릭 이벤트 처리
 		document.querySelectorAll('.btn-danger').forEach(btn => {
-			btn.addEventListener('click', function() {
+			btn.addEventListener('click', async function() {	
 				const orderId = this.dataset.orderId;
-				// 여기서 서버에 orderId에 해당하는 주문에 대해 환불 요청 전송
+				if(confirm('정말로 환불하시겠습니까?')) {
+					try{
+						const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+						const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+						
+						const response = await fetch(`/api/orders/${orderId}/refund`, {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+								[header]: token
+							}
+						});
+						
+						if(response.ok){
+							alert('환불 요청이 완료 되었습니다.');
+							window.location.reload();
+						} else {
+							alert('환불 요청 중 오류가 발생했습니다.');
+						}
+					} catch (error) {
+		                console.error('Error:', error);
+		                alert('환불 요청 처리 중 오류가 발생했습니다.');
+					}
+				}
 				// 전송 후 모달 닫기
 				bootstrap.Modal.getInstance(this.closest('.modal')).hide();
 				// 필요하다면 전체 페이지 새로고침
