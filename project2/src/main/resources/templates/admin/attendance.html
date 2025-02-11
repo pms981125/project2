@@ -8,6 +8,7 @@
 	<div class="container mt-3">
 		<div id="calendar">	</div>
 		<div class="d-flex justify-content-center mt-3 mb-3">
+			<button onclick="goMessagesInbox()" class="mx-2 btn btn-primary">메시지 확인</button>
 			<button onclick="attendance()" class="mx-2 btn btn-primary">출근</button>
 			<button onclick="leave()" class="mx-2 btn btn-primary">퇴근</button>
 			<a th:href="|@{/sudo/allUserList}|" class="text-decoration-none">
@@ -68,6 +69,26 @@
 		
 		form.action = `/sudo/leave`
 		form.method = 'post'
+		document.body.appendChild(form)
+		form.submit()
+	}
+	
+	function goMessagesInbox() {
+		const form = document.createElement('form')
+		const tokenName = /*[[${_csrf.parameterName}]]*/""
+		const token = /*[[${_csrf.token}]]*/""
+		const id = /*[[${#authentication.name}]]*/""
+		
+		let input1 = document.createElement('input')
+
+		input1.type = 'hidden'
+	    input1.name = tokenName
+	    input1.value = token
+		
+	    form.appendChild(input1)
+		
+		form.action = `/messages/inbox`
+		form.method = 'get'
 		document.body.appendChild(form)
 		form.submit()
 	}
