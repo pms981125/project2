@@ -93,23 +93,23 @@
 			<div class="bottom-nav">
 				<div class="text-right" style="padding: 10px 20px;">
 				    <!-- 장바구니 버튼 - 모든 사용자에게 표시 -->
-				    <a href="/cart/list" class="btn btn-success text-white me-2">
-				        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-				    </a>
+					<a href="#" class="btn btn-success text-white me-2" onclick="checkLoginForCart(event)">
+					    <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+					</a>
 				    
 					<!-- 주문 내역 버튼 - 로그인한 사용자에게만 표시 -->
 					<a href="/user/orderHistory" class="btn btn-info text-white me-2" sec:authorize="isAuthenticated()">
-						<i class="fa fa-list-alt" aria-hidden="true"></i>
+						<i class="fas fa-list-alt" aria-hidden="true"></i>
 					</a>
 				    
 				    <!-- 상품 등록 버튼 - 관리자에게만 표시 -->
 				    <a href="/shop/regist" class="btn btn-info text-white" sec:authorize="hasRole('MANAGER')">
-				        <i class="fa fa-plus" aria-hidden="true"></i> 
+				        <i class="fas fa-plus" aria-hidden="true"></i> 
 				    </a>
 				    
 					<!-- 주문 관리 버튼 - 관리자에게만 표시 -->
 					<a href="/manager/orders" class="btn btn-warning text-white" sec:authorize="hasRole('MANAGER')">
-					    <i class="fa fa-list-alt" aria-hidden="true"></i>
+					    <i class="fas fa-list-alt" aria-hidden="true"></i>
 					</a>
 				</div>
 			</div>
@@ -382,4 +382,26 @@
 	    document.addEventListener('DOMContentLoaded', function() {
 	        updateLoginButton();
 	    });
+	    
+	// 장바구니 접근 시 로그인 체크
+    function checkLoginForCart(e) {
+    e.preventDefault();  // 기본 이벤트 동작 방지
+    
+    fetch('/user/loginStatus')  // 로그인 상태 확인 API 호출
+        .then(response => response.json())
+        .then(data => {
+            if (data.isLoggedIn) {
+                // 로그인된 경우 장바구니 페이지로 이동
+                window.location.href = '/cart/list';
+            } else {
+                // 로그인되지 않은 경우 알림 표시 후 로그인 페이지로 이동
+                alert('장바구니는 로그인 후 이용 가능합니다.');
+                window.location.href = '/user/login';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('오류가 발생했습니다. 다시 시도해주세요.');
+        });
+}
     </script>
