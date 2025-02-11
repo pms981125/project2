@@ -59,6 +59,10 @@ dependencies {
 	
 	// localDateTime등 Java의 날자/시간 <-> JSON으로 변화(직렬화/역직렬화)
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	
+	// Apache POI dependencies 액셀 다운로드
+    implementation 'org.apache.poi:poi:5.2.3'  // POI core library
+    implementation 'org.apache.poi:poi-ooxml:5.2.3'  // POI OOXML support for Excel 2007+
 }
 
 tasks.named('test') {

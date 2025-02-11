@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>재고 목록</title>
+    <style>
+        table {
+            width: 50%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1 style="text-align: center;">재고 관리</h1>
+
+<!-- 상품 코드 검색 폼 추가 -->
+<form action="/stocks" method="get">
+    <label for="productCode">상품 코드 검색:</label>
+    <input type="text" id="productCode" name="productCode" placeholder="상품 코드를 입력하세요" />
+    <button type="submit">검색</button>
+</form>
+
+<!-- 엑셀 다운로드 링크 추가 -->
+<div style="text-align: center; margin-top: 20px;">
+    <a href="/stocks/download" class="btn btn-primary">엑셀로 다운로드</a>
+</div>
+
+
+<table>
+    <thead>
+        <tr>
+            <th>상품 코드</th>
+            <th>재고</th>
+            <th>수정</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="product : ${products}">
+            <td th:text="${product.productCode}"></td>
+            <td th:text="${product.productStock}"></td>
+            <td>
+                <a th:href="@{/stocks/edit/{productCode}(productCode=${product.productCode})}">수정하기</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
+

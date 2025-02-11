@@ -4,47 +4,126 @@
     <meta charset="UTF-8">
     <title>매장 등록</title>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBg-Su3mSEBy2sxnw-c0sD8pS2Q332EHYk&libraries=places"></script>
+
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
+
         .store-form {
-            width: 50%;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ddd;
+            width: 100%;
+            max-width: 500px;
+            padding: 25px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        fieldset {
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        legend {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin: 10px 0 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
             border-radius: 5px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        button {
+            width: 48%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        button[type="button"] {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        button[type="button"]:hover {
+            background-color: #5a6268;
         }
     </style>
 </head>
 <body>
 
     <div class="store-form">
-        <h2>매장 등록</h2>
-
         <form th:action="@{/stores/new}" method="post">
-            <label>매장 이름:</label>
-            <input type="text" name="storeName" required>
+            <fieldset>
+                <legend>매장 등록</legend>
 
-            <label>주소:</label>
-            <input id="autocomplete" type="text" name="storeAddress" required>
+                <label for="storeName">매장 이름:</label>
+                <input type="text" id="storeName" name="storeName" required>
 
-            <label>전화번호:</label>
-            <input type="text" name="storePhone">
+                <label for="autocomplete">주소:</label>
+                <input id="autocomplete" type="text" name="storeAddress" required>
 
-            <label>운영 시간:</label>
-            <input type="text" name="openingHours">
+                <label for="storePhone">전화번호:</label>
+                <input type="text" id="storePhone" name="storePhone">
 
-            <label>위도:</label>
-            <input id="latitude" type="text" name="latitude" readonly>
+                <label for="openingHours">운영 시간:</label>
+                <input type="text" id="openingHours" name="openingHours">
 
-            <label>경도:</label>
-            <input id="longitude" type="text" name="longitude" readonly>
+                <label for="latitude">위도:</label>
+                <input id="latitude" type="text" name="latitude" readonly>
 
-            <button type="submit">등록</button>
+                <label for="longitude">경도:</label>
+                <input id="longitude" type="text" name="longitude" readonly>
+
+                <div class="button-group">
+                    <button type="submit">등록</button>
+                    <button type="button" onclick="location.href='/stores'">목록으로</button>
+                </div>
+            </fieldset>
         </form>
-
-        <button onclick="location.href='/stores'">목록으로</button>
     </div>
 
     <script>
@@ -66,6 +145,8 @@
 
         window.onload = initAutocomplete;
     </script>
+
 </body>
 </html>
+
 

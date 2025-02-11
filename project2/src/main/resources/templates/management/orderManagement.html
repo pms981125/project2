@@ -51,8 +51,8 @@
 							</a>
 						</li>
 						<li class="nav-item">
-						<a class="nav-link" href="#">
-							<i class="fas fa-chart-bar"></i> 매출 통계
+						<a class="nav-link" href="/stocks">
+							<i class="fas fa-chart-bar"></i> 제고 관리
 							</a>
 						</li>
 						<hr class="my-3">
@@ -119,27 +119,21 @@
 									      th:text="${order.orderStatus}">상태</span>
                                 </td>
                                 <td>
-									<div class="action-buttons">
+                                    <div class="action-buttons">
 										<button class="btn btn-sm btn-success"
 												th:data-order-id="${order.orderId}"
 												data-bs-toggle="modal"
 												data-bs-target="#orderDetailsModal">
 											<i class="fas fa-eye"></i> 상세
-										</button>
-										<button th:if="${order.orderStatus != 'REFUND_REQUESTED' && 
-														order.orderStatus != 'REFUND_SUCCESS' && 
-														order.orderStatus != 'REFUND_REJECTED'}" 
-												class="btn btn-sm btn-primary order-approve-btn"
-												th:data-order-id="${order.orderId}">
+                                        </button>
+                                        <button class="btn btn-sm btn-primary order-approve-btn"
+                                        		th:data-order-id="${order.orderId}">
 											<i class="fas fa-check"></i> 승인
 										</button>
-										<button th:if="${order.orderStatus != 'REFUND_REQUESTED' && 
-														order.orderStatus != 'REFUND_SUCCESS' && 
-														order.orderStatus != 'REFUND_REJECTED'}" 
-												class="btn btn-sm btn-danger order-reject-btn"
+										<button class="btn btn-sm btn-danger order-reject-btn"
 												th:data-order-id="${order.orderId}">
-											<i class="fas fa-times"></i> 거절
-										</button>
+                                            <i class="fas fa-times"></i> 거절
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -213,6 +207,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-success">승인</button>
+                    <button type="button" class="btn btn-danger">거절</button>
                 </div>
             </div>
         </div>
@@ -254,50 +250,50 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     
 	<script>
-    function updateOrderStatus(orderId, status) {
-        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-        
-        fetch('/api/manager/orders/' + orderId + '/status', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                [header]: token
-            },
-            body: JSON.stringify({
-                status: status
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            // 화면 업데이트
-			const statusBadge = document.querySelector(`button[data-order-id="${orderId}"]`)
-				.closest('tr')
-				.querySelector('.status-badge');
-            
-            statusBadge.classList.remove('status-PENDING', 'status-APPROVED', 'status-REJECTED', 'status-REFUND_REQUESTED');
-            statusBadge.classList.add(`status-${status}`);
-            
-         // 상태 텍스트 업데이트
-			const statusText = {
-				'PENDING': 'PENDING',
-				'APPROVED': 'APPROVED',
-				'REJECTED': 'REJECTED',
-				'REFUND_REQUESTED': 'REFUND_REQUESTED'
-			};
-			statusBadge.textContent = statusText[status];
-			
-			alert('주문 상태가 변경되었습니다.');
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('주문 상태 변경 중 오류가 발생했습니다.');
-        });
-    }
-	
 	document.addEventListener('DOMContentLoaded', function() {
 	    const orderApproveButtons = document.querySelectorAll('.order-approve-btn');
 	    const orderRejectButtons = document.querySelectorAll('.order-reject-btn');
+	
+	    function updateOrderStatus(orderId, status) {
+	        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+	        
+	        fetch('/api/manager/orders/' + orderId + '/status', {
+	            method: 'PATCH',
+	            headers: {
+	                'Content-Type': 'application/json',
+	                [header]: token
+	            },
+	            body: JSON.stringify({
+	                status: status
+	            })
+	        })
+	        .then(response => response.json())
+	        .then(data => {
+	            // 화면 업데이트
+				const statusBadge = document.querySelector(`button[data-order-id="${orderId}"]`)
+					.closest('tr')
+					.querySelector('.status-badge');
+	            
+	            statusBadge.classList.remove('status-PENDING', 'status-APPROVED', 'status-REJECTED', 'status-REFUND_REQUESTED');
+	            statusBadge.classList.add(`status-${status}`);
+	            
+	         // 상태 텍스트 업데이트
+				const statusText = {
+					'PENDING': 'PENDING',
+					'APPROVED': 'APPROVED',
+					'REJECTED': 'REJECTED',
+					'REFUND_REQUESTED': 'REFUND_REQUESTED'
+				};
+				statusBadge.textContent = statusText[status];
+				
+				alert('주문 상태가 변경되었습니다.');
+	        })
+	        .catch(error => {
+	            console.error('Error:', error);
+	            alert('주문 상태 변경 중 오류가 발생했습니다.');
+	        });
+	    }
 	
 	    orderApproveButtons.forEach(btn => {
 	        btn.addEventListener('click', function() {
@@ -382,16 +378,14 @@
 	                                    data-bs-target="#orderDetailsModal">
 	                                <i class="fas fa-eye"></i> 상세
 	                            </button>
-								${!['REFUND_REQUESTED', 'REFUND_SUCCESS', 'REFUND_REJECTED'].includes(order.orderStatus) ? `
-									<button class="btn btn-sm btn-primary order-approve-btn"
-											data-order-id="${order.orderId}">
-										<i class="fas fa-check"></i> 승인
-									</button>
-									<button class="btn btn-sm btn-danger order-reject-btn"
-											data-order-id="${order.orderId}">
-										<i class="fas fa-times"></i> 거절
-									</button>
-								` : ''}
+	                            <button class="btn btn-sm btn-primary order-approve-btn"
+	                                    data-order-id="${order.orderId}">
+	                                <i class="fas fa-check"></i> 승인
+	                            </button>
+	                            <button class="btn btn-sm btn-danger order-reject-btn"
+	                                    data-order-id="${order.orderId}">
+	                                <i class="fas fa-times"></i> 거절
+	                            </button>
 	                        </div>
 	                    </td>
 	                `;
@@ -554,41 +548,7 @@
                         approveBtn.dataset.orderId = orderId;
                         rejectBtn.dataset.orderId = orderId;
                     }
-                    
-                    //modal footer - 환불 요청시 승인/거절 불가능하게 변경
-                    const modalFooter = orderDetailsModal.querySelector('.modal-footer');
-                    if (orderDetails.orderStatus === 'REFUND_REQUESTED' || 
-						orderDetails.orderStatus === 'REFUND_SUCCESS' || 
-						orderDetails.orderStatus === 'REFUND_REJECTED') {
-                        modalFooter.innerHTML = `
-							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-						`;
-                    } else {
-                        modalFooter.innerHTML = `
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                            <button type="button" class="btn btn-success" data-order-id="${orderId}">승인</button>
-                            <button type="button" class="btn btn-danger" data-order-id="${orderId}">거절</button>
-                        `;
-                        
-                        // 새로운 버튼들에 대한 이벤트 리스너 등록
-					    const newModalApproveBtn = modalFooter.querySelector('.btn-success');
-					    const newModalRejectBtn = modalFooter.querySelector('.btn-danger');
-                        
-					    if (newModalApproveBtn) {
-					        newModalApproveBtn.addEventListener('click', function() {
-					            updateOrderStatus(orderId, 'APPROVED');
-					            bootstrap.Modal.getInstance(orderDetailsModal).hide();
-					        });
-					    }
-
-					    if (newModalRejectBtn) {
-					        newModalRejectBtn.addEventListener('click', function() {
-					            updateOrderStatus(orderId, 'REJECTED');
-					            bootstrap.Modal.getInstance(orderDetailsModal).hide();
-					        });
-					    }
-					}
-                })
+            	})
                 .catch(error => {
                     console.error('주문 상세 정보 조회 중 오류: ', error);
                     modalBody.innerHTML = `
@@ -600,6 +560,56 @@
                 });
 		});
 	});
+    
+    // 주문 상세 모달 내 승인/거절 버튼 이벤트
+	const modalApproveBtn = document.querySelector('#orderDetailsModal .btn-success');
+	const modalRejectBtn = document.querySelector('#orderDetailsModal .btn-danger');
+
+    [modalApproveBtn, modalRejectBtn].forEach(btn => {
+        btn.addEventListener('click', function() {
+            const orderId = this.dataset.orderId;
+            const status = this.classList.contains('btn-success') ? 'APPROVED' : 'REJECTED';
+
+            const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+            
+            fetch(`/api/manager/orders/${orderId}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [header]: token
+                },
+                body: JSON.stringify({ status: status })
+            })
+            .then(response => response.json())
+            .then(updatedOrder => {
+                // 해당 주문의 상태 뱃지 업데이트
+                const orderRow = document.querySelector(`[data-order-id="${orderId}"]`).closest('tr');
+                const statusBadge = orderRow.querySelector('.status-badge');
+                
+                statusBadge.classList.remove('status-PENDING', 'status-APPROVED', 'status-REJECTED', 'status-REFUND_REQUESTED');
+                statusBadge.classList.add(`status-${status}`);
+
+                // 상태 텍스트 업데이트
+                const statusText = {
+                    'PENDING': 'PENDING',
+                    'APPROVED': 'APPROVED',
+                    'REJECTED': 'REJECTED',
+                    'REFUND_REQUESTED': 'REFUND_REQUESTED'
+                };
+                statusBadge.textContent = statusText[status];
+
+                alert('주문 상태가 변경되었습니다.');
+                
+                // 모달 닫기
+                bootstrap.Modal.getInstance(orderDetailsModal).hide();
+            })
+            .catch(error => {
+                console.error('주문 상태 변경 중 오류:', error);
+                alert('주문 상태 변경 중 오류가 발생했습니다.');
+            });
+        });
+    });
 	</script>
 </body>
 </html>

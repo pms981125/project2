@@ -5,45 +5,137 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>매장 수정</title>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBg-Su3mSEBy2sxnw-c0sD8pS2Q332EHYk&libraries=places"></script>
+
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
+
         .store-form {
-            width: 50%;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ddd;
+            width: 100%;
+            max-width: 500px;
+            padding: 25px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        fieldset {
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        legend {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin: 10px 0 5px;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
             border-radius: 5px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        button {
+            width: 48%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .back-button {
+            width: 48%;
+            background-color: #6c757d;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .back-button:hover {
+            background-color: #5a6268;
         }
     </style>
 </head>
 <body>
-    <h1>매장 정보 수정</h1>
 
-    <form th:action="@{/stores/update/{id}(id=${store.storeId})}" method="post">
-        <label for="storeName">매장 이름:</label>
-        <input type="text" id="storeName" name="storeName" th:value="${store.storeName}"/>
+    <div class="store-form">
+        <form th:action="@{/stores/update/{id}(id=${store.storeId})}" method="post">
+            <fieldset>
+                <legend>매장 정보 수정</legend>
 
-        <label for="storeAddress">매장 주소:</label>
-        <input id="autocomplete" type="text" name="storeAddress" th:value="${store.storeAddress}" required />
+                <label for="storeName">매장 이름:</label>
+                <input type="text" id="storeName" name="storeName" th:value="${store.storeName}" required>
 
-        <label for="storePhone">매장 전화번호:</label>
-        <input type="text" id="storePhone" name="storePhone" th:value="${store.storePhone}"/>
+                <label for="autocomplete">매장 주소:</label>
+                <input id="autocomplete" type="text" name="storeAddress" th:value="${store.storeAddress}" required>
 
-        <label for="latitude">위도:</label>
-        <input type="text" id="latitude" name="latitude" th:value="${store.latitude}" readonly/>
+                <label for="storePhone">매장 전화번호:</label>
+                <input type="text" id="storePhone" name="storePhone" th:value="${store.storePhone}">
 
-        <label for="longitude">경도:</label>
-        <input type="text" id="longitude" name="longitude" th:value="${store.longitude}" readonly/>
+                <label for="latitude">위도:</label>
+                <input type="text" id="latitude" name="latitude" th:value="${store.latitude}" readonly>
 
-        <label for="openingHours">운영 시간:</label>
-        <input type="text" id="openingHours" name="openingHours" th:value="${store.openingHours}"/>
+                <label for="longitude">경도:</label>
+                <input type="text" id="longitude" name="longitude" th:value="${store.longitude}" readonly>
 
-        <button type="submit">수정하기</button>
-    </form>
+                <label for="openingHours">운영 시간:</label>
+                <input type="text" id="openingHours" name="openingHours" th:value="${store.openingHours}">
 
-    <a href="/stores">목록으로 돌아가기</a>
+                <div class="button-group">
+                    <button type="submit">수정하기</button>
+                    <a href="/stores" class="back-button">목록으로</a>
+                </div>
+            </fieldset>
+        </form>
+    </div>
 
     <script>
         function initAutocomplete() {
@@ -57,7 +149,6 @@
                 if (!place.geometry) {
                     return;
                 }
-                // 위도와 경도를 자동으로 입력
                 document.getElementById('latitude').value = place.geometry.location.lat();
                 document.getElementById('longitude').value = place.geometry.location.lng();
             });
@@ -65,5 +156,8 @@
 
         window.onload = initAutocomplete;
     </script>
+
 </body>
 </html>
+
+

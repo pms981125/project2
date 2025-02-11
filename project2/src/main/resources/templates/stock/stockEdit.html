@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>재고 수정</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .stock-edit-form {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        label, input {
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1 style="text-align: center;">재고 수정</h1>
+
+<div class="stock-edit-form">
+    
+    <form th:action="@{/stocks/update/{productCode}(productCode=${product.productCode})}" method="post">
+	    <label for="productCode">상품 코드:</label>
+	    <input type="text" id="productCode" name="productCode" th:value="${product.productCode}" readonly/>
+	
+	    <label for="productStock">재고:</label>
+	    <input type="number" id="productStock" name="productStock" th:value="${product.productStock}" min="0"/>
+	
+	    <button type="submit">수정하기</button>
+	</form>
+    
+    
+
+    <a href="/stocks">목록으로 돌아가기</a>
+</div>
+
+</body>
+</html>
