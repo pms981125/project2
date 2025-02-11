@@ -1,4 +1,4 @@
-package com.lec.project.shoppingmall.domain.refund;
+package com.lec.project.shoppingmall.dto.refund;
 
 import com.lec.project.shoppingmall.domain.cart.order.OrderStatus;
 
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RefundStatusUpdateDTO {
+public class UserRefundStatusUpdateDTO {
 
 	private Long refundId;
 	private OrderStatus newStatus;

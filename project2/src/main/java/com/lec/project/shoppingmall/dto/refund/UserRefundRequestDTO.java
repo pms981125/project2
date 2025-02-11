@@ -1,4 +1,4 @@
-package com.lec.project.shoppingmall.domain.refund;
+package com.lec.project.shoppingmall.dto.refund;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RefundRequestDTO {
+public class UserRefundRequestDTO {
 
 	private Long orderId;
 	private String refundReason;

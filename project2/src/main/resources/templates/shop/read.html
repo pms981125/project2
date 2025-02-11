@@ -194,43 +194,72 @@
 
 <script th:inline="javascript">
 	function addToCart() {
-	    const quantity = document.getElementById('quantity').value;
-	    const productCode = /*[[${dto.productCode}]]*/ '';
-	    const currentStock = /*[[${dto.productStock}]]*/ 0;
-	    
-	    // 재고 확인 로직 추가
-	    if (currentStock === 0) {
-	        alert('품절된 상품입니다.');
-	        return;
-	    }
-	    
-		// CSRF 토큰 가져오기
-		const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-		const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-  
-	    fetch('/api/cart/add', {
-	        method: 'POST',
-	        headers: {
-	            'Content-Type': 'application/x-www-form-urlencoded',
-	            [header]: token
-	        },
-	        body: `productCode=${productCode}&count=${quantity}`
-	    })
-	    .then(response => {
-	        if (response.ok) {
-	            if(confirm('상품이 장바구니에 담겼습니다. 장바구니로 이동하시겠습니까?')) {
-	                window.location.href = '/cart/list';
-	            }
-	        } else {
-	            return response.text().then(errorMessage => {
-	                alert(errorMessage);
-	                location.reload();
-	            });
-	        }
-	    })
-	    .catch(error => {
-	        alert('장바구니에 담기 실패했습니다. 로그인 상태를 확인해주세요.');
-	    });
+	    fetch('/user/loginStatus')
+        .then(response => response.json())
+        .then(data => {
+            if (!data.isLoggedIn) {
+                if(confirm('로그인이 필요한 서비스입니다. 로그인 페이지로 이동하시겠습니까?')) {
+                    window.location.href = '/user/login';
+                }
+                return;
+            }
+            
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const productCode = /*[[${dto.productCode}]]*/ '';
+            const currentStock = /*[[${dto.productStock}]]*/ 0;
+            
+            // 수량 유효성 검사
+            if (quantity <= 0) {
+                alert('수량은 1개 이상이어야 합니다.');
+                return;
+            }
+            
+            if (currentStock === 0) {
+                alert('품절된 상품입니다.');
+                return;
+            }
+            
+            if (quantity > currentStock) {
+                alert(`재고가 부족합니다. 현재 재고: ${currentStock}개`);
+                return;
+            }
+            
+            const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+            const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+            fetch('/api/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    [header]: token
+                },
+                body: `productCode=${productCode}&count=${quantity}`
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || '장바구니 담기에 실패했습니다.');
+                    });
+                }
+                return response.text();
+            })
+            .then(() => {
+                if(confirm('상품이 장바구니에 담겼습니다. 장바구니로 이동하시겠습니까?')) {
+                    window.location.href = '/cart/list';
+                }
+            })
+            .catch(error => {
+                alert(error.message);
+                if (error.message.includes('재고')) {
+                    document.getElementById('quantity').value = currentStock;
+                    updateTotalPrice();
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('로그인 상태를 확인하는데 실패했습니다.');
+        });
 	}
 
 	

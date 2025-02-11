@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lec.project.Member;
 import com.lec.project.MemberRepository;
+import com.lec.project.shoppingmall.domain.cart.order.OrderStatus;
 import com.lec.project.shoppingmall.domain.cart.order.Ordered;
 import com.lec.project.shoppingmall.domain.cart.order.OrderedProduct;
 import com.lec.project.shoppingmall.domain.payment.kakao.KakaoPayment;
@@ -58,15 +59,15 @@ public class KakaoPaymentServiceImpl implements KakaoPaymentService {
 	private String adminKey;
 	
 	@Override
-	public KakaoPayReadyResponseDTO readyToPay(KakaoPayReadyRequestDTO KakaoPayReadyRequestDTO) {
+	public KakaoPayReadyResponseDTO readyToPay(KakaoPayReadyRequestDTO kakaoPayReadyRequestDTO) {
 		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
 		parameters.add("cid", "TC0ONETIME");     // 가맹점 코드
-		parameters.add("partner_order_id", KakaoPayReadyRequestDTO.getPartnerOrderId());
-		parameters.add("partner_user_id", KakaoPayReadyRequestDTO.getPartnerUserId());
-		parameters.add("item_name", KakaoPayReadyRequestDTO.getItemName());
-		parameters.add("quantity", String.valueOf(KakaoPayReadyRequestDTO.getQuantity()));
-		parameters.add("total_amount", String.valueOf(KakaoPayReadyRequestDTO.getTotalAmount()));
-		parameters.add("tax_free_amount", String.valueOf(KakaoPayReadyRequestDTO.getTaxFreeAmount()));
+		parameters.add("partner_order_id", kakaoPayReadyRequestDTO.getPartnerOrderId());
+		parameters.add("partner_user_id", kakaoPayReadyRequestDTO.getPartnerUserId());
+		parameters.add("item_name", kakaoPayReadyRequestDTO.getItemName());
+		parameters.add("quantity", String.valueOf(kakaoPayReadyRequestDTO.getQuantity()));
+		parameters.add("total_amount", String.valueOf(kakaoPayReadyRequestDTO.getTotalAmount()));
+		parameters.add("tax_free_amount", String.valueOf(kakaoPayReadyRequestDTO.getTaxFreeAmount()));
 		
 		String baseUrl = "http://localhost:8090";
 		parameters.add("approval_url", baseUrl + "/cart/order/kakao/success");
@@ -99,31 +100,31 @@ public class KakaoPaymentServiceImpl implements KakaoPaymentService {
 				.registerModule(new JavaTimeModule())
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			
-			    KakaoPayReadyResponseDTO kakaoPayResponse = objectMapper
-					.readValue(responseBody, KakaoPayReadyResponseDTO.class);
-			    log.info("Mapped response object: {}", kakaoPayResponse);
+	        KakaoPayReadyResponseDTO kakaoPayResponseDTO = objectMapper
+	                .readValue(responseBody, KakaoPayReadyResponseDTO.class);
+			    log.info("Mapped response object: {}", kakaoPayResponseDTO);
 
-	        if (kakaoPayResponse.getNextRedirectPcUrl() == null) {
+	        if (kakaoPayResponseDTO.getNextRedirectPcUrl() == null) {
 	            log.error("리다이렉트 URL이 null입니다. 응답 전체: {}", responseBody);
 	            throw new RuntimeException("카카오페이 응답에 리다이렉트 URL이 없습니다");
 	        }
 
-	        log.info("Ready to pay - tid: {}", kakaoPayResponse.getTid());
+	        log.info("Ready to pay - tid: {}", kakaoPayResponseDTO.getTid());
 	        
 	        // 결제 정보 저장
-	        KakaoPayment Kakaopay = KakaoPayment.builder()
-	            .tid(kakaoPayResponse.getTid())
-	            .partnerOrderId(KakaoPayReadyRequestDTO.getPartnerOrderId())
-	            .partnerUserId(KakaoPayReadyRequestDTO.getPartnerUserId())
-	            .totalAmount(KakaoPayReadyRequestDTO.getTotalAmount())
-	            .itemName(KakaoPayReadyRequestDTO.getItemName())
-	            .quantity(KakaoPayReadyRequestDTO.getQuantity())
+	        KakaoPayment kakaoPayment = KakaoPayment.builder()
+	            .tid(kakaoPayResponseDTO.getTid())
+	            .partnerOrderId(kakaoPayReadyRequestDTO.getPartnerOrderId())
+	            .partnerUserId(kakaoPayReadyRequestDTO.getPartnerUserId())
+	            .totalAmount(kakaoPayReadyRequestDTO.getTotalAmount())
+	            .itemName(kakaoPayReadyRequestDTO.getItemName())
+	            .quantity(kakaoPayReadyRequestDTO.getQuantity())
 	            .status(KakaoPaymentStatus.READY)
 	            .build();
 	            
-	        kakaoPaymentRepository.save(Kakaopay);
+	        kakaoPaymentRepository.save(kakaoPayment);
 	        
-	        return kakaoPayResponse;
+	        return kakaoPayResponseDTO;
 	    } catch (Exception e) {
 	        log.error("Kakao Pay Ready API Error", e);
 	        throw new RuntimeException("결제 준비 중 오류가 발생했습니다.");
@@ -193,16 +194,6 @@ public class KakaoPaymentServiceImpl implements KakaoPaymentService {
 	        for(CartListDTO item : cartItems) {
 	            Product product = productRepository.findById(item.getProductCode())
 	                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
-	            
-	            // 재고 감소 유효성 검사
-	            int newStock = product.getProductStock() - item.getCount();
-	            if(newStock >= 0) {
-	            	product.setProductStock(newStock);
-	            } else {	
-	            	product.setProductStock(0);
-	            }
-	            product.setProductStock(newStock);
-	            productRepository.save(product);
 	                
 	            OrderedProduct orderedProduct = OrderedProduct.builder()
 	                .ordered(ordered)
@@ -230,8 +221,6 @@ public class KakaoPaymentServiceImpl implements KakaoPaymentService {
 	        
 	        log.info("Completing payment process");
 	        
-	        
-	        
 	        return kakaoPaymentRepository.save(Kakaopayment);
 	        
 	    } catch (Exception e) {
@@ -243,10 +232,6 @@ public class KakaoPaymentServiceImpl implements KakaoPaymentService {
 	@Override
 	public KakaoPayment refundPayment(KakaoPayRefundRequestDTO kakaoPayRefundRequestDTO) {
 	    try {
-	        // 결제 정보 조회
-	        KakaoPayment kakaoPayment = kakaoPaymentRepository.findByTid(kakaoPayRefundRequestDTO.getTid())
-	            .orElseThrow(() -> new IllegalArgumentException("결제 정보를 찾을 수 없습니다."));
-
 	        // 환불 요청 파라미터 설정
 	        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
 	        parameters.add("cid", "TC0ONETIME");
@@ -254,28 +239,42 @@ public class KakaoPaymentServiceImpl implements KakaoPaymentService {
 	        parameters.add("cancel_amount", String.valueOf(kakaoPayRefundRequestDTO.getCancelAmount()));
 	        parameters.add("cancel_tax_free_amount", "0");
 	        parameters.add("cancel_reason", kakaoPayRefundRequestDTO.getCancelReason());
-	        parameters.add("partner_order_id", kakaoPayRefundRequestDTO.getPartnerOrderId());
-	        parameters.add("partner_user_id", kakaoPayRefundRequestDTO.getPartnerUserId());
 
 	        // 카카오페이 환불 API 호출
-	        Object refundResponse = webClient.post()
+	        webClient.post()
 	            .uri(KAKAO_PAY_HOST + "/v1/payment/cancel")
 	            .header("Authorization", "KakaoAK " + adminKey)
 	            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
 	            .body(BodyInserters.fromFormData(parameters))
 	            .retrieve()
+	            .onStatus(status -> status.is4xxClientError(),
+	                response -> response.bodyToMono(String.class)
+	                    .flatMap(errorBody -> Mono.error(new RuntimeException("환불 요청 클라이언트 오류: " + errorBody))))
+	            .onStatus(status -> status.is5xxServerError(),
+	                response -> response.bodyToMono(String.class)
+	                    .flatMap(errorBody -> Mono.error(new RuntimeException("환불 요청 서버 오류: " + errorBody))))
 	            .bodyToMono(Object.class)
 	            .block();
 
+	        // 결제 정보 업데이트
+	        KakaoPayment kakaoPayment = kakaoPaymentRepository.findByTid(kakaoPayRefundRequestDTO.getTid())
+	            .orElseThrow(() -> new IllegalArgumentException("결제 정보를 찾을 수 없습니다."));
+
 	        // 결제 상태 업데이트
-	        kakaoPayment.setStatus(KakaoPaymentStatus.REFUND_REQUESTED);
+	        kakaoPayment.setStatus(KakaoPaymentStatus.CANCELLED);
 	        kakaoPayment.setCancelledAt(LocalDateTime.now());
+
+	        // 주문 상태도 함께 업데이트
+	        if (kakaoPayment.getOrder() != null) {
+	        	kakaoPayment.getOrder().setStatus(OrderStatus.REFUND_SUCCESS.name());
+	            orderedRepository.save(kakaoPayment.getOrder());
+	        }
 
 	        return kakaoPaymentRepository.save(kakaoPayment);
 
 	    } catch (Exception e) {
-	        log.error("결제 취소 중 오류 발생", e);
-	        throw new RuntimeException("결제 취소에 실패했습니다.", e);
+	        log.error("환불 처리 중 오류 발생", e);
+	        throw new RuntimeException("환불 처리에 실패했습니다.", e);
 	    }
 	}
 }

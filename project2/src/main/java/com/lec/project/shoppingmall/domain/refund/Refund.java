@@ -1,6 +1,10 @@
-package com.lec.project.shoppingmall.domain.cart.order;
+package com.lec.project.shoppingmall.domain.refund;
 
 import java.time.LocalDateTime;
+
+import com.lec.project.shoppingmall.domain.cart.order.BaseEntity;
+import com.lec.project.shoppingmall.domain.cart.order.OrderStatus;
+import com.lec.project.shoppingmall.domain.cart.order.Ordered;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
