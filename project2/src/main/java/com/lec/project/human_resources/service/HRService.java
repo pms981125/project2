@@ -26,7 +26,7 @@ public interface HRService {
 	void addAdmin(String id, String password, String name, String ssn, String phone, String email, String address, int salary, String job);
 	void delagateAuthority(String superAdminId, String adminId);
 	void initializePassword(String memberId) throws AddressException, MessagingException;
-	void addMember(String id, String password, String name, String ssn, String phone, String email, String address, String location);
+	void addMember(String id, String password, String name, String ssn, String phone, String email, String address);
 	void exaltation(String id, int salary);
 	boolean confirmId(String id);
 	void attendance(String id, LocalTime localTime);

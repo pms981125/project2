@@ -339,7 +339,7 @@ public class HRServiceImpl implements HRService {
 	}
 
 	@Override
-	public void addMember(String id, String password, String name, String ssn, String phone, String email, String address, String location) {
+	public void addMember(String id, String password, String name, String ssn, String phone, String email, String address) {
 		Member member = Member.builder().id(id)
 										.password(passwordEncoder.encode(password))
 										.name(name)

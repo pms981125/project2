@@ -105,7 +105,7 @@ public class SuperHRController {
 	@PostMapping("/addAdmin") // 관리자 추가
 	public String addAdmin(@RequestParam("id") String id, @RequestParam("password") String password, @RequestParam("name") String name,
 						   @RequestParam("ssnFront") String ssnFront, @RequestParam("ssnEnd") String ssnEnd, @RequestParam("phone1") String phone1, @RequestParam("phone2") String phone2,   
-						   @RequestParam("email") String email, @RequestParam("location") String location, @RequestParam("address") String address, @RequestParam("annualSalary") int annualSalary,
+						   @RequestParam("email") String email, @RequestParam("address") String address, @RequestParam("annualSalary") int annualSalary,
 						   @RequestParam("job") String job) {
 		String ssn = ssnFront + "-" + ssnEnd;
 		String phone = "010-" + phone1 + "-" + phone2;
