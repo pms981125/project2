@@ -1,8 +1,6 @@
-	package com.lec.project.human_resources.controller;
+package com.lec.project.human_resources.controller;
 
-import java.security.Principal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -16,12 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.lec.project.MemberSecurityDTO;
 import com.lec.project.human_resources.service.HRService;
-import com.lec.project.shoppingmall.domain.cart.order.Ordered;
-import com.lec.project.shoppingmall.repository.OrderedRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,9 +27,6 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class UserController {
 	private final HRService hrService;
-	
-	//주문 내역 관리하기 위한 repository 주입
-	private final OrderedRepository orderedRepository;
 	
 	@GetMapping("/login")
 	public String login(Model model, @RequestParam(value = "error", defaultValue = "false") boolean error, @RequestParam(value = "exception", defaultValue = "") String exception) {
@@ -134,20 +126,5 @@ public class UserController {
 		}
 		
 		return new ResponseEntity<>(result, HttpStatus.OK);
-	}
-
-	@GetMapping({"/order/history", "/user/order/history"})
-	public String orderHistory(Model model) {
-	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-	    String username = userDetails.getUsername();
-
-	    List<Ordered> orders = orderedRepository.findByMemberIdOrderByOrderDateDesc(username);
-	    
-	    // 주문 내역이 없을 때 메시지 추가
-	    model.addAttribute("orders", orders);
-	    model.addAttribute("hasOrders", !orders.isEmpty());
-
-	    return "cart/orderHistory";
 	}
 }

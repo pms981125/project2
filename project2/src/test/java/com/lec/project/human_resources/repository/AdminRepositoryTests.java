@@ -9,8 +9,6 @@ import com.lec.project.Member;
 import com.lec.project.MemberRepository;
 import com.lec.project.MemberRole;
 import com.lec.project.human_resources.domain.Admin;
-import com.lec.project.regionboard.model.MemberRegion;
-import com.lec.project.regionboard.repository.MemberRegionRepository;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -22,9 +20,6 @@ public class AdminRepositoryTests {
 	
 	@Autowired
 	MemberRepository memberRepository;
-	
-	@Autowired
-	MemberRegionRepository memberRegionRepository;
 	
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -131,8 +126,5 @@ public class AdminRepositoryTests {
 		
 		memberRepository.save(member);
 		
-		MemberRegion memberRegion = MemberRegion.builder().member(member).region("Seoul").build();
-		
-		memberRegionRepository.save(memberRegion);
 	}
 }

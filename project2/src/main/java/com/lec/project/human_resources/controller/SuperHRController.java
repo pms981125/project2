@@ -1,9 +1,6 @@
 package com.lec.project.human_resources.controller;
 
 import java.time.LocalTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
@@ -113,7 +110,7 @@ public class SuperHRController {
 		String ssn = ssnFront + "-" + ssnEnd;
 		String phone = "010-" + phone1 + "-" + phone2;
 		
-		hrService.addAdmin(id, password, name, ssn, phone, email, address, annualSalary, location, job);
+		hrService.addAdmin(id, password, name, ssn, phone, email, address, annualSalary, job);
 		
 		return "redirect:/sudo/allUserList";
 	}

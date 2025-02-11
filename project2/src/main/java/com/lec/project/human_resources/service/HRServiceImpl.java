@@ -17,7 +17,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -39,8 +38,6 @@ import com.lec.project.human_resources.dto.CalendarDTO;
 import com.lec.project.human_resources.repository.AdminRepository;
 import com.lec.project.human_resources.repository.AttendanceRepository;
 import com.lec.project.human_resources.repository.WorkLogRepository;
-import com.lec.project.regionboard.model.MemberRegion;
-import com.lec.project.regionboard.repository.MemberRegionRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -52,11 +49,9 @@ import lombok.extern.log4j.Log4j2;
 @Transactional
 public class HRServiceImpl implements HRService {
 	private final MemberRepository memberRepository;
-	private final MemberRegionRepository memberRegionRepository;
 	private final AdminRepository adminRepository;
 	private final AttendanceRepository attendanceRepository;
 	private final WorkLogRepository workLogRepository;
-	private final ModelMapper modelMapper;
 	private final PasswordEncoder passwordEncoder;
 
 	/*	@Override
@@ -162,9 +157,6 @@ public class HRServiceImpl implements HRService {
 	public void remove(String id, boolean isAdmin) {
 		Optional<Member> result = memberRepository.findById(id);
 		Member member = result.orElseThrow();
-		MemberRegion region = memberRegionRepository.findByMember(member);
-		
-		memberRegionRepository.delete(region);
 		
 		if (isAdmin) {
 			adminRepository.deleteById(id);
@@ -174,7 +166,7 @@ public class HRServiceImpl implements HRService {
 	}
 
 	@Override
-	public void addAdmin(String id, String password, String name, String ssn, String phone, String email, String address, int annualSalary, String location, String job) {
+	public void addAdmin(String id, String password, String name, String ssn, String phone, String email, String address, int annualSalary, String job) {
 		String[] nums = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
 		String numberString = "";
 
@@ -201,10 +193,6 @@ public class HRServiceImpl implements HRService {
 		}
 		
 		memberRepository.save(member);
-		
-		MemberRegion memberRegion = MemberRegion.builder().member(member).region(location).build();
-		
-		memberRegionRepository.save(memberRegion);
 	}
 
 	@Override
@@ -365,19 +353,15 @@ public class HRServiceImpl implements HRService {
 		
 		memberRepository.save(member);
 		
-		MemberRegion memberRegion = MemberRegion.builder().member(member).region(location).build();
-		
-		memberRegionRepository.save(memberRegion);
 	}
 
 	@Override
 	public void exaltation(String id, int annualSalary) {
 		Optional<Member> result = memberRepository.findById(id);
 		Member member = result.orElseThrow();
-		MemberRegion region = memberRegionRepository.findByMember(member);
 		
 		remove(id, false);
-		addAdmin(id, member.getPassword(), member.getName(), member.getSsn(), member.getPhone(), member.getEmail(), member.getDetailedAddress(), annualSalary, region.getRegion(), "hr"); // 계좌가 있으면 작동 X
+		addAdmin(id, member.getPassword(), member.getName(), member.getSsn(), member.getPhone(), member.getEmail(), member.getDetailedAddress(), annualSalary, "hr"); // 계좌가 있으면 작동 X
 	}
 
 	@Override

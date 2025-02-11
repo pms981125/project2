@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.lec.project.regionboard.model.MemberRegion;
-import com.lec.project.regionboard.repository.MemberRegionRepository;
-
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -18,8 +15,6 @@ public class MemberRepositoryTests {
 	@Autowired
 	private MemberRepository memberRepository;
 	
-	@Autowired
-	private MemberRegionRepository memberRegionRepository;
 	
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -39,10 +34,6 @@ public class MemberRepositoryTests {
 		member.addRole(MemberRole.USER);
 		
 		memberRepository.save(member);
-		
-		MemberRegion memberRegion = MemberRegion.builder().member(member).region("Seoul").build();
-		
-		memberRegionRepository.save(memberRegion);
 	}
 	
 	@Test
@@ -60,10 +51,7 @@ public class MemberRepositoryTests {
 		member.addRole(MemberRole.MANAGER);
 		
 		memberRepository.save(member);
-		
-		MemberRegion memberRegion = MemberRegion.builder().member(member).region("Seoul").build();
-		
-		memberRegionRepository.save(memberRegion);
+
 	}
 	
 	@Test
@@ -87,9 +75,6 @@ public class MemberRepositoryTests {
 			
 			memberRepository.save(member);
 			
-			MemberRegion memberRegion = MemberRegion.builder().member(member).region(region[i % 4]).build();
-			
-			memberRegionRepository.save(memberRegion);
 		});
 	}
 	

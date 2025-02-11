@@ -23,7 +23,7 @@ public interface HRService {
 	Page<MemberSecurityDTO> getAdminListWithPaging(int p, Pageable pageable, int size);
 	void update(String id, String name, String ssn, String phone, String email, String address, int annualSalary);
 	void remove(String id, boolean isAdmin);
-	void addAdmin(String id, String password, String name, String ssn, String phone, String email, String address, int salary, String location, String job);
+	void addAdmin(String id, String password, String name, String ssn, String phone, String email, String address, int salary, String job);
 	void delagateAuthority(String superAdminId, String adminId);
 	void initializePassword(String memberId) throws AddressException, MessagingException;
 	void addMember(String id, String password, String name, String ssn, String phone, String email, String address, String location);
