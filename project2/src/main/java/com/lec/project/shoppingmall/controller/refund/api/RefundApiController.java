@@ -33,65 +33,65 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 @Log4j2
 public class RefundApiController {
-
-	private final RefundService refundService;
-	
-    // 환불 요청 생성
-//    @PostMapping
-//    public ResponseEntity<RefundResponseDTO> createRefund(
-//        @AuthenticationPrincipal UserDetails userDetails,
-//        @RequestBody RefundRequestDTO refundRequestDTO
+//
+//	private final RefundService refundService;
+//	
+//    // 환불 요청 생성
+////    @PostMapping
+////    public ResponseEntity<RefundResponseDTO> createRefund(
+////        @AuthenticationPrincipal UserDetails userDetails,
+////        @RequestBody RefundRequestDTO refundRequestDTO
+////    ) {
+////        return ResponseEntity.ok(
+////            refundService.createRefund(userDetails.getUsername(), refundRequestDTO);
+////        );
+////    }
+//    
+//    // 환불 상태 업데이트 (관리자용)
+//    @PatchMapping("/{refundId}/status")
+//    public ResponseEntity<RefundResponseDTO> updateRefundStatus(
+//        @PathVariable Long refundId,
+//        @RequestBody OrderStatus newStatus
 //    ) {
-//        return ResponseEntity.ok(
-//            refundService.createRefund(userDetails.getUsername(), refundRequestDTO);
-//        );
+//        RefundStatusUpdateDTO updateDTO = RefundStatusUpdateDTO.builder()
+//            .refundId(refundId)
+//            .newStatus(newStatus)
+//            .build();
+//            
+//        return ResponseEntity.ok(refundService.updateRefundStatus(updateDTO));
 //    }
-    
-    // 환불 상태 업데이트 (관리자용)
-    @PatchMapping("/{refundId}/status")
-    public ResponseEntity<RefundResponseDTO> updateRefundStatus(
-        @PathVariable Long refundId,
-        @RequestBody OrderStatus newStatus
-    ) {
-        RefundStatusUpdateDTO updateDTO = RefundStatusUpdateDTO.builder()
-            .refundId(refundId)
-            .newStatus(newStatus)
-            .build();
-            
-        return ResponseEntity.ok(refundService.updateRefundStatus(updateDTO));
-    }
-    
-    // 환불 상세 조회
-    @GetMapping("/{refundId}")
-    public ResponseEntity<RefundResponseDTO> getRefundDetails(
-        @PathVariable Long refundId
-    ) {
-        return ResponseEntity.ok(refundService.getRefundDetails(refundId));
-    }
-    
-    // 환불 목록 조회 (관리자용)
-//    @GetMapping("/management")
-//    public ResponseEntity<Page<RefundListResponseDTO>> getRefundList(
-//        @RequestParam(required = false) OrderStatus status,
-//        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-//        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
-//        @RequestParam(required = false) String search,
-//        @PageableDefault(size = 10) Pageable pageable
+//    
+//    // 환불 상세 조회
+//    @GetMapping("/{refundId}")
+//    public ResponseEntity<RefundResponseDTO> getRefundDetails(
+//        @PathVariable Long refundId
 //    ) {
-//        return ResponseEntity.ok(
-//            refundService.getRefundList(status, startDate, endDate, search, pageable)
-//        );
+//        return ResponseEntity.ok(refundService.getRefundDetails(refundId));
 //    }
-    
-    // 회원별 환불 목록 조회
-//    @GetMapping("/my")
-//    public ResponseEntity<Page<RefundListResponseDTO>> getMyRefunds(
-//        @AuthenticationPrincipal UserDetails userDetails,
-//        @PageableDefault(size = 10) Pageable pageable
-//    ) {
-//        return ResponseEntity.ok(
-//            refundService.getMemberRefunds(userDetails.getUsername(), pageable)
-//        );
-//    }
+//    
+//    // 환불 목록 조회 (관리자용)
+////    @GetMapping("/management")
+////    public ResponseEntity<Page<RefundListResponseDTO>> getRefundList(
+////        @RequestParam(required = false) OrderStatus status,
+////        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+////        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+////        @RequestParam(required = false) String search,
+////        @PageableDefault(size = 10) Pageable pageable
+////    ) {
+////        return ResponseEntity.ok(
+////            refundService.getRefundList(status, startDate, endDate, search, pageable)
+////        );
+////    }
+//    
+//    // 회원별 환불 목록 조회
+////    @GetMapping("/my")
+////    public ResponseEntity<Page<RefundListResponseDTO>> getMyRefunds(
+////        @AuthenticationPrincipal UserDetails userDetails,
+////        @PageableDefault(size = 10) Pageable pageable
+////    ) {
+////        return ResponseEntity.ok(
+////            refundService.getMemberRefunds(userDetails.getUsername(), pageable)
+////        );
+////    }
 
 }

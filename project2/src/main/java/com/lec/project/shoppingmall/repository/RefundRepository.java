@@ -15,26 +15,26 @@ import com.lec.project.shoppingmall.domain.cart.order.Refund;
 
 public interface RefundRepository extends JpaRepository<Refund, Long>{
 	
-	Optional<Refund> findByOrderId(Long orderId);
-
-    @Query("SELECT r FROM Refund r WHERE " +
-            "(:status IS NULL OR r.currentStatus = :status) AND " +
-            "(:startDate IS NULL OR r.requestDate >= :startDate) AND " +
-            "(:endDate IS NULL OR r.requestDate <= :endDate) AND " +
-            "(:search IS NULL OR " +
-            "LOWER(r.order.customerName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-            "LOWER(CAST(r.order.id AS string)) LIKE LOWER(CONCAT('%', :search, '%')))")
-     Page<Refund> searchRefunds(
-         @Param("status") OrderStatus status,
-         @Param("startDate") LocalDateTime startDate,
-         @Param("endDate") LocalDateTime endDate,
-         @Param("search") String search,
-         Pageable pageable
-     );
-	
-    List<Refund> findByCurrentStatus(OrderStatus status);
-    
-    @Query("SELECT r FROM Refund r WHERE r.order.member.id = :memberId ORDER BY r.requestDate DESC")
-    List<Refund> findByMemberIdOrderByRequestDateDesc(@Param("memberId") String memberId);
+//	Optional<Refund> findByOrderId(Long orderId);
+//
+//    @Query("SELECT r FROM Refund r WHERE " +
+//            "(:status IS NULL OR r.currentStatus = :status) AND " +
+//            "(:startDate IS NULL OR r.requestDate >= :startDate) AND " +
+//            "(:endDate IS NULL OR r.requestDate <= :endDate) AND " +
+//            "(:search IS NULL OR " +
+//            "LOWER(r.order.customerName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+//            "LOWER(CAST(r.order.id AS string)) LIKE LOWER(CONCAT('%', :search, '%')))")
+//     Page<Refund> searchRefunds(
+//         @Param("status") OrderStatus status,
+//         @Param("startDate") LocalDateTime startDate,
+//         @Param("endDate") LocalDateTime endDate,
+//         @Param("search") String search,
+//         Pageable pageable
+//     );
+//	
+//    List<Refund> findByCurrentStatus(OrderStatus status);
+//    
+//    @Query("SELECT r FROM Refund r WHERE r.order.member.id = :memberId ORDER BY r.requestDate DESC")
+//    List<Refund> findByMemberIdOrderByRequestDateDesc(@Param("memberId") String memberId);
     
 }
