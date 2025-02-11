@@ -75,9 +75,6 @@
 	
 	function goMessagesInbox() {
 		const form = document.createElement('form')
-		const tokenName = /*[[${_csrf.parameterName}]]*/""
-		const token = /*[[${_csrf.token}]]*/""
-		const id = /*[[${#authentication.name}]]*/""
 		
 		form.action = `/messages/inbox`
 		form.method = 'get'
