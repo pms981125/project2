@@ -13,9 +13,6 @@ import lombok.NoArgsConstructor;
 public class AdminDTO {
 	private String id;
 	
-	@NotEmpty
-	private String password;
-	
 	private int no;
 	
 	@NotEmpty
@@ -26,4 +23,6 @@ public class AdminDTO {
 	
 	@NotEmpty
 	private String email;
+	
+	
 }

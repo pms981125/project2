@@ -52,9 +52,7 @@
 			<a th:href="|@{/sudo/addAdmin}|" class="text-decoration-none">
 				<button type="button" class="btn btn-primary">직원 등록</button>
 			</a>
-			<a th:href="|@{/sudo/goAttendance}|" class="text-decoration-none">
-				<button type="button" class="btn btn-primary">출퇴근</button>
-			</a>
+			<button type="button" class="btn btn-primary" onclick="goAttendance()">출퇴근</button>
 			<a th:href="|@{/sudo/logout}|" class="text-decoration-none">
 				<button type="button" class="btn btn-secondary">로그 아웃</button>
 			</a>
@@ -123,5 +121,23 @@
 		document.body.appendChild(form)
 		form.submit()
 	}, false)
+	
+	function goAttendance() {
+		const form = document.createElement('form')
+		const id = /*[[${#authentication.name}]]*/""
+		
+		let input1 = document.createElement('input')
+	    
+		input1.type = 'hidden'
+	    input1.name = 'id'
+	    input1.value = id
+		
+	    form.appendChild(input1)
+		
+		form.action = `/sudo/goAttendance`
+		form.method = 'get'
+		document.body.appendChild(form)
+		form.submit()
+	}
 </script>
 <!-- <div th:text="${#authentication.name}">Username</div> -->

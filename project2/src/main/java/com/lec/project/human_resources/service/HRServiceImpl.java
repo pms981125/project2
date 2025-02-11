@@ -34,6 +34,7 @@ import com.lec.project.human_resources.domain.Attendance;
 import com.lec.project.human_resources.domain.AttendanceEnum;
 import com.lec.project.human_resources.domain.WorkLog;
 import com.lec.project.human_resources.domain.WorkLogEnum;
+import com.lec.project.human_resources.dto.AdminDTO;
 import com.lec.project.human_resources.dto.CalendarDTO;
 import com.lec.project.human_resources.repository.AdminRepository;
 import com.lec.project.human_resources.repository.AttendanceRepository;
@@ -451,5 +452,14 @@ public class HRServiceImpl implements HRService {
 		}
 		
 		return calendarDTOs;
+	}
+
+	@Override
+	public AdminDTO getAdmin(String id) {
+		Optional<Admin> result = adminRepository.findById(id);
+		Admin admin = result.orElseThrow();
+		AdminDTO adminDTO = new AdminDTO(); // = AdminDTO.builder().id(id).no(admin.getNo()).name(admin.getName())
+		
+		return adminDTO;
 	}
 }

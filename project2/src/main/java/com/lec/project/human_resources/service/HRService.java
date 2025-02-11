@@ -32,4 +32,5 @@ public interface HRService {
 	void attendance(String id, LocalTime localTime);
 	void leave(String id, LocalTime localTime);
 	CalendarDTO[] getWorkLog(String id);
+	AdminDTO getAdmin(String id);
 }

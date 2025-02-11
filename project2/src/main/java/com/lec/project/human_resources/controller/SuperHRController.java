@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lec.project.MemberSecurityDTO;
+import com.lec.project.human_resources.dto.AdminDTO;
 import com.lec.project.human_resources.dto.CalendarDTO;
 import com.lec.project.human_resources.service.HRService;
 
@@ -147,7 +148,11 @@ public class SuperHRController {
 	}
 	
 	@GetMapping("/goAttendance")
-	public String goAttendance() {
+	public String goAttendance(Model model, @RequestParam(name = "id") String id) {
+		AdminDTO adminDTO = hrService.getAdmin(id);
+		
+		model.addAttribute("admin", adminDTO);
+		
 		return "admin/attendance";
 	}
 	
