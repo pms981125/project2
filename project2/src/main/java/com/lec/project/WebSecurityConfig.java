@@ -47,6 +47,7 @@ public class WebSecurityConfig {
 			// http.csrf(csrf -> csrf.disable())
         	.authorizeHttpRequests(auth -> auth.requestMatchers("/admin/**").hasRole("ADMIN") // 효과 X
         									   .requestMatchers("/hr/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+        									   .requestMatchers("/sudo/goAttendance", "/sudo/attendance", "/sudo/leave", "/sudo/getWorkLog").hasAnyRole("MANAGER", "SUPER_ADMIN")
         									   .requestMatchers("/sudo/**").hasRole("SUPER_ADMIN")
         									   
         								        // shop 관련 권한을 MANAGER에 부여
@@ -114,7 +115,7 @@ public class WebSecurityConfig {
 	        }
 	        
             request.getSession().setAttribute("errorMessage", errorMessage);
-            response.sendRedirect("/login?error");
+            response.sendRedirect("/user/login");
         };
 	}
 }
