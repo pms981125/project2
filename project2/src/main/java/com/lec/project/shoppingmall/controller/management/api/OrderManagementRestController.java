@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lec.project.shoppingmall.dto.magement.OrderManagementDTO;
 import com.lec.project.shoppingmall.dto.magement.RefundProcessRequestDTO;
 import com.lec.project.shoppingmall.dto.magement.RefundRequestDTO;
+import com.lec.project.shoppingmall.service.cart.order.OrderService;
 import com.lec.project.shoppingmall.service.magement.OrderManagementService;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ import lombok.extern.log4j.Log4j2;
 public class OrderManagementRestController {
 
 	private final OrderManagementService orderManagementService;
+	private final OrderService orderService;
 	
 	@GetMapping("/{orderId}")
 	public ResponseEntity<OrderManagementDTO> getOrderDetails(@PathVariable("orderId") Long orderId) {
@@ -71,6 +74,17 @@ public class OrderManagementRestController {
             RefundProcessRequest.getManagerComment()
         );
         return ResponseEntity.ok(processedRefund);
+    }
+    
+    @PostMapping("/{orderId}/refund")
+    @ResponseBody
+    public ResponseEntity<String> requestRefund(@PathVariable("orderId") Long orderId) {
+    	try {
+            orderService.requestRefund(orderId);
+            return ResponseEntity.ok("환불이 요청되었습니다.");
+    	} catch (Exception e) {
+    		return ResponseEntity.badRequest().body("환불 요청 처리 중 오류가 발생했습니다.");
+    	}
     }
     
     @GetMapping("/management")  

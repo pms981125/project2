@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lec.project.shoppingmall.dto.payment.kakao.KakaoPayReadyRequest;
-import com.lec.project.shoppingmall.dto.payment.kakao.KakaoPayReadyResponse;
+import com.lec.project.shoppingmall.domain.payment.kakao.KakaoPayment;
+import com.lec.project.shoppingmall.dto.payment.kakao.KakaoPayReadyRequestDTO;
+import com.lec.project.shoppingmall.dto.payment.kakao.KakaoPayReadyResponseDTO;
+import com.lec.project.shoppingmall.dto.payment.kakao.KakaoPayRefundRequestDTO;
 import com.lec.project.shoppingmall.service.cart.CartService;
 import com.lec.project.shoppingmall.service.kakaopay.KakaoPaymentService;
 
@@ -28,8 +30,8 @@ public class KakaoPaymentApiController {
     private final CartService cartService;
 
     @PostMapping("/ready")
-    public ResponseEntity<KakaoPayReadyResponse> readyToPay(
-            @RequestBody KakaoPayReadyRequest kakaoPayReadyRequest) {
+    public ResponseEntity<KakaoPayReadyResponseDTO> readyToPay(
+            @RequestBody KakaoPayReadyRequestDTO kakaoPayReadyRequest) {
     	try {
     		log.info("Received payment request: {}", kakaoPayReadyRequest);
     		
@@ -40,7 +42,7 @@ public class KakaoPaymentApiController {
     		}
     		
     		log.info("Payment amount validaated successfully");
-    		KakaoPayReadyResponse kakaoPayReadyResponse = kakaoPaymentService.readyToPay(kakaoPayReadyRequest);
+    		KakaoPayReadyResponseDTO kakaoPayReadyResponse = kakaoPaymentService.readyToPay(kakaoPayReadyRequest);
     		log.info("Payment ready response: {}", kakaoPayReadyResponse);
     		
     		return ResponseEntity.ok(kakaoPayReadyResponse);
@@ -50,7 +52,7 @@ public class KakaoPaymentApiController {
     	}
     }
     
-    private boolean validatePaymentAmount(KakaoPayReadyRequest kakaoPayReadyRequest) {
+    private boolean validatePaymentAmount(KakaoPayReadyRequestDTO kakaoPayReadyRequest) {
         try {
             int actualTotalPrice = cartService.getTotalPrice(kakaoPayReadyRequest.getPartnerUserId());
 			log.info("Actual total price: {}, Requested amount: {}", 
@@ -68,5 +70,23 @@ public class KakaoPaymentApiController {
         log.error("Payment API error", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body("결제 처리 중 오류가 발생했습니다.");
+    }
+    
+    @PostMapping("/refund")
+    public ResponseEntity<KakaoPayment> refundpayment(
+    	@RequestBody KakaoPayRefundRequestDTO kakaoPayRefundRequestDTO,
+    	@AuthenticationPrincipal UserDetails userDetails
+    ) {
+    	//사용자 인증 로직
+        if (!userDetails.getUsername().equals(kakaoPayRefundRequestDTO.getPartnerUserId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        
+	    try {
+	        KakaoPayment refundedPayment = kakaoPaymentService.refundPayment(kakaoPayRefundRequestDTO);
+	        return ResponseEntity.ok(refundedPayment);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
     }
 }

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KakaoPayReadyRequest {
+public class KakaoPayReadyRequestDTO {
 
 	private String partnerOrderId;      // 가맹점 주문번호
 	private String partnerUserId;       // 가맹점 회원 ID

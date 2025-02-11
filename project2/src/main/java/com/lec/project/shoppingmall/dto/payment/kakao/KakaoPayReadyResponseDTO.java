@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KakaoPayReadyResponse {
+public class KakaoPayReadyResponseDTO {
 	private String tid;                  // 결제 고유 번호
 	
 	@JsonProperty("next_redirect_app_url")

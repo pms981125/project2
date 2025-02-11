@@ -42,5 +42,8 @@ public interface OrderedRepository extends JpaRepository<Ordered, Long> {
 		 @Param("search") String search,
 		 Pageable pageable
 	 );
+	
+	@Query("SELECT o FROM Ordered o WHERE o.member.id = :memberId ORDER BY o.orderDate DESC")
+	List<Ordered> findByMemberIdOrderByOrderDateDesc(@Param("memberId") String memberId);
     
 }
