@@ -79,14 +79,6 @@
 		const token = /*[[${_csrf.token}]]*/""
 		const id = /*[[${#authentication.name}]]*/""
 		
-		let input1 = document.createElement('input')
-
-		input1.type = 'hidden'
-	    input1.name = tokenName
-	    input1.value = token
-		
-	    form.appendChild(input1)
-		
 		form.action = `/messages/inbox`
 		form.method = 'get'
 		document.body.appendChild(form)
