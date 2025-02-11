@@ -13,7 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.lec.project.shoppingmall.domain.payment.kakao.KakaoPayment;
 import com.lec.project.shoppingmall.dto.cart.order.OrderSubmitDTO;
-import com.lec.project.shoppingmall.dto.payment.kakao.KakaoPayApproveRequestDTO;
+import com.lec.project.shoppingmall.dto.payment.kakao.KakaoPayApproveRequest;
 import com.lec.project.shoppingmall.repository.KakaoPaymentRepository;
 import com.lec.project.shoppingmall.service.kakaopay.KakaoPaymentService;
 
@@ -63,7 +63,7 @@ public class KakaoPaymentController {
 				.findFirst()
 				.orElseThrow(() -> new IllegalArgumentException("결제 정보를 찾을 수 없습니다."));
 
-            KakaoPayApproveRequestDTO request = KakaoPayApproveRequestDTO.builder()
+            KakaoPayApproveRequest request = KakaoPayApproveRequest.builder()
                 .pgToken(pgToken)
                 .partnerOrderId(kakaoPayment.getPartnerOrderId())
                 .tid(kakaoPayment.getTid())

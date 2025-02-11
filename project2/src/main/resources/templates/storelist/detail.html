@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>매장 상세 정보</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBg-Su3mSEBy2sxnw-c0sD8pS2Q332EHYk"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .store-details {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        #map {
+            width: 100%;
+            height: 400px;
+            margin-top: 10px;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px;
+            margin-right: 10px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button.delete {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="store-details">
+        <h2 th:text="${store.storeName}">매장 이름</h2>
+        <p><strong>주소:</strong> <span th:text="${store.storeAddress}"></span></p>
+        <p><strong>전화번호:</strong> <span th:text="${store.storePhone} ?: '정보 없음'"></span></p>
+        <p><strong>운영 시간:</strong> <span th:text="${store.openingHours} ?: '정보 없음'"></span></p>
+
+        <!-- Google Map -->
+        <div id="map"></div>
+
+        <div class="buttons">
+            <button onclick="location.href='/stores'">목록으로</button>
+
+            <!-- MANAGER 권한이 있는 경우만 수정 및 삭제 버튼 표시 -->
+            <button th:if="${#authorization.expression('hasRole(''MANAGER'')')}" th:onclick="|location.href='/stores/update/${store.storeId}'|">수정하기</button>
+            
+            <form th:if="${#authorization.expression('hasRole(''MANAGER'')')}" th:action="@{/stores/delete/{id}(id=${store.storeId})}" method="post" style="display:inline;">
+                <button type="submit" class="delete" onclick="return confirm('정말 삭제하시겠습니까?');">삭제하기</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function initMap() {
+            let latitude = parseFloat("[[${store.latitude}]]");
+            let longitude = parseFloat("[[${store.longitude}]]");
+            let storeLocation = { lat: latitude, lng: longitude };
+
+            let map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: storeLocation
+            });
+
+            new google.maps.Marker({
+                position: storeLocation,
+                map: map
+            });
+        }
+
+        window.onload = initMap;
+    </script>
+
+</body>
+</html>
+
+

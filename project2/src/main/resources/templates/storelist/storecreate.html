@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>매장 등록</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBg-Su3mSEBy2sxnw-c0sD8pS2Q332EHYk&libraries=places"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .store-form {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="store-form">
+        <h2>매장 등록</h2>
+
+        <form th:action="@{/stores/new}" method="post">
+            <label>매장 이름:</label>
+            <input type="text" name="storeName" required>
+
+            <label>주소:</label>
+            <input id="autocomplete" type="text" name="storeAddress" required>
+
+            <label>전화번호:</label>
+            <input type="text" name="storePhone">
+
+            <label>운영 시간:</label>
+            <input type="text" name="openingHours">
+
+            <label>위도:</label>
+            <input id="latitude" type="text" name="latitude" readonly>
+
+            <label>경도:</label>
+            <input id="longitude" type="text" name="longitude" readonly>
+
+            <button type="submit">등록</button>
+        </form>
+
+        <button onclick="location.href='/stores'">목록으로</button>
+    </div>
+
+    <script>
+        function initAutocomplete() {
+            let autocomplete = new google.maps.places.Autocomplete(
+                document.getElementById('autocomplete'),
+                { types: ['geocode'] }
+            );
+            
+            autocomplete.addListener('place_changed', function() {
+                let place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    return;
+                }
+                document.getElementById('latitude').value = place.geometry.location.lat();
+                document.getElementById('longitude').value = place.geometry.location.lng();
+            });
+        }
+
+        window.onload = initAutocomplete;
+    </script>
+</body>
+</html>
+

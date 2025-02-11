@@ -97,6 +97,11 @@
 					    <i class="fa fa-shopping-cart" aria-hidden="true"></i>
 					</a>
 				    
+					<!-- 주문 내역 버튼 - 로그인한 사용자에게만 표시 -->
+					<a href="/user/orderHistory" class="btn btn-info text-white me-2" sec:authorize="isAuthenticated()">
+						<i class="fas fa-list-alt" aria-hidden="true"></i>
+					</a>
+				    
 				    <!-- 상품 등록 버튼 - 관리자에게만 표시 -->
 				    <a href="/shop/regist" class="btn btn-info text-white" sec:authorize="hasRole('MANAGER')">
 				        <i class="fas fa-plus" aria-hidden="true"></i> 

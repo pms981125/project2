@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>매장 목록</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .store-list {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .store-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+        }
+        .store-item:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <h2>매장 목록</h2>
+
+    <!-- MANAGER 권한을 가진 사용자만 버튼 표시 -->
+    <a href="/stores/new" th:if="${#authorization.expression('hasRole(''MANAGER'')')}">
+        <button>새 매장 추가</button>
+    </a>
+
+    <ul>
+        <li th:each="store : ${stores}">
+            <a th:href="@{/stores/{id}(id=${store.storeId})}" th:text="${store.storeName}"></a>
+        </li>
+    </ul>
+</body>
+</html>
+

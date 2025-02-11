@@ -90,16 +90,4 @@ public class OrderServiceImpl implements OrderService{
         // 장바구니 비우기
         cartService.removeAll(memberId);
     }
-	
-	public void requestRefund(Long orderId) {
-		Ordered ordered = orderedRepository.findById(orderId)
-			.orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
-		
-	    if (!"PENDING".equals(ordered.getStatus()) && !"APPROVED".equals(ordered.getStatus())) {
-	        throw new IllegalStateException("환불 요청이 불가능한 상태입니다.");
-	    }
-	    
-	    ordered.setStatus("REFUND_REQUESTED");
-	    orderedRepository.save(ordered);
-	}
 }
