@@ -2,7 +2,7 @@
 
 .sidebar {
 	position: fixed;
-	width: 11%;
+	width: 10%;
 	height: 100vh;
 	background: #312450;
 	font-size: 0.85em;
@@ -19,6 +19,8 @@
 
 .nav ul {
 	list-style: none;
+	margin: 0;
+    padding: 0;
 }
 
 li {

@@ -10,8 +10,12 @@
     	<nav class="nav">
       		<ul>
         		<li><a href="#" class="active">근태 확인</a></li>
-        		<li><a th:href="|@{/sudo/allUserList}|">인사관리</a></li> <!-- 직책확인 -->
-        		<li><a href="#">매장관리</a></li> <!-- 직책확인 -->
+        		<th:block th:if="${#authentication.authorities[0].authority.equals('ROLE_SUPER_ADMIN')}">
+        			<li><a th:href="|@{/sudo/allUserList}|">인사관리</a></li>
+        		</th:block>
+        		<th:block th:if="${#authentication.authorities[0].authority.equals('ROLE_MANAGER')}">
+        			<li><a href="#">매장관리</a></li>
+        		</th:block>
         		<li><a href="javascript:goMessagesInbox()">메시지 확인</a></li>
       		</ul>
     	</nav>
@@ -39,6 +43,9 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script> <!-- 안쓰면 삭제 -->
 <script layout:fragment="script" th:inline="javascript">
+	const a = /*[[${#authentication.authorities[0].authority}]]*/""
+	// console.log(a)
+
 	function attendance() {
 		const form = document.createElement('form')
 		const tokenName = /*[[${_csrf.parameterName}]]*/""
