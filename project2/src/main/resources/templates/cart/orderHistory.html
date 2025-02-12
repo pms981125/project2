@@ -1,38 +1,164 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
 <meta charset="UTF-8">
-    <meta name="_csrf" th:content="${_csrf.token}" />
-    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+<meta name="_csrf" th:content="${_csrf.token}" />
+<meta name="_csrf_header" th:content="${_csrf.headerName}" />
 
 <title>주문 내역</title>
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+<link
+	href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap"
+	rel="stylesheet" />
 <!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	rel="stylesheet">
 <!-- Font Awesome for Icons -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+	rel="stylesheet">
+<!-- Custom styles -->
+<link href="/css/style.css" rel="stylesheet" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <style>
-	/* 상태에 따른 배지 스타일 */
-	.status-badge {
-		font-size: 0.8em;
-		padding: 0.3em 0.6em;
-	}
-	.status-PENDING { background-color: #ffc107; color: black; }
-	.status-APPROVED { background-color: #28a745; color: white; }
-	.status-REJECTED{ background-color: #dc3545; color: white; }
-	.status-REFUND_REQUESTED { background-color: #17a2b8; color: white; }
-	.status-REFUND_SUCCESS { background-color: #4B0082; color: white; }
-	.status-REFUND_REJECTED { background-color: #dc3545; color: white; }
+/* 상태에 따른 배지 스타일 */
+.status-badge {
+	font-size: 0.8em;
+	padding: 0.3em 0.6em;
+}
+
+.status-PENDING {
+	background-color: #ffc107;
+	color: black;
+}
+
+.status-APPROVED {
+	background-color: #28a745;
+	color: white;
+}
+
+.status-REJECTED {
+	background-color: #dc3545;
+	color: white;
+}
+
+.status-REFUND_REQUESTED {
+	background-color: #17a2b8;
+	color: white;
+}
+
+.status-REFUND_SUCCESS {
+	background-color: #4B0082;
+	color: white;
+}
+
+.status-REFUND_REJECTED {
+	background-color: #dc3545;
+	color: white;
+}
+
+body {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.container {
+	flex: 1;
+	margin-bottom: 2rem;
+}
+
+.container.my-4 {
+	padding-top: 2rem;
+	padding-bottom: 4rem;
+}
+
+.footer_section {
+	margin-top: auto;
+	padding: 1.5rem 0;
+	width: 100%;
+}
+
+.table {
+	margin-top: 2rem;
+}
+
+.hero_area {
+	margin-bottom: 2rem;
+}
 </style>
 </head>
-<body>
+<body class="sub_page">
+	<div class="hero_area">
+		<!-- header section starts -->
+		<header class="header_section long_section px-0">
+			<nav class="navbar navbar-expand-lg custom_nav-container">
+				<a class="navbar-brand" href="/index.html"> <span>Green
+						Project</span>
+				</a>
+
+				<button class="navbar-toggler" type="button" data-toggle="collapse"
+					data-target="#navbarSupportedContent"
+					aria-controls="navbarSupportedContent" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class=""></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<div
+						class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+						<ul class="navbar-nav">
+							<li class="nav-item"><a class="nav-link" href="/index.html">Home<span
+									class="sr-only">(current)</span></a></li>
+							<li class="nav-item"><a href="/market/access"
+								class="nav-link">Region Market</a></li>
+							<li class="nav-item"><a class="nav-link" href="/shop/list">Shopping
+									Mall</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="quote_btn-container">
+					<div class="btn-wrapper">
+						<button class="btn my-2 my-sm-0 userInfoBtn" type="button"
+							onclick="javascript:getUserInfo()">
+							<span style="color: black; margin-right: 15px;"> <i
+								class="fa fa-user" aria-hidden="true"></i> <span
+								sec:authorize="isAuthenticated()" sec:authentication="name"></span>
+							</span>
+						</button>
+						<span class="divider">|</span> <a id="loginLogoutBtn"> <b><span
+								id="buttonText" class="info">로그인</span></b>
+						</a>
+					</div>
+				</div>
+			</nav>
+			<!-- 하단 네비게이션 -->
+			<div class="bottom-nav">
+				<div class="text-right" style="padding: 10px 20px;">
+					<a href="#" class="btn btn-success text-white me-2"
+						onclick="checkLoginForCart(event)"> <i
+						class="fa fa-shopping-cart" aria-hidden="true"></i>
+					</a> <a href="/shop/regist" class="btn btn-info text-white"
+						sec:authorize="hasRole('MANAGER')"> <i class="fas fa-plus"
+						aria-hidden="true"></i>
+					</a> <a href="/manager/orders" class="btn btn-warning text-white"
+						sec:authorize="hasRole('MANAGER')"> <i class="fas fa-list-alt"
+						aria-hidden="true"></i>
+					</a>
+				</div>
+			</div>
+		</header>
+	</div>
+
 	<div class="container my-4">
 		<h2>주문 내역</h2>
-		
+
 		<div th:if="${!hasOrders}" class="alert alert-info text-center">
-	        주문 내역이 없습니다.
-	    </div>
-        
+			주문 내역이 없습니다.</div>
+
 		<!-- 주문 목록 테이블 -->
 		<table class="table table-striped">
 			<thead>
@@ -49,21 +175,22 @@
 				<tr th:each="order : ${orders}">
 					<td th:text="${order.id}"></td>
 					<td th:text="${order.customerName}"></td>
-					<td th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
-					<td th:text="${#numbers.formatInteger(order.totalAmount, 0, 'COMMA') + '원'}"></td>
+					<td
+						th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
+					<td
+						th:text="${#numbers.formatInteger(order.totalAmount, 0, 'COMMA') + '원'}"></td>
+					<td><span
+						th:class="|badge status-badge status-${order.status}|"> <span
+							th:if="${order.status == 'PENDING'}">배송대기중</span> <span
+							th:if="${order.status == 'APPROVED'}">배송중</span> <span
+							th:if="${order.status == 'REJECTED'}">주문취소</span> <span
+							th:if="${order.status == 'REFUND_REQUESTED'}">환불 요청</span> <span
+							th:if="${order.status == 'REFUND_SUCCESS'}">환불완료</span> <span
+							th:if="${order.status == 'REFUND_REJECTED'}">환불거절</span>
+					</span></td>
 					<td>
-						<span th:class="|badge status-badge status-${order.status}|">
-							<span th:if="${order.status == 'PENDING'}">배송대기중</span>
-							<span th:if="${order.status == 'APPROVED'}">배송중</span>
-							<span th:if="${order.status == 'REJECTED'}">주문취소</span>
-							<span th:if="${order.status == 'REFUND_REQUESTED'}">환불 요청</span>
-							<span th:if="${order.status == 'REFUND_SUCCESS'}">환불완료</span>
-							<span th:if="${order.status == 'REFUND_REJECTED'}">환불거절</span>
-						</span>
-					</td>
-					<td>
-						<button class="btn btn-sm btn-primary" data-bs-toggle="modal" 
-								th:data-bs-target="'#detailsModal' + ${order.id}">상세</button>
+						<button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+							th:data-bs-target="'#detailsModal' + ${order.id}">상세</button>
 					</td>
 				</tr>
 			</tbody>
@@ -71,7 +198,8 @@
 	</div>
 
 	<!-- 상세 모달 -->
-	<div th:each="order : ${orders}" th:id="'detailsModal' + ${order.id}" class="modal fade" tabindex="-1">
+	<div th:each="order : ${orders}" th:id="'detailsModal' + ${order.id}"
+		class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -81,14 +209,25 @@
 				<div class="modal-body">
 					<!-- 모달에 주문 상세 내용 표시 -->
 					<h6>주문 정보</h6>
-					<p>주문번호: <span th:text="${order.id}"></span></p>
-					<p>주문날짜: <span th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span></p>
-					
-					<h6>고객 정보</h6>  
-					<p>고객명: <span th:text="${order.customerName}"></span></p>
-					<p>연락처: <span th:text="${order.phoneNumber}"></span></p>
-					<p>주소: <span th:text="${order.address}"></span></p>
-					
+					<p>
+						주문번호: <span th:text="${order.id}"></span>
+					</p>
+					<p>
+						주문날짜: <span
+							th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></span>
+					</p>
+
+					<h6>고객 정보</h6>
+					<p>
+						고객명: <span th:text="${order.customerName}"></span>
+					</p>
+					<p>
+						연락처: <span th:text="${order.phoneNumber}"></span>
+					</p>
+					<p>
+						주소: <span th:text="${order.address}"></span>
+					</p>
+
 					<h6>주문 상품</h6>
 					<table class="table">
 						<thead>
@@ -102,40 +241,57 @@
 							<tr th:each="product : ${order.orderedProducts}">
 								<td th:text="${product.product.productName}"></td>
 								<td th:text="${product.count}"></td>
-								<td th:text="${#numbers.formatInteger(product.price, 0, 'COMMA') + '원'}"></td>
+								<td
+									th:text="${#numbers.formatInteger(product.price, 0, 'COMMA') + '원'}"></td>
 							</tr>
 						</tbody>
 					</table>
-					
+
 					<h6>결제 정보</h6>
-					<p>총금액: <span th:text="${#numbers.formatInteger(order.totalAmount, 0, 'COMMA') + '원'}"></span></p>
 					<p>
-						상태:
-						<span th:class="|badge status-badge status-${order.status}|">
-							<span th:if="${order.status == 'PENDING'}">배송대기중</span>
-							<span th:if="${order.status == 'APPROVED'}">배송중</span>
-							<span th:if="${order.status == 'REJECTED'}">주문취소</span>
-							<span th:if="${order.status == 'REFUND_REQUESTED'}">환불 요청</span>
+						총금액: <span
+							th:text="${#numbers.formatInteger(order.totalAmount, 0, 'COMMA') + '원'}"></span>
+					</p>
+					<p>
+						상태: <span th:class="|badge status-badge status-${order.status}|">
+							<span th:if="${order.status == 'PENDING'}">배송대기중</span> <span
+							th:if="${order.status == 'APPROVED'}">배송중</span> <span
+							th:if="${order.status == 'REJECTED'}">주문취소</span> <span
+							th:if="${order.status == 'REFUND_REQUESTED'}">환불 요청</span>
 						</span>
 					</p>
-					
+
 					<h6>요청사항</h6>
 					<p th:text="${order.specialRequests}"></p>
-					
+
 				</div>
 				<div class="modal-footer">
 					<!-- 환불 버튼은 pending이나 approved 상태에서만 보이도록 함 -->
-					<button th:if="${order.status == 'PENDING' || order.status == 'APPROVED'}"
-						class="btn btn-danger" th:data-order-id="${order.id}">환불 요청</button>
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+					<button
+						th:if="${order.status == 'PENDING' || order.status == 'APPROVED'}"
+						class="btn btn-danger" th:data-order-id="${order.id}">환불
+						요청</button>
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">닫기</button>
 				</div>
 			</div>
 		</div>
 	</div>
 
+	<!-- footer section -->
+	<footer class="footer_section">
+		<div class="container">
+			<p>
+				&copy; <span id="displayYear"></span> All Rights Reserved By <a
+					href="https://html.design/">Free Html Templates</a>
+			</p>
+		</div>
+	</footer>
+
 	<!-- Bootstrap JS -->
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-	
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 	<script>
 		// 환불 요청 버튼 클릭 이벤트 처리
 		document.querySelectorAll('.btn-danger').forEach(btn => {
@@ -170,6 +326,83 @@
 				// 필요하다면 전체 페이지 새로고침
 			});
 		});
+		
+		// Navigation bar scripts
+        function updateLoginButton() {
+            fetch('/user/loginStatus')
+                .then(response => response.json())
+                .then(data => {
+                    const button = document.getElementById('loginLogoutBtn');
+                    const buttonText = document.getElementById('buttonText');
+                    
+                    if (data.isLoggedIn) {
+                        buttonText.textContent = '로그아웃';
+                        button.href = '/user/logout';
+                    } else {
+                        buttonText.textContent = '로그인';
+                        button.href = '/user/login';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        document.querySelector(".userInfoBtn").addEventListener("click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            fetch('/user/loginStatus')
+                .then(response => response.json())
+                .then(data => {
+                    const form = document.createElement('form');
+                    
+                    if (data.isLoggedIn) {
+                        form.action = '/user/userInfo';
+                    } else {
+                        form.action = '/user/login';
+                    }
+                    
+                    form.method = 'get';
+                    document.body.appendChild(form);
+                    form.submit();
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById("loginLogoutBtn").addEventListener("click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const form = document.createElement('form');
+            form.action = this.href;
+            form.method = 'get';
+            document.body.appendChild(form);
+            form.submit();
+        });
+
+        function checkLoginForCart(e) {
+            e.preventDefault();
+            
+            fetch('/user/loginStatus')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.isLoggedIn) {
+                        window.location.href = '/cart/list';
+                    } else {
+                        alert('장바구니는 로그인 후 이용 가능합니다.');
+                        window.location.href = '/user/login';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('오류가 발생했습니다. 다시 시도해주세요.');
+                });
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateLoginButton();
+        });
+        
 	</script>
-</body>  
+</body>
 </html>

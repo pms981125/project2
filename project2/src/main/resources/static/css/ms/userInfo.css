@@ -1,74 +1,114 @@
 @charset "UTF-8";
 
-body {
-	background-color: #f8f9fa;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-		"Helvetica Neue", Arial, sans-serif;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	min-height: 70vh;
-	margin: 0;
+.userInfoBtn, #loginLogoutBtn {
+	margin-left: 15px;
 }
 
-.container {
-	max-width: 600px;
-	background-color: white;
+.form-container {
+	max-width: 1024px;
+	margin: 2rem auto;
 	padding: 2rem;
-	border-radius: 8px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	background-color: #ffffff;
 }
 
-h2 {
+.form-title {
 	color: #333;
 	font-size: 1.5rem;
 	font-weight: 600;
 	margin-bottom: 2rem;
 	padding-bottom: 1rem;
-	border-bottom: 2px solid #eee;
+	border-bottom: 2px solid #e2e8f0;
 }
 
 .form-group {
-	margin-bottom: 1rem;
+	margin-bottom: 1.5rem;
+	background-color: #ffffff;
+	padding: 1rem;
+	border-radius: 4px;
+	border: 1px solid #e2e8f0;
 }
 
-.input-group-text {
-	min-width: 120px;
-	background-color: #f8f9fa;
-	border-color: #ced4da;
-	color: #495057;
-	font-size: 0.9rem;
-}
-
-.form-control {
-	border-color: #ced4da;
-}
-
-.form-control:read-only {
-	background-color: #e9ecef;
-}
-
-.btn {
-	padding: 0.5rem 1.5rem;
+.input-label {
+	display: block;
 	font-weight: 500;
+	color: #4a5568;
+	margin-bottom: 0.5rem;
+	font-size: 0.95rem;
 }
 
-.btn-primary {
-	background-color: #4a90e2;
-	border-color: #4a90e2;
+.required::after {
+	content: "*";
+	color: #e53e3e;
+	margin-left: 0.25rem;
 }
 
-.btn-danger {
-	background-color: #dc3545;
-	border-color: #dc3545;
+.form-input {
+	width: 100%;
+	padding: 0.625rem;
+	border: 1px solid #e2e8f0;
+	border-radius: 4px;
+	background-color: #fff;
+	transition: border-color 0.2s;
+	font-size: 0.95rem;
 }
 
-.btn-success {
-	background-color: #28a745;
-	border-color: #28a745;
+.form-input:focus {
+	outline: none;
+	border-color: #4299e1;
 }
 
-.asterisk {
-	color: #dc3545;
-	margin-left: 3px;
+.form-input[readonly] {
+	background-color: #f8fafc;
+}
+
+.address-group {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.address-input {
+	flex: 1;
+}
+
+.address-button {
+	padding: 0.625rem 1rem;
+	background-color: #4299e1;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background-color 0.2s;
+	font-size: 0.95rem;
+}
+
+.button-group {
+	display: flex;
+	justify-content: center;
+	gap: 0.75rem;
+	margin-top: 2rem;
+	padding: 1rem;
+	background-color: #ffffff;
+	border: 1px solid #e2e8f0;
+	border-radius: 4px;
+}
+
+.btn-update {
+	background-color: #4299e1;
+	color: white;
+}
+
+.btn-delete {
+	background-color: #f56565;
+	color: white;
+}
+
+.btn-order {
+	background-color: #48bb78;
+	color: white;
+}
+
+.btn-home {
+	background-color: #718096;
+	color: white;
 }
