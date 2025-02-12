@@ -22,8 +22,11 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 	
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+		String id = authentication.getName(); // id
+				
 		if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPER_ADMIN"))) {
-			response.sendRedirect("/sudo/allUserList");
+			response.sendRedirect("/sudo/goAttendance?id=" + id);
+			// response.sendRedirect("/sudo/allUserList");
 			// response.sendRedirect("/index.html");
 		} else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
 			// MemberSecurityDTO memberSecurityDTO = (MemberSecurityDTO) authentication.getPrincipal();
@@ -31,7 +34,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 			// response.sendRedirect("/hr/info?id=" + memberSecurityDTO.getId());
 			response.sendRedirect("/hr/userList"); // templates 폴더에 있는 html 파일에 접근 시, controller 이용
 		} else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_MANAGER"))) {
-			response.sendRedirect("/shop/list");
+			response.sendRedirect("/sudo/goAttendance?id=" + id);
+			// response.sendRedirect("/shop/list");
 		} else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER"))) {
 			response.sendRedirect("/index.html"); // static 폴더에 있는 html 파일로 접근 시
 			//response.sendRedirect("/user/home");

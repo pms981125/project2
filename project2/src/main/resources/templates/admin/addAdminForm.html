@@ -4,8 +4,25 @@
 
 <link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
 <link th:href="@{/css/ms/addAdminForm.css}" rel="stylesheet" />
+<link th:href="@{/css/ms/sidebar.css}" rel="stylesheet" />
 
 <div layout:fragment="content">
+	<aside class="sidebar">
+    	<nav class="nav">
+      		<ul>
+        		<li><a href="javascript:goAttendance()">근태 확인</a></li>
+        		<th:block th:if="${#authentication.authorities[0].authority.equals('ROLE_SUPER_ADMIN')}">
+        			<li><a th:href="|@{/sudo/allUserList}|">인사관리</a></li>
+        			<li><a th:href="|@{/sudo/addAdmin}|" class="active">직원 등록</a></li>
+        		</th:block>
+        		<th:block th:if="${#authentication.authorities[0].authority.equals('ROLE_MANAGER')}">
+        		<li><a th:href="|@{/shop/list}|">매장관리</a></li>
+        		</th:block>
+        		<li><a href="javascript:goMessagesInbox()">메시지 확인</a></li>
+        		<li><a th:href="|@{/sudo/logout}|">로그아웃</a></li>
+      		</ul>
+    	</nav>
+  	</aside>
 
 	<section class="d-flex vh-100">
 	    <div class="container-fluid row justify-content-center align-content-center">
@@ -69,7 +86,7 @@
 						<div class="form-group input-group mt-sm-1 justify-content-center">
 							<!-- <button class="btn btn-primary addAdminBtn">관리자 추가</button> -->
 							<input type="submit" class="btn btn-primary buttonSubmit" value="직원 등록" />
-							<button class="btn btn-success goBackBtn ml-2" >이전</button>
+							<!-- <button class="btn btn-success goBackBtn ml-2" >이전</button> -->
 						</div>
 					</form>
 	            </div>
@@ -136,12 +153,12 @@
 	    }
 	}, false)
 	
-	document.querySelector(".goBackBtn").addEventListener("click", function(e) {
+/* 	document.querySelector(".goBackBtn").addEventListener("click", function(e) {
 	    e.preventDefault()
 	    e.stopPropagation()
 	    
 		location.href = "/sudo/allUserList"
-	}, false)
+	}, false) */
 	
 	function searchAddress() {
         new daum.Postcode({
@@ -233,4 +250,31 @@
         	}); //End Ajax
     	});
     })
+    	
+	function goAttendance() {
+		const form = document.createElement('form')
+		const id = /*[[${#authentication.name}]]*/""
+		
+		let input1 = document.createElement('input')
+	    
+		input1.type = 'hidden'
+	    input1.name = 'id'
+	    input1.value = id
+		
+	    form.appendChild(input1)
+		
+		form.action = `/sudo/goAttendance`
+		form.method = 'get'
+		document.body.appendChild(form)
+		form.submit()
+	}
+
+	function goMessagesInbox() {
+		const form = document.createElement('form')
+		
+		form.action = `/messages/inbox`
+		form.method = 'get'
+		document.body.appendChild(form)
+		form.submit()
+	}
 </script>
