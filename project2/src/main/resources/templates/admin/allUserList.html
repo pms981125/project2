@@ -4,8 +4,26 @@
 
 <link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
 <link th:href="@{/css/ms/userList.css}" rel="stylesheet" />
+<link th:href="@{/css/ms/sidebar.css}" rel="stylesheet" />
 
 <div layout:fragment="content">
+	<aside class="sidebar">
+    	<nav class="nav">
+      		<ul>
+        		<li><a href="javascript:goAttendance()">근태 확인</a></li>
+        		<th:block th:if="${#authentication.authorities[0].authority.equals('ROLE_SUPER_ADMIN')}">
+        			<li><a th:href="|@{/sudo/allUserList}|" class="active">인사관리</a></li>
+        			<li><a th:href="|@{/sudo/addAdmin}|">직원 등록</a></li>
+        		</th:block>
+        		<th:block th:if="${#authentication.authorities[0].authority.equals('ROLE_MANAGER')}">
+        		<li><a th:href="|@{/shop/list}|">매장관리</a></li>
+        		</th:block>
+        		<li><a href="javascript:goMessagesInbox()">메시지 확인</a></li>
+        		<li><a th:href="|@{/sudo/logout}|">로그아웃</a></li>
+      		</ul>
+    	</nav>
+  	</aside>
+
 	<div class="container mt-4">
 		<div class="input-group">
 			<div class="input-group-prepend">
@@ -49,13 +67,13 @@
 		
 		<hr />	
 		<div class="button">
-			<a th:href="|@{/sudo/addAdmin}|" class="text-decoration-none">
+			<!-- <a th:href="|@{/sudo/addAdmin}|" class="text-decoration-none">
 				<button type="button" class="btn btn-primary">직원 등록</button>
-			</a>
-			<button type="button" class="btn btn-primary" onclick="goAttendance()">출퇴근</button>
-			<a th:href="|@{/sudo/logout}|" class="text-decoration-none">
+			</a> -->
+			<!-- <button type="button" class="btn btn-primary" onclick="goAttendance()">출퇴근</button> -->
+			<!-- <a th:href="|@{/sudo/logout}|" class="text-decoration-none">
 				<button type="button" class="btn btn-secondary">로그 아웃</button>
-			</a>
+			</a> -->
 		</div>
 	</div>
 </div>
@@ -135,6 +153,15 @@
 	    form.appendChild(input1)
 		
 		form.action = `/sudo/goAttendance`
+		form.method = 'get'
+		document.body.appendChild(form)
+		form.submit()
+	}
+	
+	function goMessagesInbox() {
+		const form = document.createElement('form')
+		
+		form.action = `/messages/inbox`
 		form.method = 'get'
 		document.body.appendChild(form)
 		form.submit()
