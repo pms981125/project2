@@ -18,9 +18,7 @@
 <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
 
 <!-- fonts style -->
-<link
-	href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap"
-	rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet" />
 
 <!-- font awesome style -->
 <link href="/css/font-awesome.min.css" rel="stylesheet" />
@@ -28,8 +26,7 @@
 <!-- Custom styles -->
 <link href="/css/style.css" rel="stylesheet" />
 <link href="/css/responsive.css" rel="stylesheet" />
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <link rel="stylesheet" href="/css/ms/userinfo.css" />
 </head>
 <body class="sub_page">
@@ -37,40 +34,42 @@
 		<!-- header section starts -->
 		<header class="header_section long_section px-0">
 			<nav class="navbar navbar-expand-lg custom_nav-container">
-				<a class="navbar-brand" href="/index.html"> <span>Green
-						Project</span>
+				<a class="navbar-brand" href="/index.html">
+					<span>Green Project</span>
 				</a>
 
-				<button class="navbar-toggler" type="button" data-toggle="collapse"
-					data-target="#navbarSupportedContent"
-					aria-controls="navbarSupportedContent" aria-expanded="false"
-					aria-label="Toggle navigation">
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+						aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					<span class=""></span>
 				</button>
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<div
-						class="d-flex mx-auto flex-column flex-lg-row align-items-center">
+					<div class="d-flex mx-auto flex-column flex-lg-row align-items-center">
 						<ul class="navbar-nav">
-							<li class="nav-item"><a class="nav-link" href="/index.html">Home<span
-									class="sr-only">(current)</span></a></li>
-							<li class="nav-item"><a href="/market/access"
-								class="nav-link">Region Market</a></li>
-							<li class="nav-item"><a class="nav-link" href="/shop/list">Shopping
-									Mall</a></li>
+							<li class="nav-item">
+								<a class="nav-link" href="/index.html">
+									Home<span class="sr-only">(current)</span>
+								</a>
+							</li>
+							<li class="nav-item">
+								<a href="/stores" class="nav-link">Store List</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/shop/list">Shopping Mall</a>
+							</li>
 						</ul>
 					</div>
 				</div>
 				<div class="quote_btn-container">
 					<div class="btn-wrapper">
-						<button class="btn my-2 my-sm-0 userInfoBtn" type="button"
-							onclick="javascript:getUserInfo()">
-							<span style="color: black; margin-right: 15px;"> <i
-								class="fa fa-user" aria-hidden="true"></i> <span
-								sec:authorize="isAuthenticated()" sec:authentication="name"></span>
+						<button class="btn my-2 my-sm-0 userInfoBtn" type="button" onclick="javascript:getUserInfo()">
+							<span style="color: black; margin-right: 15px;">
+								<i	class="fa fa-user" aria-hidden="true"></i>
+								<span sec:authorize="isAuthenticated()" sec:authentication="name"></span>
 							</span>
 						</button>
-						<span class="divider">|</span> <a id="loginLogoutBtn"> <b><span
-								id="buttonText" class="info">로그인</span></b>
+						<span class="divider">|</span>
+						<a id="loginLogoutBtn">
+							<b><span id="buttonText" class="info">로그인</span></b>
 						</a>
 					</div>
 				</div>
