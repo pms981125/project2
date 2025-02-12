@@ -141,24 +141,28 @@
 		document.querySelectorAll('.btn-danger').forEach(btn => {
 			btn.addEventListener('click', async function() {	
 				const orderId = this.dataset.orderId;
-				if(confirm('정말로 환불하시겠습니까?')) {
+				const refundReason = prompt('환불 사유를 입력해주세요:');
+				
+				if(refundReason !== null && refundReason.trim() !== '') {
 					try{
 						const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
 						const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 						
-						const response = await fetch(`/api/orders/${orderId}/refund`, {
+						const response = await fetch(`/cart/{orderId}/refund`, {
 							method: 'POST',
 							headers: {
 								'Content-Type': 'application/json',
 								[header]: token
-							}
+							},
+							body: JSON.stringify({ refundReason: refundReason })
 						});
 						
 						if(response.ok){
 							alert('환불 요청이 완료 되었습니다.');
 							window.location.reload();
 						} else {
-							alert('환불 요청 중 오류가 발생했습니다.');
+							const errorMessage = await response.text();
+							alert(errorMessage || '환불 요청 중 오류가 발생했습니다.');
 						}
 					} catch (error) {
 		                console.error('Error:', error);

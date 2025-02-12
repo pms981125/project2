@@ -1,5 +1,7 @@
 package com.lec.project.shoppingmall.controller.cart.order;
 
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -7,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +22,11 @@ import com.lec.project.shoppingmall.dto.PageRequestDTO;
 import com.lec.project.shoppingmall.dto.PageResponseDTO;
 import com.lec.project.shoppingmall.dto.cart.CartListDTO;
 import com.lec.project.shoppingmall.dto.cart.order.OrderSubmitDTO;
+import com.lec.project.shoppingmall.dto.refund.UserRefundDetailResponseDTO;
+import com.lec.project.shoppingmall.dto.refund.UserRefundRequestDTO;
 import com.lec.project.shoppingmall.service.cart.CartService;
 import com.lec.project.shoppingmall.service.cart.order.OrderService;
+import com.lec.project.shoppingmall.service.refund.RefundService;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +41,7 @@ public class OrderController {
 	private final OrderService orderService;
 	private final MemberRepository memberRepository;
 	private final CartService cartService;
+	private final RefundService refundService;
 	
 	@GetMapping("/order")
 	public String order(PageRequestDTO pageRequestDTO
@@ -111,4 +118,29 @@ public class OrderController {
 	    session.setAttribute("orderSubmitDTO", orderSubmitDTO);
 	    return ResponseEntity.ok("success");
 	}
+	
+    @PostMapping("/{orderId}/refund")
+    public ResponseEntity<?> requestRefund(
+        @PathVariable Long orderId,
+        @RequestBody(required = false) Map<String, String> payload,
+        @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        // 환불 사유 추출 (옵션)
+        String refundReason = payload != null ? payload.get("refundReason") : "사유 미입력";
+
+        UserRefundRequestDTO userRefundRequestDTO = UserRefundRequestDTO.builder()
+                .orderId(orderId)
+                .refundReason(refundReason)
+                .build();
+
+        try {
+            UserRefundDetailResponseDTO userRefundDetailResponseDTO = refundService.createRefund(
+                userDetails.getUsername(), 
+                userRefundRequestDTO
+            );
+            return ResponseEntity.ok(userRefundDetailResponseDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

@@ -45,11 +45,11 @@
 								<i class="fas fa-shopping-cart"></i> 주문 관리
 							</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="#">
-								<i class="fas fa-undo"></i> 환불 관리
-							</a>
-						</li>
+			            <li class="nav-item">
+			                <a class="nav-link" href="/refunds/management">
+			                    <i class="fas fa-undo"></i> 환불 관리
+			                </a>
+			            </li>
 						<li class="nav-item">
 						<a class="nav-link" href="/stocks">
 							<i class="fas fa-chart-bar"></i> 제고 관리
@@ -80,7 +80,9 @@
                                 <option value="PENDING">대기</option>
                                 <option value="APPROVED">승인</option>
                                 <option value="REJECTED">거절</option>
-                                <option value="REFUND_REQUESTED">환불요청</option>
+								<option value="REFUND_REQUESTED">환불 요청</option>
+								<option value="REFUND_SUCCESS">환불 완료</option>
+								<option value="REFUND_REJECTED">환불 거절</option>
                             </select>
                         </div>
                         <div class="col-md-3">

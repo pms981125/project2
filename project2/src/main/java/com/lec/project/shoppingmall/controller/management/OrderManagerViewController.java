@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lec.project.shoppingmall.dto.magement.OrderManagementDTO;
-import com.lec.project.shoppingmall.service.magement.OrderManagementService;
+import com.lec.project.shoppingmall.service.magement.OrderManagementServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -24,7 +24,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class OrderManagerViewController {
 
-	private final OrderManagementService orderManagementService;
+	private final OrderManagementServiceImpl orderManagementService;
 	
 	@GetMapping
 	public String orderManagementView(

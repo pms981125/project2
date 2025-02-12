@@ -66,14 +66,14 @@ public class OrderManagementRestController {
     @PostMapping("/refunds/{orderId}/process")
     public ResponseEntity<RefundRequestDTO> processRefundRequest(
         @PathVariable("orderId") Long orderId,
-        @RequestBody RefundProcessRequestDTO RefundProcessRequest
+        @RequestBody RefundProcessRequestDTO refundProcessRequestDTO
     ) {
-        RefundRequestDTO processedRefund = orderManagementService.processRefundRequest(
+        RefundRequestDTO refundRequestDTO = orderManagementService.processRefundRequest(
             orderId, 
-            RefundProcessRequest.isApprove(), 
-            RefundProcessRequest.getManagerComment()
+            refundProcessRequestDTO.isApprove(), 
+            refundProcessRequestDTO.getManagerComment()
         );
-        return ResponseEntity.ok(processedRefund);
+        return ResponseEntity.ok(refundRequestDTO);
     }
     
 //    @PostMapping("/{orderId}/refund")
@@ -95,6 +95,7 @@ public class OrderManagementRestController {
 		@RequestParam(name = "search", required = false) String search, 
 		@PageableDefault(size = 10) Pageable pageable
     ) {
+
         Page<OrderManagementDTO> filteredOrders = orderManagementService.getOrderList(
             status, startDate, endDate, search, pageable
         );

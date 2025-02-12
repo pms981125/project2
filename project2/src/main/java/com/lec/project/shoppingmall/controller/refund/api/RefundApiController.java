@@ -72,15 +72,24 @@ public class RefundApiController {
     // 환불 목록 조회 (관리자용)
     @GetMapping("/management")
     public ResponseEntity<Page<UserRefundListResponseDTO>> getRefundList(
-        @RequestParam(required = false) OrderStatus status,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
-        @RequestParam(required = false) String search,
+        @RequestParam(name = "status", required = false) String status,
+        @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+        @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+        @RequestParam(name = "search", required = false) String search,
         @PageableDefault(size = 10) Pageable pageable
     ) {
-        return ResponseEntity.ok(
-            refundService.getRefundList(status, startDate, endDate, search, pageable)
-        );
+        log.info("환불 관리 API 요청 파라미터:");
+        log.info("Status: {}", status);
+        log.info("Start Date: {}", startDate);
+        log.info("End Date: {}", endDate);
+        log.info("Search: {}", search);
+        log.info("Pageable: {}", pageable);
+    	
+    	OrderStatus orderStatus = status != null ? OrderStatus.valueOf(status) : null;
+    	
+		return ResponseEntity.ok(
+		        refundService.getRefundList(orderStatus, startDate, endDate, search, pageable)
+		);
     }
     
     // 회원별 환불 목록 조회
