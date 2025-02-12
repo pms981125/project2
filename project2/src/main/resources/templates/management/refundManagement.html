@@ -16,9 +16,10 @@
 			font-size: 0.8em;
 			padding: 0.3em 0.6em;
 		}
-		.status-REFUND_PENDING { background-color: #ffc107; color: black; }
-		.status-REFUND_APPROVED { background-color: #28a745; color: white; }
-		.status-REFUND_REJECTED { background-color: #dc3545; color: white; }
+		.status-REFUND_PENDING { background-color: #ffc107; }
+		.status-REFUND_APPROVED { background-color: #28a745; }
+		.status-REFUND_REJECTED { background-color: #dc3545; }
+		.status-REFUND_REQUESTED { background-color: #17a2b8; }
         
 		.action-buttons {
 			display: flex;
@@ -29,7 +30,7 @@
 			padding: 1rem;
 			margin-bottom: 1rem;
 			border-radius: 0.5rem;
-		}
+		}		
 	</style>
 </head>
 <body>
@@ -49,11 +50,11 @@
 								<i class="fas fa-undo"></i> 환불 관리
 							</a>
 						</li>
-						<li class="nav-item">
-						<a class="nav-link" href="#">
-							<i class="fas fa-chart-bar"></i> 매출 통계
-							</a>
-						</li>
+			            <li class="nav-item">
+			                <a class="nav-link" href="/stocks">
+			                    <i class="fas fa-boxes"></i> 재고 관리
+			                </a>
+			            </li>
 						<hr class="my-3">
 			            <li class="nav-item">
 			                <a class="nav-link" href="/shop/list">
@@ -107,36 +108,26 @@
                             </tr>
                         </thead>
                         <tbody id="refundTableBody">
-                            <tr th:each="refund : ${refundList.content}">
-								<td th:text="${refund.orderId}">주문 번호</td>
-								<td th:text="${refund.customerName}">고객명</td>
-								<td th:text="${#temporals.format(refund.orderDate, 'yyyy-MM-dd HH:mm')}">주문 날짜</td>
-								<td th:text="${#numbers.formatInteger(refund.totalAmount, 0, 'COMMA') + '원'}">환불 금액</td>
-								<td>
-									<span th:class="|badge status-badge status-${refund.refundStatus}|"
-									      th:text="${refund.refundStatus}">상태</span>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-										<button class="btn btn-sm btn-success"
-												th:data-order-id="${refund.orderId}"
-												data-bs-toggle="modal"
-												data-bs-target="#refundDetailsModal">
-											<i class="fas fa-eye"></i> 상세
-                                        </button>
-                                        <button class="btn btn-sm btn-primary refund-approve-btn"
-                                        		th:data-order-id="${refund.orderId}"
-                                                th:disabled="${refund.refundStatus != 'REFUND_PENDING'}">
-											<i class="fas fa-check"></i> 승인
-										</button>
-										<button class="btn btn-sm btn-danger refund-reject-btn"
-												th:data-order-id="${refund.orderId}"
-												th:disabled="${refund.refundStatus != 'REFUND_PENDING'}">
-                                            <i class="fas fa-times"></i> 거절
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+							<tr th:each="refund : ${refundList.content}">
+							    <td th:text="${refund.orderId}">주문 번호</td>
+							    <td th:text="${refund.customerName}">고객명</td>
+							    <td th:text="${#temporals.format(refund.orderDate, 'yyyy-MM-dd HH:mm')}">주문 날짜</td>
+							    <td th:text="${#numbers.formatInteger(refund.totalAmount, 0, 'COMMA') + '원'}">환불 금액</td>
+							    <td>
+							        <span th:class="|badge status-badge status-${refund.orderStatus}|"
+							              th:text="${refund.orderStatus}">상태</span>
+							    </td>
+							    <td>
+							        <div class="action-buttons">
+							            <button class="btn btn-sm btn-success"
+							                    th:data-order-id="${refund.orderId}"
+							                    data-bs-toggle="modal"
+							                    data-bs-target="#refundDetailsModal">
+							                <i class="fas fa-eye"></i> 상세
+							            </button>
+							        </div>
+							    </td>
+							</tr>
                             <!-- More rows will be dynamically added -->
                         </tbody>
                     </table>
@@ -221,328 +212,67 @@
     
 	<script>
 	document.addEventListener('DOMContentLoaded', function() {
-	    const refundApproveButtons = document.querySelectorAll('.refund-approve-btn');
-	    const refundRejectButtons = document.querySelectorAll('.refund-reject-btn');
-	
-	    function updateRefundStatus(orderId, status) {
+	    // DOM 요소 참조
+	    const statusFilter = document.getElementById('statusFilter');
+	    const startDateFilter = document.getElementById('startDateFilter');
+	    const endDateFilter = document.getElementById('endDateFilter');
+	    const searchInput = document.getElementById('searchInput');
+	    const modalApproveBtn = document.querySelector('#refundDetailsModal .refund-approve-btn');
+	    const modalRejectBtn = document.querySelector('#refundDetailsModal .refund-reject-btn');
+
+	    // 상태 텍스트 매핑
+	    const statusText = {
+	        'REFUND_PENDING': '환불 대기',
+	        'REFUND_APPROVED': '환불 승인',
+	        'REFUND_REJECTED': '환불 거절',
+	        'REFUND_REQUESTED': '환불 요청'
+	    };
+
+	    // 환불 상태 업데이트 함수
+	    function updateRefundStatus(orderId, approve, managerComment = '') {
 	        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
 	        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 	        
-	        fetch('/api/manager/refunds/' + orderId + '/status', {
-	            method: 'PATCH',
+	        fetch(`/api/manager/orders/refunds/${orderId}/process`, {
+	            method: 'POST',
 	            headers: {
 	                'Content-Type': 'application/json',
 	                [header]: token
 	            },
 	            body: JSON.stringify({
-	                status: status
+	                approve: approve,
+	                managerComment: managerComment
 	            })
 	        })
 	        .then(response => response.json())
 	        .then(data => {
-	            // 화면 업데이트
-				const statusBadge = document.querySelector(`button[data-order-id="${orderId}"]`)
-					.closest('tr')
-					.querySelector('.status-badge');
-	            
-	            statusBadge.classList.remove('status-REFUND_PENDING', 'status-REFUND_APPROVED', 'status-REFUND_REJECTED');
-	            statusBadge.classList.add(`status-${status}`);
-	            
-	            // 상태 텍스트 업데이트
-				const statusText = {
-					'REFUND_PENDING': '환불 대기',
-					'REFUND_APPROVED': '환불 승인',
-					'REFUND_REJECTED': '환불 거절'
-				};
-				statusBadge.textContent = statusText[status];
-				
-				// 버튼 비활성화
-				const approveBtn = document.querySelector(`button.refund-approve-btn[data-order-id="${orderId}"]`);
-				const rejectBtn = document.querySelector(`button.refund-reject-btn[data-order-id="${orderId}"]`);
-				if (approveBtn) approveBtn.disabled = true;
-				if (rejectBtn) rejectBtn.disabled = true;
-				
-				alert('환불 상태가 변경되었습니다.');
+	            alert(approve ? '환불이 승인되었습니다.' : '환불이 거절되었습니다.');
+	            bootstrap.Modal.getInstance(document.getElementById('refundDetailsModal')).hide();
+	            applyFilters();
 	        })
 	        .catch(error => {
 	            console.error('Error:', error);
-	            alert('환불 상태 변경 중 오류가 발생했습니다.');
+	            alert('환불 처리 중 오류가 발생했습니다.');
 	        });
 	    }
-	
-	    // 리스트의 승인/거절 버튼 이벤트 리스너
-	    refundApproveButtons.forEach(btn => {
-	        btn.addEventListener('click', function() {
-	            const orderId = this.dataset.orderId;
-	            updateRefundStatus(orderId, 'REFUND_APPROVED');
-	        });
+
+	    // 모달 승인/거절 버튼 이벤트 리스너
+	    modalApproveBtn.addEventListener('click', function() {
+	        const orderId = this.dataset.orderId;
+	        if(confirm('환불을 승인하시겠습니까?')) {
+	            updateRefundStatus(orderId, true);
+	        }
 	    });
-	
-	    refundRejectButtons.forEach(btn => {
-	        btn.addEventListener('click', function() {
-	            const orderId = this.dataset.orderId;
-	            updateRefundStatus(orderId, 'REFUND_REJECTED');
-	        });
+
+	    modalRejectBtn.addEventListener('click', function() {
+	        const orderId = this.dataset.orderId;
+	        const comment = prompt('환불 거절 사유를 입력해주세요:');
+	        if(comment !== null && comment.trim() !== '') {
+	            updateRefundStatus(orderId, false, comment);
+	        }
 	    });
-	    
-		const statusFilter = document.getElementById('statusFilter');
-		const startDateFilter = document.getElementById('startDateFilter');
-		const endDateFilter = document.getElementById('endDateFilter');
-		const searchInput = document.getElementById('searchInput');
-		
-		function applyFilters() {
-			const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-			const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-			
-			const params = new URLSearchParams();
-			
-			// 상태 필터 파라미터 추가
-			if (statusFilter.value) {
-				params.append('status', statusFilter.value);
-			}
-			
-			// 시작 날짜 필터 파라미터 추가 (시작 시간을 00:00:00으로 설정)
-			if (startDateFilter.value) {
-				params.append('startDate', startDateFilter.value + 'T00:00:00');
-			}
-			
-			// 종료 날짜 필터 파라미터 추가 (종료 시간을 23:59:59로 설정)
-			if (endDateFilter.value) {
-				params.append('endDate', endDateFilter.value + 'T23:59:59');
-			}
-			
-			// 검색어 필터 파라미터 추가
-			if (searchInput.value.trim()) {
-				params.append('search', searchInput.value.trim());
-			}
-			
-		    // 페이징 파라미터 추가 (첫 페이지부터 시작, 페이지당 10개 항목)
-		    params.append('page', '0');
-		    params.append('size', '10');
-			
-		    // 환불 데이터 조회 API 호출
-		    fetch(`/api/manager/refunds/management?${params.toString()}`, {
-				method: 'GET',
-				headers: {
-					[header]: token
-				}
-			})
-			.then(response => response.json())
-			.then(data => {
-				const refundTableBody = document.getElementById('refundTableBody');
-				refundTableBody.innerHTML = ''; // 테이블 초기화
-				
-		        // 검색 결과가 없는 경우 처리
-		         if (!data || !data.content || data.content.length === 0) {
-		            refundTableBody.innerHTML = `
-		                <tr>
-		                    <td colspan="6" class="text-center">검색 결과가 없습니다.</td>
-		                </tr>
-		            `;
-		            return;
-		        }
-				
-				// 데이터 동적으로 테이블에 추가
-				data.content.forEach(refund => {
-					const row = document.createElement('tr');
-					row.innerHTML = `
-	                    <td>${refund.orderId}</td>
-	                    <td>${refund.customerName}</td>
-	                    <td>${new Date(refund.orderDate).toLocaleString()}</td>
-	                    <td>${refund.totalAmount.toLocaleString()}원</td>
-	                    <td>
-	                        <span class="badge status-badge status-${refund.refundStatus}">
-	                            ${getRefundStatusText(refund.refundStatus)}
-	                        </span>
-	                    </td>
-	                    <td>
-	                        <div class="action-buttons">
-	                            <button class="btn btn-sm btn-success" 
-	                                    data-order-id="${refund.orderId}"
-	                                    data-bs-toggle="modal"
-	                                    data-bs-target="#refundDetailsModal">
-	                                <i class="fas fa-eye"></i> 상세
-	                            </button>
-	                            <button class="btn btn-sm btn-primary refund-approve-btn"
-	                                    data-order-id="${refund.orderId}"
-	                                    ${refund.refundStatus !== 'REFUND_PENDING' ? 'disabled' : ''}>
-	                                <i class="fas fa-check"></i> 승인
-	                            </button>
-	                            <button class="btn btn-sm btn-danger refund-reject-btn"
-	                                    data-order-id="${refund.orderId}"
-	                                    ${refund.refundStatus !== 'REFUND_PENDING' ? 'disabled' : ''}>
-	                                <i class="fas fa-times"></i> 거절
-	                            </button>
-	                        </div>
-	                    </td>
-	                `;
-					refundTableBody.appendChild(row);
-				});
-				
-				// 이벤트 리스너 재설정
-				attachEventListeners();
-			})
-			.catch(error => {
-			    console.error('필터링 중 오류:', error);
-			    const refundTableBody = document.getElementById('refundTableBody');
-			    refundTableBody.innerHTML = `
-			        <tr>
-			            <td colspan="6" class="text-center text-danger">
-			                데이터를 불러오는 중 오류가 발생했습니다.<br>
-			                잠시 후 다시 시도해주세요.
-			            </td>
-			        </tr>
-			    `;
-			})
-		}
-		
-		// 환불 상태 텍스트 변환 함수
-		function getRefundStatusText(status) {
-			const statusTexts = {
-				'REFUND_PENDING': '환불 대기',
-				'REFUND_APPROVED': '환불 승인',
-				'REFUND_REJECTED': '환불 거절'
-			};
-			return statusTexts[status] || status;
-		}
-		
-	    // 이벤트 리스너 등록 함수
-	    function attachEventListeners() {
-	        const refundApproveButtons = document.querySelectorAll('.refund-approve-btn');
-	        const refundRejectButtons = document.querySelectorAll('.refund-reject-btn');
-	        const detailButtons = document.querySelectorAll('[data-bs-target="#refundDetailsModal"]');
 
-	        // 승인/거절 버튼 이벤트 리스너
-	        refundApproveButtons.forEach(btn => {
-	            btn.addEventListener('click', function() {
-	                const orderId = this.dataset.orderId;
-	                updateRefundStatus(orderId, 'REFUND_APPROVED');
-	            });
-	        });
-
-	        refundRejectButtons.forEach(btn => {
-	            btn.addEventListener('click', function() {
-	                const orderId = this.dataset.orderId;
-	                updateRefundStatus(orderId, 'REFUND_REJECTED');
-	            });
-	        });
-
-	        // 상세 버튼 이벤트 리스너
-	        detailButtons.forEach(btn => {
-	            btn.addEventListener('click', function() {
-	                const orderId = this.dataset.orderId;
-	                loadRefundDetails(orderId);
-	            });
-	        });
-	    }
-
-	    // 환불 상세 정보 로드 함수
-	    function loadRefundDetails(orderId) {
-	        const refundDetailsModal = document.getElementById('refundDetailsModal');
-	        const modalBody = refundDetailsModal.querySelector('.modal-body');
-	        
-	        // 로딩 스피너 표시
-	        modalBody.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">로딩중...</span></div></div>';
-	        
-	        // 환불 상세 정보 조회 API 호출
-	        fetch(`/api/manager/refunds/${orderId}`)
-	            .then(response => {
-	                if (!response.ok) {
-	                    throw new Error(`HTTP 오류! 상태: ${response.status}`);
-	                }
-	                return response.json();
-	            })
-	            .then(refundDetails => {
-	                if (!refundDetails) {
-	                    throw new Error('서버에서 데이터를 받지 못했습니다.');
-	                }
-	                
-	                // 모달 내용 업데이트
-	                modalBody.innerHTML = `
-	                    <div class="row">
-	                        <div class="col-md-6">
-	                            <h6>주문자 정보</h6>
-	                            <p><strong>고객명:</strong> <span id="customerName">${refundDetails.customerName || '정보 없음'}</span></p>
-	                            <p><strong>연락처:</strong> <span id="customerPhone">${refundDetails.phoneNumber || '정보 없음'}</span></p>
-	                            <p><strong>이메일:</strong> <span id="customerEmail">${refundDetails.email || '정보 없음'}</span></p>
-	                        </div>
-	                        <div class="col-md-6">
-	                            <h6>환불 정보</h6>
-	                            <p><strong>환불 사유:</strong> <span id="refundReason">${refundDetails.refundReason || '사유 없음'}</span></p>
-	                            <p><strong>환불 방법:</strong> <span id="refundMethod">${refundDetails.refundMethod || '정보 없음'}</span></p>
-	                            <p><strong>환불 요청 날짜:</strong> <span id="refundRequestDate">${new Date(refundDetails.refundRequestDate).toLocaleString()}</span></p>
-	                        </div>
-	                    </div>
-
-	                    <h6 class="mt-3">주문 상품 목록</h6>
-	                    <table class="table">
-	                        <thead>
-	                            <tr>
-	                                <th>상품명</th>
-	                                <th>수량</th>
-	                                <th>가격</th>
-	                                <th>소계</th>
-	                            </tr>
-	                        </thead>
-	                        <tbody id="refundProductsBody"></tbody>
-	                        <tfoot>
-	                            <tr>
-	                                <td colspan="3" class="text-end"><strong>총 환불 금액</strong></td>
-	                                <td><strong id="totalRefundAmount"></strong></td>
-	                            </tr>
-	                        </tfoot>
-	                    </table>
-	                `;
-	                
-	                // 상품 목록 업데이트
-	                const productTableBody = document.getElementById('refundProductsBody');
-	                let totalAmount = 0;
-	                
-	                if (refundDetails.products && Array.isArray(refundDetails.products)) {
-	                    refundDetails.products.forEach(product => {
-	                        const row = document.createElement('tr');
-	                        row.innerHTML = `
-	                            <td>${product.productName || '상품명 없음'}</td>
-	                            <td>${product.quantity || 0}</td>
-	                            <td>${(product.price || 0).toLocaleString()}원</td>
-	                            <td>${(product.totalPrice || 0).toLocaleString()}원</td>
-	                        `;
-	                        productTableBody.appendChild(row);
-	                        totalAmount += product.totalPrice || 0;
-	                    });
-	                } else {
-	                    productTableBody.innerHTML = '<tr><td colspan="4" class="text-center">상품 정보가 없습니다.</td></tr>';
-	                }
-	                
-	                // 총 환불 금액 업데이트
-	                document.getElementById('totalRefundAmount').textContent = 
-	                    totalAmount.toLocaleString() + '원';
-	                
-	                // 모달 버튼 업데이트
-	                const approveBtn = refundDetailsModal.querySelector('.refund-approve-btn');
-	                const rejectBtn = refundDetailsModal.querySelector('.refund-reject-btn');
-	                if (approveBtn && rejectBtn) {
-	                    approveBtn.dataset.orderId = orderId;
-	                    rejectBtn.dataset.orderId = orderId;
-	                    
-	                    // 상태에 따라 버튼 비활성화
-	                    const isDisabled = refundDetails.refundStatus !== 'REFUND_PENDING';
-	                    approveBtn.disabled = isDisabled;
-	                    rejectBtn.disabled = isDisabled;
-	                }
-	            })
-	            .catch(error => {
-	                console.error('환불 상세 정보 조회 중 오류: ', error);
-	                modalBody.innerHTML = `
-	                    <div class="alert alert-danger" role="alert">
-	                        환불 정보를 불러오는 중 오류가 발생했습니다.<br>
-	                        새로고침 후 다시 시도해주세요.
-	                    </div>
-	                `;
-	            });
-	    }
-
-	    // 필터 변경 이벤트 리스너
+	    // 필터 이벤트 리스너
 	    statusFilter.addEventListener('change', applyFilters);
 	    startDateFilter.addEventListener('change', applyFilters);
 	    endDateFilter.addEventListener('change', applyFilters);
@@ -551,27 +281,118 @@
 	    let searchTimeout;
 	    searchInput.addEventListener('input', function() {
 	        clearTimeout(searchTimeout);
-	        searchTimeout = setTimeout(applyFilters, 300); // 300ms 후에 검색 실행
+	        searchTimeout = setTimeout(applyFilters, 300);
 	    });
 
-	    // 모달 내 승인/거절 버튼 이벤트 리스너
-	    const modalApproveBtn = document.querySelector('#refundDetailsModal .refund-approve-btn');
-	    const modalRejectBtn = document.querySelector('#refundDetailsModal .refund-reject-btn');
+	    // 필터 적용 함수
+	    function applyFilters() {
+	        console.log('Status:', statusFilter.value);
+	        console.log('Start Date:', startDateFilter.value);
+	        console.log('End Date:', endDateFilter.value);
+	        console.log('Search:', searchInput.value.trim());
+	    	
+	        const params = new URLSearchParams();
+	        params.append('status', statusFilter.value || 'REFUND_REQUESTED');
+	        
+	        if (startDateFilter.value) {
+	            params.append('startDate', startDateFilter.value + 'T00:00:00');
+	        }
+	        if (endDateFilter.value) {
+	            params.append('endDate', endDateFilter.value + 'T23:59:59');
+	        }
+	        if (searchInput.value.trim()) {
+	            params.append('search', searchInput.value.trim());
+	        }
+	        
+	        console.log('Params:', params.toString());
 
-	    [modalApproveBtn, modalRejectBtn].forEach(btn => {
-	        btn.addEventListener('click', function() {
-	            const orderId = this.dataset.orderId;
-	            const status = this.classList.contains('btn-success') ? 'REFUND_APPROVED' : 'REFUND_REJECTED';
+	        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
-	            updateRefundStatus(orderId, status);
-	            
-	            // 모달 닫기
-	            bootstrap.Modal.getInstance(document.getElementById('refundDetailsModal')).hide();
+	        fetch(`/api/refunds/management?${params.toString()}`, {
+	            method: 'GET',
+	            headers: { [header]: token }
+	        })
+	        .then(response => {
+	            console.log('Response status:', response.status);
+				return response.json()
+			})
+	        .then(data => {
+	            console.log('Received data:', data);
+	        	updateTable(data);
+	        })
+	        .catch(error => {
+	            console.error('Full error:', error);
+	            handleError(error);
 	        });
+	    }
+	    
+	    document.addEventListener('DOMContentLoaded', function() {
+	        statusFilter.value = 'REFUND_REQUESTED';
+	        applyFilters();
 	    });
 
-	    // 초기 페이지 로드 시 이벤트 리스너 설정
-	    attachEventListeners();
+	    // 테이블 업데이트 함수
+	    function updateTable(data) {
+	        const refundTableBody = document.getElementById('refundTableBody');
+	        refundTableBody.innerHTML = '';
+
+	        if (!data.content || data.content.length === 0) {
+	            refundTableBody.innerHTML = `
+	                <tr><td colspan="6" class="text-center">검색 결과가 없습니다.</td></tr>
+	            `;
+	            return;
+	        }
+
+	        data.content.forEach(refund => {
+	            const row = createTableRow(refund);
+	            refundTableBody.appendChild(row);
+	        });
+	    }
+
+	    // 테이블 행 생성 함수
+	    function createTableRow(refund) {
+	        const row = document.createElement('tr');
+	        row.innerHTML = `
+	            <td>${refund.orderId}</td>
+	            <td>${refund.customerName}</td>
+	            <td>${new Date(refund.orderDate).toLocaleString()}</td>
+	            <td>${refund.totalAmount.toLocaleString()}원</td>
+	            <td>
+	                <span class="badge status-badge status-${refund.orderStatus}">
+	                    ${statusText[refund.orderStatus] || refund.orderStatus}
+	                </span>
+	            </td>
+	            <td>
+	                <div class="action-buttons">
+	                    <button class="btn btn-sm btn-success" 
+	                            data-order-id="${refund.orderId}"
+	                            data-bs-toggle="modal"
+	                            data-bs-target="#refundDetailsModal">
+	                        <i class="fas fa-eye"></i> 상세
+	                    </button>
+	                </div>
+	            </td>
+	        `;
+	        return row;
+	    }
+
+	    // 에러 처리 함수
+	    function handleError(error) {
+	        console.error('Error:', error);
+	        const refundTableBody = document.getElementById('refundTableBody');
+	        refundTableBody.innerHTML = `
+	            <tr>
+	                <td colspan="6" class="text-center text-danger">
+	                    데이터를 불러오는 중 오류가 발생했습니다.<br>
+	                    잠시 후 다시 시도해주세요.
+	                </td>
+	            </tr>
+	        `;
+	    }
+
+	    // 초기 테이블 로드
+	    applyFilters();
 	});
 	</script>
 </body>

@@ -1,6 +1,7 @@
 package com.lec.project.shoppingmall.service.refund;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +19,12 @@ import com.lec.project.shoppingmall.repository.OrderedRepository;
 import com.lec.project.shoppingmall.repository.RefundRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Log4j2
 public class RefundServiceImpl implements RefundService {
 
 	private final RefundRepository refundRepository;
@@ -30,6 +33,7 @@ public class RefundServiceImpl implements RefundService {
 	@Override
 	public UserRefundDetailResponseDTO createRefund(String memberId, UserRefundRequestDTO refundRequestDTO) {
 		
+		// 주문 조회
         Ordered ordered = orderedRepository.findById(refundRequestDTO.getOrderId())
                 .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
 		
@@ -43,15 +47,23 @@ public class RefundServiceImpl implements RefundService {
             throw new IllegalStateException("이미 환불이 신청된 주문입니다.");
         }
         
+        // 환불 가능한 상태 제한
+        OrderStatus currentStatus = OrderStatus.valueOf(ordered.getStatus());
+        if (!Arrays.asList(OrderStatus.PENDING, OrderStatus.APPROVED).contains(currentStatus)) {
+            throw new IllegalStateException("현재 상태에서는 환불할 수 없습니다.");
+        }
+        
         Refund refund = Refund.builder()
                 .order(ordered)
-                .previousStatus(OrderStatus.valueOf(ordered.getStatus()))
+                .previousStatus(currentStatus)
                 .refundReason(refundRequestDTO.getRefundReason())
                 .build();
         
         // 주문 상태 업데이트
         ordered.setStatus(OrderStatus.REFUND_REQUESTED.name());
         orderedRepository.save(ordered);
+
+        Refund savedRefund = refundRepository.save(refund);
         
         return UserRefundDetailResponseDTO.fromEntity(refundRepository.save(refund));
 	}
@@ -89,6 +101,8 @@ public class RefundServiceImpl implements RefundService {
 			String search,
 			Pageable pageable
 	) {
+	    log.info("Refund List Query Params: status={}, startDate={}, endDate={}, search={}, pageable={}", 
+	             status, startDate, endDate, search, pageable);
 		
         return refundRepository.searchRefunds(status, startDate, endDate, search, pageable)
                 .map(UserRefundListResponseDTO::fromEntity);
