@@ -458,7 +458,13 @@ public class HRServiceImpl implements HRService {
 	public AdminDTO getAdmin(String id) {
 		Optional<Admin> result = adminRepository.findById(id);
 		Admin admin = result.orElseThrow();
-		AdminDTO adminDTO = new AdminDTO(); // = AdminDTO.builder().id(id).no(admin.getNo()).name(admin.getName())
+		AdminDTO adminDTO = AdminDTO.builder().id(id).no(admin.getNo()).name(admin.getName()).ssn(admin.getSsn()).email(admin.getEmail()).build();
+		
+		if (attendanceRepository.findByIdWithAttendance(admin, AttendanceEnum.출근).isPresent() || attendanceRepository.findByIdWithAttendance(admin, AttendanceEnum.지각).isPresent()) {
+			adminDTO.setAttendance(true);
+		} else {
+			adminDTO.setAttendance(false);
+		}
 		
 		return adminDTO;
 	}

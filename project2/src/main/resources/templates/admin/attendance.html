@@ -2,18 +2,36 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
+<link th:href="@{/css/ms/sidebar.css}" rel="stylesheet" />
 <link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
 
 <div layout:fragment="content">
+	<aside class="sidebar">
+    	<nav class="nav">
+      		<ul>
+        		<li><a href="#" class="active">근태 확인</a></li>
+        		<li><a th:href="|@{/sudo/allUserList}|">인사관리</a></li> <!-- 직책확인 -->
+        		<li><a href="#">매장관리</a></li> <!-- 직책확인 -->
+        		<li><a href="javascript:goMessagesInbox()">메시지 확인</a></li>
+      		</ul>
+    	</nav>
+  	</aside>
+  	
 	<div class="container mt-3">
 		<div id="calendar">	</div>
 		<div class="d-flex justify-content-center mt-3 mb-3">
-			<button onclick="goMessagesInbox()" class="mx-2 btn btn-primary">메시지 확인</button>
-			<button onclick="attendance()" class="mx-2 btn btn-primary">출근</button>
-			<button onclick="leave()" class="mx-2 btn btn-primary">퇴근</button>
-			<a th:href="|@{/sudo/allUserList}|" class="text-decoration-none">
+			<!-- <button onclick="goMessagesInbox()" class="mx-2 btn btn-primary">메시지 확인</button> -->
+			
+			<th:block th:if="${admin.isAttendance}">
+				<button onclick="leave()" class="mx-2 btn btn-primary">퇴근</button>
+			</th:block>
+			<th:block th:unless="${admin.isAttendance}">
+				<button onclick="attendance()" class="mx-2 btn btn-primary">출근</button>
+			</th:block>
+			
+			<!-- <a th:href="|@{/sudo/allUserList}|" class="text-decoration-none">
 				<button class="mx-2 btn btn-success">이전</button>
-			</a>
+			</a> -->
 		</div>
 	</div>
 </div>

@@ -24,5 +24,5 @@ public class AdminDTO {
 	@NotEmpty
 	private String email;
 	
-	
+	private boolean isAttendance;
 }

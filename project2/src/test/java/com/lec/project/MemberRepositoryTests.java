@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.lec.project.human_resources.domain.Admin;
+import com.lec.project.human_resources.repository.AdminRepository;
+
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -15,6 +18,8 @@ public class MemberRepositoryTests {
 	@Autowired
 	private MemberRepository memberRepository;
 	
+	@Autowired
+	private AdminRepository adminRepository;
 	
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -51,7 +56,18 @@ public class MemberRepositoryTests {
 		member.addRole(MemberRole.MANAGER);
 		
 		memberRepository.save(member);
-
+		
+		Admin admin = Admin.builder().id("manager")
+				  		   .password(passwordEncoder.encode("m"))
+				  		   .name("sungil")
+				  		   .ssn("222222-1222222")
+				  		   .phone("010-2222-3333")
+				  		   .email("sungil@gmail.com")
+				  		   .detailedAddress("서울시 강남구 125-126")
+				  		   .annualSalary(30000000)
+				  		   .build();
+		
+		adminRepository.save(admin);
 	}
 	
 	@Test
