@@ -42,6 +42,7 @@ li {
 
 .nav a:hover {
 	color: #716490;
+	font-size: 1.10em;
 }
 
 .nav a.active {
