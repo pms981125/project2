@@ -159,53 +159,37 @@
     </div>
 
     <!-- Refund Details Modal -->
-    <div class="modal fade" id="refundDetailsModal" tabindex="-1" aria-labelledby="refundDetailsModalLabel" aria-hidden="true">
+    <div class="modal fade" id="refundDetailsModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="refundDetailsModalLabel">환불 상세 정보</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">환불 상세 정보</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
                             <h6>주문자 정보</h6>
-                            <p><strong>이름:</strong> <span id="customerName"></span></p>
-                            <p><strong>연락처:</strong> <span id="customerPhone"></span></p>
-                            <p><strong>이메일:</strong> <span id="customerEmail"></span></p>
+		                        <p><strong>고객명:</strong> <span id="modalCustomerName"></span></p>
+		                        <p><strong>주문번호:</strong> <span id="modalOrderId"></span></p>
+		                        <p><strong>연락처:</strong> <span id="modalPhoneNumber"></span></p>
                         </div>
                         <div class="col-md-6">
                             <h6>환불 정보</h6>
-                            <p><strong>환불 사유:</strong> <span id="refundReason"></span></p>
-                            <p><strong>환불 방법:</strong> <span id="refundMethod"></span></p>
-                            <p><strong>환불 요청 날짜:</strong> <span id="refundRequestDate"></span></p>
+		                        <p><strong>환불 요청일:</strong> <span id="modalRequestDate"></span></p>
+		                        <p><strong>환불 금액:</strong> <span id="modalRefundAmount"></span></p>
+		                        <p><strong>환불 상태:</strong> <span id="modalRefundStatus"></span></p>
                         </div>
                     </div>
-
-                    <h6 class="mt-3">주문 상품 목록</h6>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>상품명</th>
-                                <th>수량</th>
-                                <th>가격</th>
-                                <th>소계</th>
-                            </tr>
-                        </thead>
-						<tbody id="refundProductsBody">
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="3" class="text-end"><strong>총 환불 금액</strong></td>
-                                <td><strong id="totalRefundAmount"></strong></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
+					<div class="mt-4">
+                    	<h6>환불 사유</h6>
+                    	<p id="modalRefundReason"></p>
+                	</div>
+            	</div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    <button type="button" class="btn btn-success refund-approve-btn">환불 승인</button>
-                    <button type="button" class="btn btn-danger refund-reject-btn">환불 거절</button>
+	                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+	                <button type="button" class="btn btn-success refund-approve-btn">환불 승인</button>
+	                <button type="button" class="btn btn-danger refund-reject-btn">환불 거절</button>
                 </div>
             </div>
         </div>
@@ -216,6 +200,17 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     
 	<script>
+
+    // 상태 텍스트 매핑
+    const statusText = {
+        'REFUND_REQUESTED': '환불 요청',
+        'REFUND_SUCCESS': '환불 완료',
+        'REFUND_REJECTED': '환불 거절',
+        'PENDING': '대기',
+        'APPROVED': '승인',
+        'REJECTED': '거절'
+    };
+    
 	document.addEventListener('DOMContentLoaded', function() {
 	    // DOM 요소 참조
 	    const statusFilter = document.getElementById('statusFilter');
@@ -225,13 +220,9 @@
 	    const modalApproveBtn = document.querySelector('#refundDetailsModal .refund-approve-btn');
 	    const modalRejectBtn = document.querySelector('#refundDetailsModal .refund-reject-btn');
 
-	    // 상태 텍스트 매핑
-	    const statusText = {
-	        'REFUND_PENDING': '환불 대기',
-	        'REFUND_APPROVED': '환불 승인',
-	        'REFUND_REJECTED': '환불 거절',
-	        'REFUND_REQUESTED': '환불 요청'
-	    };
+	    // 초기값 설정 및 필터 적용 (여기로 이동)
+	    statusFilter.value = 'REFUND_REQUESTED';
+	    applyFilters();
 
 	    // 환불 상태 업데이트 함수
 	    function updateRefundStatus(orderId, approve, managerComment = '') {
@@ -331,47 +322,56 @@
 	            handleError(error);
 	        });
 	    }
-	    
-	    document.addEventListener('DOMContentLoaded', function() {
-	        statusFilter.value = 'REFUND_REQUESTED';
-	        applyFilters();
-	    });
 
 	    // 테이블 업데이트 함수
 	    function updateTable(data) {
-	        const refundTableBody = document.getElementById('refundTableBody');
-	        refundTableBody.innerHTML = '';
+	    	console.log('Received refund data:', data);
+	    	const refundTableBody = document.getElementById('refundTableBody');
+	    	refundTableBody.innerHTML = '';
 
-	        if (!data.content || data.content.length === 0) {
-	            refundTableBody.innerHTML = `
-	                <tr><td colspan="6" class="text-center">검색 결과가 없습니다.</td></tr>
+	    	if (!data.content || data.content.length === 0) {
+	    		refundTableBody.innerHTML = `
+	                <tr>
+	                	<td colspan="6" class="text-center">환불 요청 내역이 없습니다.</td>
+	            	</tr>
 	            `;
 	            return;
 	        }
 
-	        data.content.forEach(refund => {
-	            const row = createTableRow(refund);
-	            refundTableBody.appendChild(row);
+	    	data.content.forEach(refund => {
+	    		try {
+	    			console.log('Processing refund:', refund);
+	            	const row = createTableRow(refund);
+	            	refundTableBody.appendChild(row);
+	    		} catch (error) {
+	    			console.error('행 생성 중 오류:', error, refund);
+	    		}
 	        });
 	    }
 
 	    // 테이블 행 생성 함수
 	    function createTableRow(refund) {
 	        const row = document.createElement('tr');
+	        
+	        const totalAmount = refund.refundAmount || 0;
+	        const requestDate = refund.requestDate ? new Date(refund.requestDate).toLocaleString() : '-';
+	        
+	        const customerName = refund.customerName || refund.order?.customerName || '-';
+	        
 	        row.innerHTML = `
-	            <td>${refund.orderId}</td>
-	            <td>${refund.customerName}</td>
-	            <td>${new Date(refund.orderDate).toLocaleString()}</td>
-	            <td>${refund.totalAmount.toLocaleString()}원</td>
+	            <td>${refund.orderId || '-'}</td>
+	            <td>${refund.customerName || '-'}</td></td>
+	            <td>${requestDate}</td>
+	            <td>${totalAmount.toLocaleString()}원</td>
 	            <td>
-	                <span class="badge status-badge status-${refund.orderStatus}">
-	                    ${statusText[refund.orderStatus] || refund.orderStatus}
+	                <span class="badge status-badge status-${refund.status}">
+	                    ${statusText[refund.status] || refund.status}
 	                </span>
 	            </td>
 	            <td>
 	                <div class="action-buttons">
 	                    <button class="btn btn-sm btn-success" 
-	                            data-order-id="${refund.orderId}"
+	                    		data-refund-id="${refund.refundId}"
 	                            data-bs-toggle="modal"
 	                            data-bs-target="#refundDetailsModal">
 	                        <i class="fas fa-eye"></i> 상세
@@ -399,25 +399,141 @@
 	    // 초기 테이블 로드
 	    applyFilters();
 	});
-	</script>
-<script th:inline="javascript">
-	function goAttendance() {
-		const form = document.createElement('form')
-		const id = /*[[${#authentication.name}]]*/""
+	
+	// 모달 데이터 업데이트 함수
+	function updateRefundModal(refund) {
 		
-		let input1 = document.createElement('input')
-	    
-		input1.type = 'hidden'
-	    input1.name = 'id'
-	    input1.value = id
-		
-	    form.appendChild(input1)
-		
-		form.action = `/sudo/goAttendance`
-		form.method = 'get'
-		document.body.appendChild(form)
-		form.submit()
+	    try {
+	        // 모달이 존재하는지 확인
+	        const modalBody = document.querySelector('#refundDetailsModal .modal-body');
+	        if (!modalBody) {
+	            console.error('Modal body not found');
+	            return;
+	        }
+	        
+	        modalBody.innerHTML = `
+	            <div class="row">
+	                <div class="col-md-6">
+	                    <h6>주문자 정보</h6>
+	                    <p><strong>고객명:</strong> <span id="modalCustomerName"></span></p>
+	                    <p><strong>주문번호:</strong> <span id="modalOrderId"></span></p>
+	                    <p><strong>연락처:</strong> <span id="modalPhoneNumber"></span></p>
+	                </div>
+	                <div class="col-md-6">
+	                    <h6>환불 정보</h6>
+	                    <p><strong>환불 요청일:</strong> <span id="modalRequestDate"></span></p>
+	                    <p><strong>환불 금액:</strong> <span id="modalRefundAmount"></span></p>
+	                    <p><strong>환불 상태:</strong> <span id="modalRefundStatus"></span></p>
+	                </div>
+	            </div>
+	            <div class="mt-4">
+	                <h6>환불 사유</h6>
+	                <p id="modalRefundReason"></p>
+	            </div>
+	        `;
+	      
+	        // 데이터 업데이트
+	        document.getElementById('modalCustomerName').textContent = refund.customerName || '-';
+	        document.getElementById('modalOrderId').textContent = refund.orderId || '-';
+	        document.getElementById('modalPhoneNumber').textContent = refund.order?.phoneNumber || '-';
+	        document.getElementById('modalRequestDate').textContent = 
+	            refund.requestDate ? new Date(refund.requestDate).toLocaleString() : '-';
+	        document.getElementById('modalRefundAmount').textContent = 
+	            (refund.refundAmount || 0).toLocaleString() + '원';
+	        document.getElementById('modalRefundReason').textContent = refund.refundReason || '-';
+	        
+	        const statusBadge = document.createElement('span');
+	        statusBadge.className = `badge status-badge status-${refund.status}`;
+	        statusBadge.textContent = statusText[refund.status] || refund.status;
+	        document.getElementById('modalRefundStatus').innerHTML = '';
+	        document.getElementById('modalRefundStatus').appendChild(statusBadge);
+
+	        // 승인/거절 버튼에 orderId 설정
+	        document.querySelector('.refund-approve-btn').dataset.orderId = refund.orderId;
+	        document.querySelector('.refund-reject-btn').dataset.orderId = refund.orderId;
+	    } catch (error) {
+	        console.error('Error updating modal:', error);
+	    }
 	}
+	
+	// 상세 버튼 클릭 이벤트 리스너 추가
+	document.addEventListener('click', function(e) {
+		if (e.target.closest('[data-bs-target="#refundDetailsModal"]')) {
+	        const btn = e.target.closest('[data-bs-target="#refundDetailsModal"]');
+	        const refundId = btn.dataset.refundId; 
+	        
+	        // 로딩 상태 표시
+	        const modalBody = document.querySelector('#refundDetailsModal .modal-body');
+	        modalBody.innerHTML = `
+	            <div class="text-center py-4">
+	                <div class="spinner-border text-primary" role="status">
+	                    <span class="visually-hidden">로딩중...</span>
+	                </div>
+	            </div>
+	        `;	
+	        
+	        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+			
+	        // 입력값 검증 추가
+	        if (!refundId || isNaN(refundId)) {
+	            modalBody.innerHTML = `
+	                <div class="alert alert-danger" role="alert">
+	                    유효하지 않은 환불 ID입니다.
+	                </div>
+	            `;
+	            return;
+	        }
+	        
+	        fetch(`/api/refunds/${refundId}`, {
+	            headers: { [header]: token }
+	        })
+	        .then(response => {
+	        	if (!response.ok){
+	                if (response.status === 400) {
+	                    throw new Error('잘못된 요청입니다. 환불 ID를 확인해주세요.');
+	                } else if (response.status === 404) {
+	                    throw new Error('해당 환불 정보를 찾을 수 없습니다.');
+	                }
+	                throw new Error('환불 정보를 불러오는 중 오류가 발생했습니다.');
+	        	}
+	        		return response.json()
+	        })
+	        .then(refundDetails => {
+	        	if(!refundDetails) {
+	        		throw new Error('환불 정보가 없습니다.');
+	        	}
+	            updateRefundModal(refundDetails);
+	        })
+	        .catch(error => {
+	            console.error('Error:', error);
+	            modalBody.innerHTML = `
+	                <div class="alert alert-danger" role="alert">
+	                    ${error.message}
+	                </div>
+	            `;
+	        });
+	    }
+	});
+	</script>
+	<script th:inline="javascript">
+		function goAttendance() {
+			const form = document.createElement('form')
+			const id = /*[[${#authentication.name}]]*/""
+			
+			let input1 = document.createElement('input')
+		    
+			input1.type = 'hidden'
+		    input1.name = 'id'
+		    input1.value = id
+			
+		    form.appendChild(input1)
+			
+			form.action = `/sudo/goAttendance`
+			form.method = 'get'
+			document.body.appendChild(form)
+			form.submit()
+		}
 </script>
 </body>
 </html>

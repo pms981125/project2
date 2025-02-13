@@ -35,6 +35,9 @@ public class Refund extends BaseEntity{
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Ordered order;
+    
+    @Column(length = 50)
+    private String customerName;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

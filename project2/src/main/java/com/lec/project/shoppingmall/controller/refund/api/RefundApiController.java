@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -64,9 +65,21 @@ public class RefundApiController {
     // 환불 상세 조회
     @GetMapping("/{refundId}")
     public ResponseEntity<UserRefundDetailResponseDTO> getRefundDetails(
-        @PathVariable Long refundId
+        @PathVariable("refundId") Long refundId
     ) {
-        return ResponseEntity.ok(refundService.getRefundDetails(refundId));
+        try {
+            UserRefundDetailResponseDTO dto = refundService.getRefundDetails(refundId);
+            if (dto == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(dto);
+        } catch (IllegalArgumentException e) {
+            // 잘못된 요청이나 데이터를 찾을 수 없는 경우
+            return ResponseEntity.badRequest().body(null);
+        } catch (Exception e) {
+            log.error("환불 상세 정보 조회 중 오류 발생", e);
+            return ResponseEntity.internalServerError().body(null);
+        }
     }
     
     // 환불 목록 조회 (관리자용)

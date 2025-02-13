@@ -55,6 +55,7 @@ public class RefundServiceImpl implements RefundService {
         
         Refund refund = Refund.builder()
                 .order(ordered)
+                .customerName(ordered.getCustomerName())
                 .previousStatus(currentStatus)
                 .refundReason(refundRequestDTO.getRefundReason())
                 .build();
@@ -86,10 +87,18 @@ public class RefundServiceImpl implements RefundService {
 	@Override
 	@Transactional(readOnly = true)
 	public UserRefundDetailResponseDTO getRefundDetails(Long refundId) {
-        return UserRefundDetailResponseDTO.fromEntity(
-                refundRepository.findById(refundId)
-                    .orElseThrow(() -> new IllegalArgumentException("환불 요청을 찾을 수 없습니다."))
-            );
+	    
+		Refund refund = refundRepository.findById(refundId)
+	            .orElseThrow(() -> new IllegalArgumentException("환불 요청을 찾을 수 없습니다."));
+	        
+	        try {
+	            // Order 정보 강제 초기화
+	            refund.getOrder().getId();  // Order 정보 로딩
+	            return UserRefundDetailResponseDTO.fromEntity(refund);
+	        } catch (Exception e) {
+	            log.error("환불 상세 정보 조회 중 오류 발생", e);
+	            throw new IllegalArgumentException("환불 정보를 불러오는데 실패했습니다.");
+	        }
 	}
 	
 	@Override

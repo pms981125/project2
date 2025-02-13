@@ -18,6 +18,7 @@ public class UserRefundListResponseDTO {
     
     private Long refundId;
     private Long orderId;
+    private String customerName;
     private int refundAmount;
     private OrderStatus status;
     private LocalDateTime requestDate;
@@ -28,6 +29,7 @@ public class UserRefundListResponseDTO {
         return UserRefundListResponseDTO.builder()
             .refundId(refund.getId())
             .orderId(refund.getOrder().getId())
+            .customerName(refund.getOrder().getCustomerName())
             .refundAmount(refund.getOrder().getTotalAmount())
             .status(refund.getCurrentStatus())
             .requestDate(refund.getRequestDate())
