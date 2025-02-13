@@ -5,6 +5,9 @@
 <link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
 <link th:href="@{/css/ms/sidebar.css}" rel="stylesheet" />
 
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
 <div layout:fragment="content">
 	<aside class="sidebar">
     	<nav class="nav">
@@ -29,7 +32,7 @@
 			<!-- <button onclick="goMessagesInbox()" class="mx-2 btn btn-primary">메시지 확인</button> -->
 			
 			<th:block th:if="${admin.isAttendance}">
-				<button onclick="leave()" class="mx-2 btn btn-primary">퇴근</button>
+				<button onclick="leave()" class="mx-2 btn btn-primary">퇴근</button> <!-- 에러 확인 -->
 			</th:block>
 			<th:block th:unless="${admin.isAttendance}">
 				<button onclick="attendance()" class="mx-2 btn btn-primary">출근</button>
@@ -47,13 +50,13 @@
 <script layout:fragment="script" th:inline="javascript">
 	const a = /*[[${#authentication.authorities[0].authority}]]*/""
 	// console.log(a)
-
-	function attendance() {
-		const form = document.createElement('form')
-		const tokenName = /*[[${_csrf.parameterName}]]*/""
-		const token = /*[[${_csrf.token}]]*/""
-		const id = /*[[${#authentication.name}]]*/""
-		
+	
+	/* function attendance() {
+		const form = document.createElement('form') */
+		// const tokenName = /*[[${_csrf.parameterName}]]*/""
+		// const token = /*[[${_csrf.token}]]*/""
+		// const id = /*[[${#authentication.name}]]*/""
+/* 		
 		let input1 = document.createElement('input')
 		let input2 = document.createElement('input')
 
@@ -72,14 +75,14 @@
 		form.method = 'post'
 		document.body.appendChild(form)
 		form.submit()
-	}
+	} */
 	
-	function leave() {
-		const form = document.createElement('form')
-		const tokenName = /*[[${_csrf.parameterName}]]*/""
-		const token = /*[[${_csrf.token}]]*/""
-		const id = /*[[${#authentication.name}]]*/""
-		
+/* 	function leave() {
+		const form = document.createElement('form') */
+		///const tokenName = /*[[${_csrf.parameterName}]]*/""
+		// const token = /*[[${_csrf.token}]]*/""
+		// const id = /*[[${#authentication.name}]]*/""
+/* 		
 		let input1 = document.createElement('input')
 		let input2 = document.createElement('input')
 
@@ -98,8 +101,56 @@
 		form.method = 'post'
 		document.body.appendChild(form)
 		form.submit()
+	} */
+	
+	function attendance() {
+	    const token = $("meta[name='_csrf']").attr("content");
+	    const header = $("meta[name='_csrf_header']").attr("content");
+	    const id = /*[[${#authentication.name}]]*/""
+	    
+	    $.ajax({
+	        url: "/sudo/attendance",
+	        type: "POST",
+	        beforeSend: function(xhr) {
+	            xhr.setRequestHeader(header, token);
+	        },
+	        data: { id: id },
+	        success: function(response) {
+	            console.log("출근 기록 저장 완료:", response);
+	            alert("출근 기록이 저장되었습니다.");
+	            location.reload();
+	        },
+	        error: function(xhr, status, error) {
+	            console.error("출근 요청 실패:", error);
+	            alert("출근 요청 실패");
+	        }
+	    });
 	}
 	
+	function leave() {
+	    const token = $("meta[name='_csrf']").attr("content");
+	    const header = $("meta[name='_csrf_header']").attr("content");
+	    const id = /*[[${#authentication.name}]]*/""
+	    
+	    $.ajax({
+	        url: "/sudo/leave",
+	        type: "POST",
+	        beforeSend: function(xhr) {
+	            xhr.setRequestHeader(header, token);
+	        },
+	        data: { id: id },
+	        success: function(response) {
+	            console.log("퇴근 기록 저장 완료:", response);
+	            alert("퇴근 기록이 저장되었습니다.");
+	            location.reload();
+	        },
+	        error: function(xhr, status, error) {
+	            console.error("퇴근 요청 실패:", error);
+	            alert("퇴근 요청 실패");
+	        }
+	    });
+	}
+
 	document.addEventListener('DOMContentLoaded', function() {
 		var calendarEl = document.getElementById('calendar');
 	    var calendar = new FullCalendar.Calendar(calendarEl, {

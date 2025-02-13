@@ -163,7 +163,7 @@ public class SuperHRController {
 		// log.info("345678jhrebr " + id + " " + localTime);
 		hrService.attendance(id, localTime);
 		
-		return "admin/attendance";
+		return "redirect:/sudo/goAttendance?id=" + id;
 	}
 	
 	@PostMapping("/leave")
@@ -172,7 +172,7 @@ public class SuperHRController {
 		
 		hrService.leave(id, localTime);
 		
-		return "admin/attendance";
+		return "redirect:/sudo/goAttendance?id=" + id;
 	}
 	
 	@GetMapping("/getWorkLog")
