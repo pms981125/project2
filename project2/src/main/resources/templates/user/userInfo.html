@@ -150,8 +150,8 @@
 	<footer class="footer_section">
 		<div class="container">
 			<p>
-				&copy; <span id="displayYear"></span> All Rights Reserved By <a
-					href="https://html.design/">Free Html Templates</a>
+				&copy; <span id="displayYear"></span> All Rights Reserved By
+				<a href="https://html.design/">Free Html Templates</a>
 			</p>
 		</div>
 	</footer>
@@ -176,6 +176,8 @@
             form.action = `/user/update`
             form.method = 'post'
             form.submit()
+            
+            alert('회원 정보가 수정되었습니다.')
         }, false)
         
         document.querySelector(".memWithdrawalBtn").addEventListener("click", function(e) {
