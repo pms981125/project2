@@ -57,6 +57,11 @@
 			            </li>
 						<hr class="my-3">
 			            <li class="nav-item">
+			                <a class="nav-link" href="javascript:goAttendance()">
+			                  <i class="fa-regular fa-calendar-days"></i> 직원 메뉴
+			                </a>
+			            </li>
+			            <li class="nav-item">
 			                <a class="nav-link" href="/shop/list">
 			                    <i class="fas fa-shopping-bag"></i> 쇼핑몰 바로가기
 			                </a>
@@ -395,6 +400,25 @@
 	    applyFilters();
 	});
 	</script>
+<script th:inline="javascript">
+	function goAttendance() {
+		const form = document.createElement('form')
+		const id = /*[[${#authentication.name}]]*/""
+		
+		let input1 = document.createElement('input')
+	    
+		input1.type = 'hidden'
+	    input1.name = 'id'
+	    input1.value = id
+		
+	    form.appendChild(input1)
+		
+		form.action = `/sudo/goAttendance`
+		form.method = 'get'
+		document.body.appendChild(form)
+		form.submit()
+	}
+</script>
 </body>
 </html>
 	

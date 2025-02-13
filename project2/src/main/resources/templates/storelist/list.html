@@ -135,7 +135,83 @@
         </div>
     </div>
 </body>
+<script>
+function updateLoginButton() {
+    fetch('/user/loginStatus')
+        .then(response => response.json())
+        .then(data => {
+            const button = document.getElementById('loginLogoutBtn');
+            const buttonText = document.getElementById('buttonText');
+            
+            if (data.isLoggedIn) {
+                buttonText.textContent = '로그아웃';
+                button.href = '/user/logout';
+            } else {
+                buttonText.textContent = '로그인';
+                button.href = '/user/login';
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
 
+document.querySelector(".userInfoBtn").addEventListener("click", function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    fetch('/user/loginStatus')
+        .then(response => response.json())
+        .then(data => {
+            const form = document.createElement('form');
+            
+            if (data.isLoggedIn) {
+                form.action = '/user/userInfo';
+            } else {
+                form.action = '/user/login';
+            }
+            
+            form.method = 'get';
+            document.body.appendChild(form);
+            form.submit();
+        })
+        .catch(error => console.error('Error:', error));
+});
+
+document.getElementById("loginLogoutBtn").addEventListener("click", function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const form = document.createElement('form');
+    form.action = this.href;
+    form.method = 'get';
+    document.body.appendChild(form);
+    form.submit();
+});
+
+function checkLoginForCart(e) {
+    e.preventDefault();
+    
+    fetch('/user/loginStatus')
+        .then(response => response.json())
+        .then(data => {
+            if (data.isLoggedIn) {
+                window.location.href = '/cart/list';
+            } else {
+                alert('장바구니는 로그인 후 이용 가능합니다.');
+                window.location.href = '/user/login';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('오류가 발생했습니다. 다시 시도해주세요.');
+        });
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    updateLoginButton();
+});
+
+</script>
 </html>
 
 
