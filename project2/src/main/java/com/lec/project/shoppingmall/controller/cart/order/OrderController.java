@@ -22,6 +22,7 @@ import com.lec.project.shoppingmall.dto.PageRequestDTO;
 import com.lec.project.shoppingmall.dto.PageResponseDTO;
 import com.lec.project.shoppingmall.dto.cart.CartListDTO;
 import com.lec.project.shoppingmall.dto.cart.order.OrderSubmitDTO;
+import com.lec.project.shoppingmall.dto.magement.OrderManagementDTO;
 import com.lec.project.shoppingmall.dto.refund.UserRefundDetailResponseDTO;
 import com.lec.project.shoppingmall.dto.refund.UserRefundRequestDTO;
 import com.lec.project.shoppingmall.service.cart.CartService;
@@ -121,7 +122,7 @@ public class OrderController {
 	
     @PostMapping("/{orderId}/refund")
     public ResponseEntity<?> requestRefund(
-        @PathVariable Long orderId,
+        @PathVariable("orderId") Long orderId,
         @RequestBody(required = false) Map<String, String> payload,
         @AuthenticationPrincipal UserDetails userDetails
     ) {
@@ -139,6 +140,20 @@ public class OrderController {
                 userRefundRequestDTO
             );
             return ResponseEntity.ok(userRefundDetailResponseDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    
+    @PostMapping("/{orderId}/cancel-refund")
+    public ResponseEntity<?> cancelRefund(
+        @PathVariable("orderId") Long orderId,
+        @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        try {
+            // 기존 상태를 저장했다가 복원
+            OrderManagementDTO updatedOrder = orderService.cancelRefund(orderId, userDetails.getUsername());
+            return ResponseEntity.ok(updatedOrder);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -13,8 +13,10 @@ import com.lec.project.shoppingmall.domain.product.Product;
 import com.lec.project.shoppingmall.dto.PageRequestDTO;
 import com.lec.project.shoppingmall.dto.cart.CartListDTO;
 import com.lec.project.shoppingmall.dto.cart.order.OrderSubmitDTO;
+import com.lec.project.shoppingmall.dto.magement.OrderManagementDTO;
 import com.lec.project.shoppingmall.repository.OrderedRepository;
 import com.lec.project.shoppingmall.repository.ProductRepository;
+import com.lec.project.shoppingmall.repository.RefundRepository;
 import com.lec.project.shoppingmall.service.cart.CartService;
 
 import jakarta.transaction.Transactional;
@@ -31,6 +33,7 @@ public class OrderServiceImpl implements OrderService{
 	private final CartService cartService;
 	private final OrderedRepository orderedRepository;
 	private final ProductRepository productRepository;
+	private final RefundRepository refundRepository;
 	
 	@Override
 	public void createOrder(String memberId, OrderSubmitDTO orderSubmitDTO) {
@@ -101,5 +104,35 @@ public class OrderServiceImpl implements OrderService{
 	    
 	    ordered.setStatus("REFUND_REQUESTED");
 	    orderedRepository.save(ordered);
+	}
+	
+	@Override
+	@Transactional
+	public OrderManagementDTO cancelRefund(Long orderId, String memberId) {
+	    Ordered ordered = orderedRepository.findById(orderId)
+	        .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
+	        
+	    // 본인 확인
+	    if (!ordered.getMember().getId().equals(memberId)) {
+	        throw new IllegalArgumentException("본인의 주문만 취소할 수 있습니다.");
+	    }
+	    
+	    // 환불 요청 상태인지 확인
+	    if (!"REFUND_REQUESTED".equals(ordered.getStatus())) {
+	        throw new IllegalStateException("환불 요청 상태인 주문만 취소할 수 있습니다.");
+	    }
+	    
+	    // Refund 엔티티 삭제
+	    refundRepository.findByOrderId(orderId).ifPresent(refund -> {
+	        // 이전 상태로 복원
+	        ordered.setStatus(refund.getPreviousStatus().name());
+	        refundRepository.delete(refund);
+	    });
+	    
+	    // 주문 저장
+	    Ordered updatedOrder = orderedRepository.save(ordered);
+	    
+	    // OrderManagementDTO로 변환하여 반환
+	    return OrderManagementDTO.fromEntity(updatedOrder);
 	}
 }

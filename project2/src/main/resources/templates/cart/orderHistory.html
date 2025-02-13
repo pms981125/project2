@@ -272,12 +272,15 @@ body {
 				</div>
 				<div class="modal-footer">
 					<!-- 환불 버튼은 pending이나 approved 상태에서만 보이도록 함 -->
-					<button
-						th:if="${order.status == 'PENDING' || order.status == 'APPROVED'}"
-						class="btn btn-danger" th:data-order-id="${order.id}">환불
-						요청</button>
-					<button type="button" class="btn btn-secondary"
-						data-bs-dismiss="modal">닫기</button>
+					<button th:if="${order.status == 'PENDING' || order.status == 'APPROVED'}"
+					        class="btn btn-danger"
+					        th:data-order-id="${order.id}">
+					    환불 요청 </button>
+					<button th:if="${order.status == 'REFUND_REQUESTED'}"
+							class="btn btn-warning cancel-refund-btn"
+							th:data-order-id="${order.id}">
+						환불 취소 </button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
 				</div>
 			</div>
 		</div>
@@ -300,40 +303,40 @@ body {
 	<script>
 		// 환불 요청 버튼 클릭 이벤트 처리
 		document.querySelectorAll('.btn-danger').forEach(btn => {
-			btn.addEventListener('click', async function() {	
-				const orderId = this.dataset.orderId;
-				const refundReason = prompt('환불 사유를 입력해주세요:');
-				
-				if(refundReason !== null && refundReason.trim() !== '') {
-					try{
-						const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-						const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-						
-						const response = await fetch(`/cart/{orderId}/refund`, {
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/json',
-								[header]: token
-							},
-							body: JSON.stringify({ refundReason: refundReason })
-						});
-						
-						if(response.ok){
-							alert('환불 요청이 완료 되었습니다.');
-							window.location.reload();
-						} else {
-							const errorMessage = await response.text();
-							alert(errorMessage || '환불 요청 중 오류가 발생했습니다.');
-						}
-					} catch (error) {
+		    btn.addEventListener('click', async function() {    
+		        const orderId = this.dataset.orderId;
+		        const refundReason = prompt('환불 사유를 입력해주세요:');
+		        
+		        if(refundReason !== null && refundReason.trim() !== '') {
+		            try {
+		                const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+		                const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+		                
+		                const response = await fetch(`/cart/${orderId}/refund`, {
+		                    method: 'POST',
+		                    headers: {
+		                        'Content-Type': 'application/json',
+		                        [header]: token
+		                    },
+		                    body: JSON.stringify({
+		                        refundReason: refundReason
+		                    })
+		                });
+		                
+		                if(response.ok) {
+		                    alert('환불 요청이 완료되었습니다.');
+		                    window.location.reload();
+		                } else {
+		                    const errorMessage = await response.text();
+		                    alert(errorMessage || '환불 요청 중 오류가 발생했습니다.');
+		                }
+		            } catch (error) {
 		                console.error('Error:', error);
 		                alert('환불 요청 처리 중 오류가 발생했습니다.');
-					}
-				}
-				// 전송 후 모달 닫기
-				bootstrap.Modal.getInstance(this.closest('.modal')).hide();
-				// 필요하다면 전체 페이지 새로고침
-			});
+		            }
+		        }
+		        bootstrap.Modal.getInstance(this.closest('.modal')).hide();
+		    });
 		});
 		
 		// Navigation bar scripts
@@ -375,6 +378,39 @@ body {
                     form.submit();
                 })
                 .catch(error => console.error('Error:', error));
+        });
+        
+		// 환불 취소 버튼 클릭 이벤트 처리
+        document.querySelectorAll('.cancel-refund-btn').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                if(confirm('환불 요청을 취소하시겠습니까?')) {
+                    try {
+                        const orderId = this.dataset.orderId;
+                        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+                        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+                        
+                        const response = await fetch(`/cart/${orderId}/cancel-refund`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                [header]: token
+                            }
+                        });
+                        
+                        if(response.ok) {
+                            alert('환불 요청이 취소되었습니다.');
+                            window.location.reload();
+                        } else {
+                            const errorMessage = await response.text();
+                            alert(errorMessage || '환불 요청 취소 중 오류가 발생했습니다.');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('환불 요청 취소 중 오류가 발생했습니다.');
+                    }
+                }
+                bootstrap.Modal.getInstance(this.closest('.modal')).hide();
+            });
         });
 
         document.getElementById("loginLogoutBtn").addEventListener("click", function(e) {

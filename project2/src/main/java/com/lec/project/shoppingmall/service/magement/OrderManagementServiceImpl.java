@@ -43,11 +43,19 @@ public class OrderManagementServiceImpl implements OrderManagementService {
 		String search,
 		Pageable pageable
 	) {
-		Page<Ordered> orders = orderedRepository.searchOrders(
-			status, startDate, endDate, search, pageable
-		);
+	    if (status == null || status.isEmpty()) {
+	        // 환불 요청 상태가 아닌 주문만 조회
+	        return orderedRepository.searchOrders(
+	            "REFUND_REQUESTED", 
+	            startDate, 
+	            endDate, 
+	            search, 
+	            pageable
+	        ).map(OrderManagementDTO::fromEntity);
+	    }
 
-		return orders.map(OrderManagementDTO::fromEntity);
+	    return orderedRepository.searchOrders(status, startDate, endDate, search, pageable)
+	            .map(OrderManagementDTO::fromEntity);
 	}
 
 	// 주문 상세 조회
