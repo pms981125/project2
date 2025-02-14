@@ -468,4 +468,31 @@ public class HRServiceImpl implements HRService {
 		
 		return adminDTO;
 	}
+	
+	public boolean checkPassword(String id, String inputPassword) {
+		Optional<Member> result = memberRepository.findById(id);
+		Member member = result.orElseThrow();
+		 
+		return passwordEncoder.matches(inputPassword, member.getPassword());
+	}
+	
+	public void changePassword(String id, String inputPassword) {
+		Optional<Member> result = memberRepository.findById(id);
+		Member member = result.orElseThrow();
+		
+		inputPassword = passwordEncoder.encode(inputPassword);
+		member.setPassword(inputPassword);
+		
+		memberRepository.save(member);
+		
+		Optional<Admin> result2 = adminRepository.findById(id);
+		
+		if (result2.isPresent()) {
+			Admin admin = result2.orElseThrow();
+			
+			admin.setPassword(inputPassword);
+			
+			adminRepository.save(admin);
+		}
+	}
 }

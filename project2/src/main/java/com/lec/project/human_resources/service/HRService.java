@@ -33,4 +33,6 @@ public interface HRService {
 	void leave(String id, LocalTime localTime);
 	CalendarDTO[] getWorkLog(String id);
 	AdminDTO getAdmin(String id);
+	boolean checkPassword(String id, String inputPassword);
+	void changePassword(String id, String inputPassword);
 }

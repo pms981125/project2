@@ -158,4 +158,17 @@ public class UserController {
 		
 		return "redirect:/user/login";
 	}
+	
+	@PostMapping("/checkPassword")
+    public ResponseEntity<Boolean> checkPassword(@RequestParam("id") String id, @RequestParam("inputPassword") String inputPassword) {
+		boolean result = hrService.checkPassword(id, inputPassword); 
+        return ResponseEntity.ok(result);
+    }
+	
+	@PostMapping("/changePassword")
+	public String changePassword(@RequestParam("id") String id, @RequestParam("inputPassword") String inputPassword) {
+		hrService.changePassword(id, inputPassword);
+		
+		return "redirect:/user/userInfo?id=" + id;
+	}
 }
