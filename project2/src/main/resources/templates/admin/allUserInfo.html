@@ -111,7 +111,7 @@
 	
 	document.querySelector(".pwInitializeBtn").addEventListener("click", function(e) {
 	    e.preventDefault()
-	    e.stopPropagation()
+	    e.stopPropagation() // 토큰 추가?
 	    
 		form.action = `/sudo/initializePassword`
 		form.method = 'post'

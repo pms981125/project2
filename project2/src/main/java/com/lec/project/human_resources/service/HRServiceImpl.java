@@ -291,8 +291,8 @@ public class HRServiceImpl implements HRService {
 		memberRepository.save(member); // admin?
 		
 		// String address = member.getEmail(); 회원의 이메일
-		String address = ""; // 메일 수신자 - 네이버
-		String sender = ""; // 메일 송신자 - 구글
+		String address = "pms981125@naver.com"; // 메일 수신자 - 네이버
+		String sender = "pms141683@gmail.com"; // 메일 송신자 - 구글
 		String senderPassword = "khed zxab durs cgoy"; // 앱 비밀번호
         String host = "smtp.gmail.com"; // 구글 메일 서버 호스트 이름
 
@@ -317,7 +317,7 @@ public class HRServiceImpl implements HRService {
         
         message.setFrom(new InternetAddress(sender));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(address));
-        message.setSubject("[테스트] 비밀번호");
+        message.setSubject("비밀번호 재발급");
         message.setText(memberId + "님의 초기화된 비밀번호는 " + password + " 입니다");
         
         Transport.send(message);

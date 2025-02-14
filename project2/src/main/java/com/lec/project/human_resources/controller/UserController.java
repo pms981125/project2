@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -147,5 +150,12 @@ public class UserController {
 	    model.addAttribute("hasOrders", !orders.isEmpty());
 
 	    return "cart/orderHistory";
+	}
+	
+	@PostMapping("/initializePassword") // 비밀번호 초기화(재발급)
+	public String initializePassword(@RequestParam("id") String id) throws AddressException, MessagingException {
+		hrService.initializePassword(id);
+		
+		return "redirect:/user/login";
 	}
 }

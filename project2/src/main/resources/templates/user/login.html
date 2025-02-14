@@ -63,6 +63,9 @@
 							<input type="checkbox" id="saveUserInfo" class="form-check-input custom-checkbox">
 							<label class="form-check-label" for="saveUserInfo">아이디 저장</label>
 						</div>
+						<div class="input-group justify-content-center">
+							<a href="javascript:initializePassword()">비밀번호를 잊으셨나요?</a>
+						</div>
 						<div class="btn-container">
 							<button type="submit" class="btn btn-primary">로그인</button>
 							<a href="/user/goRegisterForm" class="text-decoration-none">
@@ -133,5 +136,38 @@
     		rememberMe.checked = true;
     	}
     })
+    
+    function initializePassword() {
+    	const reallyInitialize = confirm('비밀번호를 재발급 받으시겠습니까?')
+    	
+    	if (reallyInitialize) {
+    		const id = prompt('재발급 받을 id를 입력해주세요')
+    		const form = document.createElement('form')
+    		const tokenName = /*[[${_csrf.parameterName}]]*/""
+			const token = /*[[${_csrf.token}]]*/""
+	
+			let input1 = document.createElement('input')
+			let input2 = document.createElement('input')
+		    
+			input1.type = 'hidden'
+		    input1.name = 'id'
+		    input1.value = id
+			input2.type = 'hidden'
+		    input2.name = tokenName
+		    input2.value = token
+			
+		    form.appendChild(input1)
+		    form.appendChild(input2)
+			
+			form.action = `/user/initializePassword`
+			form.method = 'post'
+			document.body.appendChild(form)
+			form.submit()
+			
+    		alert('비밀번호가 재발급 되었습니다.')
+    	} else {
+    		alert('재발급을 취소하셨습니다.')
+    	}
+    }
 </script>
 </html>
