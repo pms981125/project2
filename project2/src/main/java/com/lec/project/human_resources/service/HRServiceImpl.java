@@ -296,7 +296,7 @@ public class HRServiceImpl implements HRService {
 		String senderPassword = "khed zxab durs cgoy"; // 앱 비밀번호
         String host = "smtp.gmail.com"; // 구글 메일 서버 호스트 이름
 
-        Properties props = new Properties();	// SMTP 프로토콜 설정
+        Properties props = new Properties(); // SMTP 프로토콜 설정
         
         props.setProperty("mail.smtp.host", host);
         props.setProperty("mail.smtp.port", "587");

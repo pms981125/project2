@@ -4,6 +4,12 @@
 	  
 <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
 
+<style>
+	.idDiv {
+		margin-bottom: 16px;
+	}
+</style>
+
 <div layout:fragment="content">
 	<section class="d-flex vh-100">
 	    <div class="container-fluid row justify-content-center align-content-center">
@@ -11,7 +17,7 @@
 	            <div class="card-body p-5 text-center">
 					<h1>회원가입 페이지</h1>
 					<form th:action="@{/user/register}" method="post" id="form">
-						<div class="form-group input-group">
+						<div class="form-group input-group idDiv">
 							<input type="text" name="id" id="id" class="form-control mt-1" placeholder="ID" required>
 						</div>
 						<label id="idLabel"></label>
@@ -190,8 +196,10 @@
         			
         			if (result == true) {
         				$("#idLabel").css("color", "blue").text("사용 가능한 ID 입니다.");
+        				$(".idDiv").css("margin-bottom", "4px");
         			} else{
         				$("#idLabel").css("color", "red").text("사용 불가능한 ID 입니다.");
+        				$(".idDiv").css("margin-bottom", "4px");
         				$("#id").val('');
         			}
         		},
