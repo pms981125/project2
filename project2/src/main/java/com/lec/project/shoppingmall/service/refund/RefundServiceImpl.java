@@ -10,13 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lec.project.shoppingmall.domain.cart.order.OrderStatus;
 import com.lec.project.shoppingmall.domain.cart.order.Ordered;
+import com.lec.project.shoppingmall.domain.payment.kakao.KakaoPayment;
 import com.lec.project.shoppingmall.domain.refund.Refund;
+import com.lec.project.shoppingmall.dto.payment.kakao.KakaoPayRefundRequestDTO;
 import com.lec.project.shoppingmall.dto.refund.UserRefundDetailResponseDTO;
 import com.lec.project.shoppingmall.dto.refund.UserRefundListResponseDTO;
 import com.lec.project.shoppingmall.dto.refund.UserRefundRequestDTO;
 import com.lec.project.shoppingmall.dto.refund.UserRefundStatusUpdateDTO;
+import com.lec.project.shoppingmall.repository.KakaoPaymentRepository;
 import com.lec.project.shoppingmall.repository.OrderedRepository;
 import com.lec.project.shoppingmall.repository.RefundRepository;
+import com.lec.project.shoppingmall.service.kakaopay.KakaoPaymentService;
+import com.lec.project.shoppingmall.service.magement.OrderManagementService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -29,6 +34,9 @@ public class RefundServiceImpl implements RefundService {
 
 	private final RefundRepository refundRepository;
 	private final OrderedRepository orderedRepository;
+	private final KakaoPaymentRepository kakaoPaymentRepository;
+	private final KakaoPaymentService kakaoPaymentService;
+	private final OrderManagementService orderManagementService;
 	
 	@Override
 	public UserRefundDetailResponseDTO createRefund(String memberId, UserRefundRequestDTO refundRequestDTO) {
@@ -76,9 +84,48 @@ public class RefundServiceImpl implements RefundService {
         Refund refund = refundRepository.findById(refundStatusUpdateDTO.getRefundId())
                 .orElseThrow(() -> new IllegalArgumentException("환불 요청을 찾을 수 없습니다."));
         
+        //환불 승인인 경우 카카오페이 환불 처리
+        if(refundStatusUpdateDTO.getNewStatus() == OrderStatus.REFUND_SUCCESS) {
+        	try {
+        		// 주문에 연결된 카카오페이 결제 정보 조회
+        		KakaoPayment kakaopayment = kakaoPaymentRepository.findByOrderId(refund.getOrder().getId())
+        				.orElseThrow(() -> new IllegalArgumentException("결제 정보를 찾을 수 없습니다."));
+        		
+        		// 카카오페이 환불 요청 생성
+        		KakaoPayRefundRequestDTO kakaoPayRefundRequestDTO = KakaoPayRefundRequestDTO.builder()
+        				.tid(kakaopayment.getTid())
+        				.cancelAmount(refund.getOrder().getTotalAmount())
+                        .cancelReason("관리자 승인")
+                        .partnerOrderId(String.valueOf(refund.getOrder().getId()))
+                        .partnerUserId(refund.getOrder().getMember().getId())
+                        .build();
+        		
+        		// 카카오페이 환불 처리
+        		kakaoPaymentService.refundPayment(kakaoPayRefundRequestDTO);
+        		
+                // OrderManagementService를 통한 주문 상태 업데이트
+                orderManagementService.processRefundRequest(
+                    refund.getOrder().getId(),
+                    true,  // approve
+                    "카카오페이 환불 완료"
+                );
+        	} catch(Exception e) {
+                log.error("카카오페이 환불 처리 중 오류 발생", e);
+                throw new RuntimeException("카카오페이 환불 처리에 실패했습니다.", e);
+        	}
+        } else if (refundStatusUpdateDTO.getNewStatus() == OrderStatus.REFUND_REJECTED) {
+            // 환불 거절 처리
+            orderManagementService.processRefundRequest(
+                refund.getOrder().getId(),
+                false,  // reject
+                "관리자 거절"
+            );
+        }
+        
+        // 환불 상태 업데이트
         refund.updateStatus(refundStatusUpdateDTO.getNewStatus());
         
-        // 주문 상태도 업데이트
+        // 주문 상태 업데이트
         refund.getOrder().setStatus(refundStatusUpdateDTO.getNewStatus().name());
         orderedRepository.save(refund.getOrder());
         

@@ -235,11 +235,13 @@
 	    }
 
 	    // 환불 상태 업데이트 함수
-	    function updateRefundStatus(orderId, refundId, isApproved, comment = '') {
+	    async function updateRefundStatus(orderId, refundId, isApproved, comment = '') {
 	        const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
 	        const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 	        
-	        fetch(`/api/manager/orders/refunds/${orderId}/process`, {
+	        try{
+	        	// 1. 주문 관리 API를 통한 환불 처리
+	        	const orderResponse = await fetch(`/api/manager/orders/refunds/${orderId}/process`, {
 	            method: 'POST',
 	            headers: {
 	                'Content-Type': 'application/json',
@@ -249,42 +251,41 @@
 	                approve: isApproved,
 	                managerComment: comment
 	            })
-	        })
-	        .then(response => {
-	            if (!response.ok) {
-	                throw new Error('환불 처리 중 오류가 발생했습니다.');
-	            }
-	            return response.json();
-	        })
-	        .then(data => {
-	        	console.log("First API response:", data);
-	        	// 성공 후 Refund 상태도 업데이트
-	        	const refundStatus = isApproved ? 'REFUND_SUCCESS' : 'REFUND_REJECTED';
-	            return fetch(`/api/refunds/${refundId}/status`, {
-	                method: 'PATCH',
-	                headers: {
-	                    'Content-Type': 'application/json',
-	                    [header]: token
-	                },
-	                	body: JSON.stringify(refundStatus)
-	            });
-	        })
-			.then(response => {
-				if (!response.ok) {
-					throw new Error('환불 상태 업데이트 중 오류가 발생했습니다.');
-				}
-				return response.json();
-			})
-			.then(data => {
-	            alert(isApproved ? '환불이 승인되었습니다.' : '환불이 거절되었습니다.');
-	            bootstrap.Modal.getInstance(document.getElementById('refundDetailsModal')).hide();
-	            applyFilters(); // 목록 새로고침
-	        })
-	        .catch(error => {
-	            console.error('Error:', error);
-	            alert(error.message);
 	        });
-	    }
+	        	
+			if(!orderResponse.ok) {
+				throw new Error('주문 상태 업데이트 중 오류가 발생했습니다.');
+			}
+			
+			// 2. 환불 상태 업데이트 (카카오페이 환불 처리)
+			const refundStatus = isApproved ? 'REFUND_SUCCESS' : 'REFUND_REJECTED';
+			const refundResponse = await fetch(`/api/refunds/${refundId}/status`, {
+				method: 'PATCH',
+				headers: {
+	                'Content-Type': 'application/json',
+	                [header]: token
+				},
+				body: JSON.stringify(refundStatus)
+			});
+			
+	        if (!refundResponse.ok) {
+	            throw new Error('환불 상태 업데이트 중 오류가 발생했습니다.');
+	        }
+	        
+	        // 3. 성공 메시지 표시
+	        const successMessage = isApproved
+	            	? '환불이 승인되었습니다. 카카오페이 환불이 완료되었습니다.' 
+	                : '환불이 거절되었습니다.';
+	            alert(successMessage);
+	            
+	         // 4. 모달 닫고 목록 새로고침
+			bootstrap.Modal.getInstance(document.getElementById('refundDetailsModal')).hide();
+			applyFilters();
+		} catch (error) {
+			console.error('Error', error);
+			alert(error.message);
+		}
+	}
 
 	    // 필터 적용 함수
 	    function applyFilters() {
