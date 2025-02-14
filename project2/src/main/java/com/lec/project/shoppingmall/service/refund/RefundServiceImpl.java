@@ -56,6 +56,7 @@ public class RefundServiceImpl implements RefundService {
         Refund refund = Refund.builder()
                 .order(ordered)
                 .customerName(ordered.getCustomerName())
+                .member(ordered.getMember())
                 .previousStatus(currentStatus)
                 .refundReason(refundRequestDTO.getRefundReason())
                 .build();

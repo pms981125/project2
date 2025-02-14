@@ -2,6 +2,7 @@ package com.lec.project.shoppingmall.domain.refund;
 
 import java.time.LocalDateTime;
 
+import com.lec.project.Member;
 import com.lec.project.shoppingmall.domain.cart.order.BaseEntity;
 import com.lec.project.shoppingmall.domain.cart.order.OrderStatus;
 import com.lec.project.shoppingmall.domain.cart.order.Ordered;
@@ -15,6 +16,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,6 +40,9 @@ public class Refund extends BaseEntity{
     
     @Column(length = 50)
     private String customerName;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

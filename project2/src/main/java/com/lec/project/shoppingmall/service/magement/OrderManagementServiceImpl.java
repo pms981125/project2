@@ -46,7 +46,7 @@ public class OrderManagementServiceImpl implements OrderManagementService {
 	    if (status == null || status.isEmpty()) {
 	        // 환불 요청 상태가 아닌 주문만 조회
 	        return orderedRepository.searchOrders(
-	            "REFUND_REQUESTED", 
+	            null, 
 	            startDate, 
 	            endDate, 
 	            search, 
@@ -109,7 +109,7 @@ public class OrderManagementServiceImpl implements OrderManagementService {
 		if (approve) {
 			// 환불 승인 처리
 			kakaopayment.setStatus(KakaoPaymentStatus.CANCELLED);
-			ordered.setStatus("REFUNDED");
+			ordered.setStatus("REFUND_SUCCESS");
 
 			// 실제 환불 처리 로직 추가 (결제 시스템 API 호출 등) // 예: 카카오페이 환불 API 호출
 //			kakaoPayService.refundPayment(kakaopayment.getTid(), kakaopayment.getTotalAmount());

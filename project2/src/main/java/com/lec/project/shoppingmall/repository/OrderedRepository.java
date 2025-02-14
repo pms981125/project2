@@ -28,13 +28,13 @@ public interface OrderedRepository extends JpaRepository<Ordered, Long> {
     List<Ordered> findByOrderDateBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
     
     // 복합 검색
-	@Query("SELECT o FROM Ordered o WHERE " +
-			"(:status IS NULL OR o.status = :status) AND " +
-			"(:startDate IS NULL OR o.orderDate >= :startDate) AND " +
-			"(:endDate IS NULL OR o.orderDate <= :endDate) AND " +
-			"(:search IS NULL OR " +
-			"LOWER(o.member.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-			"LOWER(CAST(o.id AS string)) LIKE LOWER(CONCAT('%', :search, '%')))")
+    @Query("SELECT o FROM Ordered o WHERE " +
+            "(:status IS NULL OR o.status = :status) AND " +
+            "(:startDate IS NULL OR o.orderDate >= :startDate) AND " +
+            "(:endDate IS NULL OR o.orderDate <= :endDate) AND " +
+            "(:search IS NULL OR " +
+            "LOWER(o.member.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(CAST(o.id AS string)) LIKE LOWER(CONCAT('%', :search, '%')))")
 	 Page<Ordered> searchOrders(
 		 @Param("status") String status,
 		 @Param("startDate") LocalDateTime startDate,

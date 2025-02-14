@@ -20,6 +20,8 @@
 		.status-APPROVED { background-color: #28a745; color: white; }
 		.status-REJECTED { background-color: #dc3545; color: white; }
 		.status-REFUND_REQUESTED { background-color: #17a2b8; color: white; }
+		.status-REFUND_SUCCESS { background-color: #6f42c1; color: white; }
+		.status-REFUND_REJECTED { background-color: #fd7e14; color: white; }
         
 		.action-buttons {
 			display: flex;
@@ -155,11 +157,11 @@
 						<li class="page-item" th:classappend="${!orderList.hasPrevious} ? disabled">
 							<a class="page-link" th:href="@{/manager/orders(page=${orderList.number - 1})}">이전</a>
                         </li>
-                        <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, orderList.totalPages - 1)}"
-                        	th:classappend="${pageNum == orderList.number} ? 'active'">
-							<a class="page-link" th:href="@{/manager/orders(page=${pageNum})}"
-								th:text="${pageNum + 1}">1</a>
-                        </li>
+						<li class="page-item" th:each="pageNum : ${#numbers.sequence(0, orderList.totalPages - 1)}"
+						    th:classappend="${pageNum == orderList.number} ? 'active'">
+						    <a class="page-link" th:href="@{/manager/orders(page=${pageNum})}"
+						       th:text="${pageNum + 1}">1</a>
+						</li>
 						<li class="page-item" th:classappend="${!orderList.hasNext} ? disabled">
 							<a class="page-link" th:href="@{/manager/orders(page=${orderList.number + 1})}">다음</a>
                         </li>
@@ -290,7 +292,9 @@
 					'PENDING': 'PENDING',
 					'APPROVED': 'APPROVED',
 					'REJECTED': 'REJECTED',
-					'REFUND_REQUESTED': 'REFUND_REQUESTED'
+					'REFUND_REQUESTED': 'REFUND_REQUESTED',
+					'REFUND_SUCCESS': 'REFUND_SUCCESS',
+					'REFUND_REJECTED': 'REFUND_REJECTED'
 				};
 				statusBadge.textContent = statusText[status];
 				
@@ -327,18 +331,18 @@
 			
 			const params = new URLSearchParams();
 			
-			if (statusFilter.value) {
-				params.append('status', statusFilter.value);
-			}
-			if (startDateFilter.value) {
-				params.append('startDate', startDateFilter.value + 'T00:00:00');
-			}
-			if (endDateFilter.value) {
-				params.append('endDate', endDateFilter.value + 'T23:59:59');
-			}
-			if (searchInput.value.trim()) {
-				params.append('search', searchInput.value.trim());
-			}
+		    if (statusFilter.value && statusFilter.value !== '') {
+		        params.append('status', statusFilter.value);
+		    }
+		    if (startDateFilter.value) {
+		        params.append('startDate', startDateFilter.value + 'T00:00:00');
+		    }
+		    if (endDateFilter.value) {
+		        params.append('endDate', endDateFilter.value + 'T23:59:59');
+		    }
+		    if (searchInput.value.trim()) {
+		        params.append('search', searchInput.value.trim());
+		    }
 			
 		    // 페이징 파라미터 추가
 		    params.append('page', '0'); // 필터링 시 첫 페이지부터 시작

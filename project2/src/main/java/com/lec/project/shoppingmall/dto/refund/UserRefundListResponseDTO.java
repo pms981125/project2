@@ -19,22 +19,26 @@ public class UserRefundListResponseDTO {
     private Long refundId;
     private Long orderId;
     private String customerName;
+    private String phoneNumber;
     private int refundAmount;
     private OrderStatus status;
     private LocalDateTime requestDate;
     private LocalDateTime processDate;
     private String refundReason;
+    private String memberId;
 
     public static UserRefundListResponseDTO fromEntity(Refund refund) {
         return UserRefundListResponseDTO.builder()
             .refundId(refund.getId())
             .orderId(refund.getOrder().getId())
             .customerName(refund.getOrder().getCustomerName())
+            .phoneNumber(refund.getOrder().getPhoneNumber())
             .refundAmount(refund.getOrder().getTotalAmount())
-            .status(refund.getCurrentStatus())
             .requestDate(refund.getRequestDate())
+            .status(refund.getCurrentStatus())
             .processDate(refund.getProcessDate())
             .refundReason(refund.getRefundReason())
+            .memberId(refund.getOrder().getMember().getId())
             .build();
     }
 }
