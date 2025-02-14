@@ -6,6 +6,12 @@
 <link th:href="@{/css/ms/addAdminForm.css}" rel="stylesheet" />
 <link th:href="@{/css/ms/sidebar.css}" rel="stylesheet" />
 
+<style>
+	.idDiv {
+		margin-bottom: 16px;
+	}
+</style>
+
 <div layout:fragment="content">
 	<aside class="sidebar">
     	<nav class="nav">
@@ -29,7 +35,7 @@
 	        <div class="card" style="border-radius: 1rem;">
 	            <div class="card-body p-5 text-center">
 					<form th:action="@{/sudo/addAdmin}" method="post" id="form" class="form">
-						<div class="form-group input-group">
+						<div class="form-group input-group idDiv">
 							<input type="text" name="id" id="id" class="form-control mt-1" placeholder="ID" required>
 						</div>
 						<label id="idLabel"></label>
@@ -239,8 +245,10 @@
         			
         			if (result == true) {
         				$("#idLabel").css("color", "blue").text("사용 가능한 ID 입니다.");
+        				$(".idDiv").css("margin-bottom", "4px");
         			} else{
         				$("#idLabel").css("color", "red").text("사용 불가능한 ID 입니다.");
+        				$(".idDiv").css("margin-bottom", "4px");
         				$("#id").val('');
         			}
         		},
