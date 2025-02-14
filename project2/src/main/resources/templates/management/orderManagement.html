@@ -137,11 +137,13 @@
 											<i class="fas fa-eye"></i> 상세
                                         </button>
                                         <button class="btn btn-sm btn-primary order-approve-btn"
-                                        		th:data-order-id="${order.orderId}">
+                                        		th:data-order-id="${order.orderId}"
+                                        		th:if="${order.orderStatus == 'PENDING'}">
 											<i class="fas fa-check"></i> 승인
 										</button>
 										<button class="btn btn-sm btn-danger order-reject-btn"
-												th:data-order-id="${order.orderId}">
+												th:data-order-id="${order.orderId}"
+												th:if="${order.orderStatus == 'PENDING'}">
                                             <i class="fas fa-times"></i> 거절
                                         </button>
                                     </div>
@@ -217,8 +219,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                    <button type="button" class="btn btn-success">승인</button>
-                    <button type="button" class="btn btn-danger">거절</button>
+                    <button type="button" class="btn btn-success" style="display: none;">승인</button>
+                    <button type="button" class="btn btn-danger" style="display: none;">거절</button>
                 </div>
             </div>
         </div>
@@ -390,17 +392,19 @@
 	                                    data-bs-target="#orderDetailsModal">
 	                                <i class="fas fa-eye"></i> 상세
 	                            </button>
-	                            <button class="btn btn-sm btn-primary order-approve-btn"
-	                                    data-order-id="${order.orderId}">
-	                                <i class="fas fa-check"></i> 승인
-	                            </button>
-	                            <button class="btn btn-sm btn-danger order-reject-btn"
-	                                    data-order-id="${order.orderId}">
-	                                <i class="fas fa-times"></i> 거절
-	                            </button>
-	                        </div>
-	                    </td>
-	                `;
+	                            ${order.orderStatus === 'PENDING' ? `
+		                            <button class="btn btn-sm btn-primary order-approve-btn"
+		                                    data-order-id="${order.orderId}">
+		                                <i class="fas fa-check"></i> 승인
+		                            </button>
+		                            <button class="btn btn-sm btn-danger order-reject-btn"
+		                                    data-order-id="${order.orderId}">
+		                                <i class="fas fa-times"></i> 거절
+		                            </button>
+								` : ''}
+							</div>
+						</td>
+					`;
 					orderTableBody.appendChild(row);
 				});
 				attachEventListeners();
@@ -556,9 +560,14 @@
                     // 모달 버튼 업데이트
                     const approveBtn = orderDetailsModal.querySelector('.btn-success');
                     const rejectBtn = orderDetailsModal.querySelector('.btn-danger');
-                    if (approveBtn && rejectBtn) {
+                    if (orderDetails.orderStatus === 'PENDING') {
+                        approveBtn.style.display = 'block';
+                        rejectBtn.style.display = 'block';
                         approveBtn.dataset.orderId = orderId;
                         rejectBtn.dataset.orderId = orderId;
+                    } else {
+                        approveBtn.style.display = 'none';
+                        rejectBtn.style.display = 'none';
                     }
             	})
                 .catch(error => {
@@ -604,13 +613,22 @@
 
                 // 상태 텍스트 업데이트
                 const statusText = {
-                    'PENDING': 'PENDING',
-                    'APPROVED': 'APPROVED',
-                    'REJECTED': 'REJECTED',
-                    'REFUND_REQUESTED': 'REFUND_REQUESTED'
+					'PENDING': 'PENDING',
+					'APPROVED': 'APPROVED',
+					'REJECTED': 'REJECTED',
+					'REFUND_REQUESTED': 'REFUND_REQUESTED',
+					'REFUND_SUCCESS': 'REFUND_SUCCESS',
+					'REFUND_REJECTED': 'REFUND_REJECTED'
                 };
                 statusBadge.textContent = statusText[status];
 
+                // 승인/거절 버튼 제거
+                const actionButtons = orderRow.querySelector('.action-buttons');
+                const approveBtn = actionButtons.querySelector('.order-approve-btn');
+                const rejectBtn = actionButtons.querySelector('.order-reject-btn');
+                if (approveBtn) approveBtn.remove();
+                if (rejectBtn) rejectBtn.remove();
+                
                 alert('주문 상태가 변경되었습니다.');
                 
                 // 모달 닫기
