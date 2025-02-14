@@ -33,7 +33,7 @@
 
 .status-PENDING {
 	background-color: #ffc107;
-	color: black;
+	color: white;
 }
 
 .status-APPROVED {
@@ -262,10 +262,12 @@ body {
 					</p>
 					<p>
 						상태: <span th:class="|badge status-badge status-${order.status}|">
-							<span th:if="${order.status == 'PENDING'}">배송대기중</span> <span
-							th:if="${order.status == 'APPROVED'}">배송중</span> <span
-							th:if="${order.status == 'REJECTED'}">주문취소</span> <span
-							th:if="${order.status == 'REFUND_REQUESTED'}">환불 요청</span>
+							<span th:if="${order.status == 'PENDING'}">배송대기중</span>
+							<span th:if="${order.status == 'APPROVED'}">배송중</span>
+							<span th:if="${order.status == 'REJECTED'}">주문취소</span>
+							<span th:if="${order.status == 'REFUND_REQUESTED'}">환불 요청</span>
+							<span th:if="${order.status == 'REFUND_SUCCESS'}">환불완료</span>
+							<span th:if="${order.status == 'REFUND_REJECTED'}">환불거절</span>
 						</span>
 					</p>
 
