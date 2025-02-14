@@ -50,7 +50,7 @@ public class RefundApiController {
     // 환불 상태 업데이트 (관리자용)
     @PatchMapping("/{refundId}/status")
     public ResponseEntity<UserRefundDetailResponseDTO> updateRefundStatus(
-        @PathVariable Long refundId,
+        @PathVariable("refundId") Long refundId,
         @RequestBody OrderStatus newStatus
     ) {
         UserRefundStatusUpdateDTO updateDTO = UserRefundStatusUpdateDTO.builder()
@@ -97,7 +97,15 @@ public class RefundApiController {
         log.info("Search: {}", search);
         log.info("Pageable: {}", pageable);
     	
-    	OrderStatus orderStatus = status != null ? OrderStatus.valueOf(status) : null;
+    	OrderStatus orderStatus = null;
+        if (status != null && !status.isEmpty()) {
+            try {
+                orderStatus = OrderStatus.valueOf(status);
+            } catch (IllegalArgumentException e) {
+                // 잘못된 상태값이 들어왔을 때 처리
+                return ResponseEntity.badRequest().build();
+            }
+        }
     	
 		return ResponseEntity.ok(
 		        refundService.getRefundList(orderStatus, startDate, endDate, search, pageable)

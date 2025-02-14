@@ -113,10 +113,6 @@ public class RefundServiceImpl implements RefundService {
 	) {
 	    log.info("Refund List Query Params: status={}, startDate={}, endDate={}, search={}, pageable={}", 
 	             status, startDate, endDate, search, pageable);
-	    
-	    if (status == null) {
-	        status = OrderStatus.REFUND_REQUESTED;
-	    }
 		
 	    return refundRepository.searchRefunds(status, startDate, endDate, search, pageable)
 	            .map(UserRefundListResponseDTO::fromEntity);
