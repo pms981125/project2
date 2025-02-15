@@ -10,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lec.project.shoppingmall.domain.cart.order.OrderStatus;
 import com.lec.project.shoppingmall.domain.cart.order.Ordered;
+import com.lec.project.shoppingmall.domain.cart.order.OrderedProduct;
 import com.lec.project.shoppingmall.domain.payment.kakao.KakaoPayment;
+import com.lec.project.shoppingmall.domain.product.Product;
 import com.lec.project.shoppingmall.domain.refund.Refund;
 import com.lec.project.shoppingmall.dto.payment.kakao.KakaoPayRefundRequestDTO;
 import com.lec.project.shoppingmall.dto.refund.UserRefundDetailResponseDTO;
@@ -19,6 +21,7 @@ import com.lec.project.shoppingmall.dto.refund.UserRefundRequestDTO;
 import com.lec.project.shoppingmall.dto.refund.UserRefundStatusUpdateDTO;
 import com.lec.project.shoppingmall.repository.KakaoPaymentRepository;
 import com.lec.project.shoppingmall.repository.OrderedRepository;
+import com.lec.project.shoppingmall.repository.ProductRepository;
 import com.lec.project.shoppingmall.repository.RefundRepository;
 import com.lec.project.shoppingmall.service.kakaopay.KakaoPaymentService;
 import com.lec.project.shoppingmall.service.magement.OrderManagementService;
@@ -37,6 +40,7 @@ public class RefundServiceImpl implements RefundService {
 	private final KakaoPaymentRepository kakaoPaymentRepository;
 	private final KakaoPaymentService kakaoPaymentService;
 	private final OrderManagementService orderManagementService;
+	private final ProductRepository productRepository;
 	
 	@Override
 	public UserRefundDetailResponseDTO createRefund(String memberId, UserRefundRequestDTO refundRequestDTO) {
@@ -90,6 +94,23 @@ public class RefundServiceImpl implements RefundService {
         		// 주문에 연결된 카카오페이 결제 정보 조회
         		KakaoPayment kakaopayment = kakaoPaymentRepository.findByOrderId(refund.getOrder().getId())
         				.orElseThrow(() -> new IllegalArgumentException("결제 정보를 찾을 수 없습니다."));
+        		
+                // 재고 복구 처리
+                Ordered order = refund.getOrder();
+                for (OrderedProduct orderedProduct : order.getOrderedProducts()) {
+                    Product product = orderedProduct.getProduct();
+                    int currentStock = product.getProductStock();
+                    int refundQuantity = orderedProduct.getCount();
+                    
+                    product.setProductStock(currentStock + refundQuantity);
+                    productRepository.save(product);
+                    
+                    log.info("Restored stock for product {}: {} + {} = {}", 
+                        product.getProductCode(), 
+                        currentStock, 
+                        refundQuantity, 
+                        product.getProductStock());
+                }
         		
         		// 카카오페이 환불 요청 생성
         		KakaoPayRefundRequestDTO kakaoPayRefundRequestDTO = KakaoPayRefundRequestDTO.builder()
