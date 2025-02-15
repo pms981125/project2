@@ -10,7 +10,7 @@ public interface CartService {
     CartListDTO readOne(Long id, String memberid);
     void modify(Long id, int count, String memberid);
     void remove(Long id, String memberid);
-    void removeAll(String memberid);
+    void removeAll(String memberId, boolean restoreStock);
     void addToCart(String memberid, String productCode, int count);
     int getTotalPrice(String memberid);
 	

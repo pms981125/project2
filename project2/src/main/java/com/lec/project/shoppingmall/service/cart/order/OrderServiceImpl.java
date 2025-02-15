@@ -91,7 +91,7 @@ public class OrderServiceImpl implements OrderService{
         memberRepository.save(member);
         
         // 장바구니 비우기
-        cartService.removeAll(memberId);
+        cartService.removeAll(memberId, false);
     }
 	
 	public void requestRefund(Long orderId) {

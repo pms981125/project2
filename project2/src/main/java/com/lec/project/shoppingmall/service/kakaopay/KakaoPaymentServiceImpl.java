@@ -174,8 +174,6 @@ public class KakaoPaymentServiceImpl implements KakaoPaymentService {
 		    Member member = memberRepository.findById(kakaoPayApproveRequestDTO.getPartnerUserId())
 	        	.orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
 		    
-		    
-		    
 		    // 주문 정보 생성
 		    Ordered ordered = Ordered.builder()
 				.member(member)
@@ -217,7 +215,7 @@ public class KakaoPaymentServiceImpl implements KakaoPaymentService {
 	        Kakaopayment.setApprovedAt(LocalDateTime.now());
 	        
 	        // 장바구니 비우기
-	        cartService.removeAll(member.getId());
+	        cartService.removeAll(member.getId(), false);
 	        
 	        log.info("Completing payment process");
 	        

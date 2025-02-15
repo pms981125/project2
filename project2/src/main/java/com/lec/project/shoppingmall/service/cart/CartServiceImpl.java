@@ -153,7 +153,7 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public void removeAll(String memberId) {
+	public void removeAll(String memberId, boolean restoreStock) {
 		
 		log.info("Removing all cart items for member: {}", memberId);
 		
@@ -163,17 +163,19 @@ public class CartServiceImpl implements CartService {
 		log.info("Found {} cart items to remove", cartProducts.size());
 		
 	    // 각 장바구니 상품의 재고 복원
-	    for (CartProduct cartProduct : cartProducts) {
-	        Product product = cartProduct.getProduct();
-	        int currentStock = product.getProductStock();
-	        int cartQuantity = cartProduct.getCount();
-	        
-	        log.info("Restoring stock for product {}: current stock {}, cart quantity {}", 
-	                  product.getProductCode(), currentStock, cartQuantity);
-	        
-	        product.setProductStock(currentStock + cartQuantity);
-	        productRepository.save(product);
-	    }
+		if(restoreStock) {
+		    for (CartProduct cartProduct : cartProducts) {
+		        Product product = cartProduct.getProduct();
+		        int currentStock = product.getProductStock();
+		        int cartQuantity = cartProduct.getCount();
+		        
+		        log.info("Restoring stock for product {}: current stock {}, cart quantity {}", 
+		                  product.getProductCode(), currentStock, cartQuantity);
+		        
+		        product.setProductStock(currentStock + cartQuantity);
+		        productRepository.save(product);
+		    }
+		}
 		
 		cartProductRepository.deleteByCart(cart);
 	}

@@ -27,7 +27,7 @@ public class CartApiController {
 	public ResponseEntity<Void> clearCart(
 			@AuthenticationPrincipal UserDetails userDetails) {
 		String memberId = userDetails.getUsername();
-	    cartService.removeAll(memberId);
+	    cartService.removeAll(memberId, true);
 	    
 	    return ResponseEntity.ok().build();
 	}
