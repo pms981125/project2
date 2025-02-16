@@ -312,6 +312,17 @@ body {
 		        const orderId = this.dataset.orderId;
 		        const refundReason = prompt('환불 사유를 입력해주세요:');
 		        
+		        if(refundReason === null) {
+		            // 취소 버튼 클릭 시 그냥 리턴
+		            return;
+		        }
+		        
+		        if(refundReason.trim() === '') {
+		            // 입력값이 비어있을 경우 알림
+		            alert('환불 사유를 반드시 입력해주세요.');
+		            return;
+		        }
+		        
 		        if(refundReason !== null && refundReason.trim() !== '') {
 		            try {
 		                const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
