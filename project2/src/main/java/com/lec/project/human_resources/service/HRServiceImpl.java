@@ -39,6 +39,8 @@ import com.lec.project.human_resources.dto.CalendarDTO;
 import com.lec.project.human_resources.repository.AdminRepository;
 import com.lec.project.human_resources.repository.AttendanceRepository;
 import com.lec.project.human_resources.repository.WorkLogRepository;
+import com.lec.project.shoppingmall.domain.cart.order.Ordered;
+import com.lec.project.shoppingmall.repository.OrderedRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +55,7 @@ public class HRServiceImpl implements HRService {
 	private final AdminRepository adminRepository;
 	private final AttendanceRepository attendanceRepository;
 	private final WorkLogRepository workLogRepository;
+	private final OrderedRepository orderedRepository;
 	private final PasswordEncoder passwordEncoder;
 
 	/*	@Override
@@ -158,9 +161,14 @@ public class HRServiceImpl implements HRService {
 	public void remove(String id, boolean isAdmin) {
 		Optional<Member> result = memberRepository.findById(id);
 		Member member = result.orElseThrow();
+		List<Ordered> orderedList = orderedRepository.findByMemberOrderByOrderDateDesc(member);
 		
 		if (isAdmin) {
 			adminRepository.deleteById(id);
+		}
+		
+		for (Ordered ordered : orderedList) {
+			orderedRepository.delete(ordered);
 		}
 		
 		memberRepository.deleteById(id);
