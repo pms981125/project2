@@ -39,5 +39,5 @@ public interface RefundRepository extends JpaRepository<Refund, Long>{
     List<Refund> findByCurrentStatus(OrderStatus status);
     
     @Query("SELECT r FROM Refund r WHERE r.member = :member")
-    List<Refund> findByMember(Member member);
+    List<Refund> findByMember(@Param("member") Member member);
 }
