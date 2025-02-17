@@ -77,6 +77,8 @@
 	    form.action = `/sudo/update`
 	    form.method = 'post'
 	    form.submit()
+	    
+		alert('회원 정보가 수정되었습니다.')
 	}, false)
 	
 	if(!member.admin && !(member.authorities[0].authority == "ROLE_SUPER_ADMIN")) {
@@ -116,6 +118,8 @@
 		form.action = `/sudo/initializePassword`
 		form.method = 'post'
 		form.submit()
+		
+		alert('비밀번호가 재발급되었습니다.')
 	}, false)
 		
 	if(member.admin) {

@@ -312,7 +312,7 @@ public class HRServiceImpl implements HRService {
 		int limit = size;
 		
 		List<Member> listSize = memberRepository.findAll().stream().filter(member -> member.getRoleSet().contains(MemberRole.SUPER_ADMIN) || member.getRoleSet().contains(MemberRole.MANAGER)).collect(Collectors.toList());
-		Page<Member> pages = memberRepository.findAll(PageRequest.of(page, limit));
+		Page<Member> pages = memberRepository.findAll(PageRequest.of(page, 100));
 		List<MemberSecurityDTO> DTOPages = pages.getContent().stream()
 												.filter(member -> member.getRoleSet().contains(MemberRole.SUPER_ADMIN) || member.getRoleSet().contains(MemberRole.MANAGER))
 												.map(member -> new MemberSecurityDTO(
