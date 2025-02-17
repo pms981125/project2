@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.lec.project.Member;
 import com.lec.project.shoppingmall.domain.cart.order.OrderStatus;
 import com.lec.project.shoppingmall.domain.refund.Refund;
 
@@ -37,4 +38,6 @@ public interface RefundRepository extends JpaRepository<Refund, Long>{
     
     List<Refund> findByCurrentStatus(OrderStatus status);
     
+    @Query("SELECT r FROM Refund r WHERE r.member = :member")
+    List<Refund> findByMember(Member member);
 }

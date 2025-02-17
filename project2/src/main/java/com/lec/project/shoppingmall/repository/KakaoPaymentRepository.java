@@ -27,4 +27,7 @@ public interface KakaoPaymentRepository extends JpaRepository<KakaoPayment, Long
 	
     @Query("SELECT k FROM KakaoPayment k WHERE k.status = :status")
     List<KakaoPayment> findByPaymentStatus(@Param("status") KakaoPaymentStatus status);
+
+    @Query("SELECT k FROM KakaoPayment k WHERE k.partnerUserId = :id")
+    List<KakaoPayment> findPaymentByID(@Param("id") String id);
 }
