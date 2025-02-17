@@ -39,6 +39,8 @@ import com.lec.project.human_resources.dto.CalendarDTO;
 import com.lec.project.human_resources.repository.AdminRepository;
 import com.lec.project.human_resources.repository.AttendanceRepository;
 import com.lec.project.human_resources.repository.WorkLogRepository;
+import com.lec.project.message.model.MemberMessage;
+import com.lec.project.message.repository.MemberMessageRepository;
 import com.lec.project.shoppingmall.domain.cart.Cart;
 import com.lec.project.shoppingmall.domain.cart.order.Ordered;
 import com.lec.project.shoppingmall.domain.payment.kakao.KakaoPayment;
@@ -49,7 +51,6 @@ import com.lec.project.shoppingmall.repository.OrderedRepository;
 import com.lec.project.shoppingmall.repository.RefundRepository;
 import com.lec.project.shoppingmall.service.cart.CartService;
 
-import groovyjarjarantlr4.v4.parse.ANTLRParser.finallyClause_return;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -68,6 +69,7 @@ public class HRServiceImpl implements HRService {
 	private final RefundRepository refundRepository;
 	private final CartRepository cartRepository;
 	private final CartService cartService;
+	private final MemberMessageRepository memberMessageRepository;
 	private final PasswordEncoder passwordEncoder;
 
 	/*	@Override
@@ -177,6 +179,7 @@ public class HRServiceImpl implements HRService {
 		List<KakaoPayment> paymentList = kakaoPaymentRepository.findPaymentByID(id);
 		List<Refund> refundList = refundRepository.findByMember(member);
 		List<Cart> cartList = cartRepository.findAllByMember(member);
+		List<MemberMessage> memberMessageList = memberMessageRepository.findBySender_Id(id);
 		
 		if (isAdmin) {
 			adminRepository.deleteById(id);
@@ -194,10 +197,16 @@ public class HRServiceImpl implements HRService {
 			refundRepository.delete(refund);
 		}
 		
-		cartService.removeAll(id, true);
+		if (!cartList.isEmpty()) {
+			cartService.removeAll(id, true);
+		}
 		
 		for (Cart cart : cartList) {
 			cartRepository.delete(cart);
+		}
+		
+		for (MemberMessage memberMessage : memberMessageList) {
+			memberMessageRepository.delete(memberMessage);
 		}
 		
 		memberRepository.deleteById(id);
