@@ -4,6 +4,7 @@
 
 <link th:href="@{/css/bootstrap.css}" rel="stylesheet" />
 <link th:href="@{/css/ms/sidebar.css}" rel="stylesheet" />
+<link th:href="@{/css/ms/calendar.css}" rel="stylesheet" />
 
 <meta name="_csrf" th:content="${_csrf.token}"/>
 <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
@@ -187,7 +188,8 @@
         			var res = response[i];
         			var event = {
         				title: res.title,
-        				start: res.start
+        				start: res.start,
+        				description: res.description
         			};
         			
         			events.push(event);
@@ -196,6 +198,7 @@
         		console.log('Events:', events);
         		console.log('n: ', response.length);
         		console.log('r: ', response);
+	       		console.log("이벤트 데이터:", events);
                 initializeFullCalendar(events);
         	},
         	
@@ -211,11 +214,37 @@
 	    	initialView: 'dayGridMonth',
 	    	locale: 'ko', // 한국어로 설정
 	    	titleFormat: { year: 'numeric', month: 'long' }, // 연도, 월 표시형식 설정
-	    	events: event/* ,
+	    	events: event,/* ,
 	    	dateSet: function (info) {
 	    		currentMonth = info.view.title;
 	    		calendar.refetchEvents();
 	    	} */
+	    	eventMouseEnter: function(info) {
+	            var tooltip = document.createElement('div');
+	            tooltip.classList.add('tooltip');
+	            tooltip.innerText = info.event.extendedProps.description; // description 속성 사용
+	            document.body.appendChild(tooltip);
+
+	            tooltip.style.position = 'absolute';
+	            tooltip.style.background = 'black';
+	            tooltip.style.color = 'white';
+	            tooltip.style.padding = '5px 10px';
+	            tooltip.style.borderRadius = '5px';
+	            tooltip.style.fontSize = '12px';
+	            tooltip.style.top = info.jsEvent.pageY + 10 + 'px';
+	            tooltip.style.left = info.jsEvent.pageX + 10 + 'px';
+
+	            info.el.setAttribute('data-tooltip-id', tooltip);
+	        },
+
+	        // 마우스 벗어나면 툴팁 제거
+	        eventMouseLeave: function(info) {
+	            var tooltip = document.querySelector('.tooltip');
+	            if (tooltip) {
+	                tooltip.remove();
+	            }
+	        }
+	    	
 	    });
 	    
 		calendar.render();

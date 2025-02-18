@@ -15,4 +15,5 @@ public class CalendarDTO {
 	private String start;
 	// private String end;
 	private String title;
+	private String description;
 }

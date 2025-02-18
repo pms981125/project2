@@ -494,7 +494,7 @@ public class HRServiceImpl implements HRService {
 		for (int i = 0; i < calendarDTOs.length; i++) {
 			WorkLog workLog = workLogList.get(i);
 			
-			calendarDTOs[i] = CalendarDTO.builder().start(simpleDateFormat.format(workLog.getWorkDate())).title(workLog.getStatus().toString()).build();
+			calendarDTOs[i] = CalendarDTO.builder().start(simpleDateFormat.format(workLog.getWorkDate())).title(workLog.getStatus().toString()).description("근무 시간: " + workLog.getWorkTime() + "시간").build();
 		}
 		
 		return calendarDTOs;
