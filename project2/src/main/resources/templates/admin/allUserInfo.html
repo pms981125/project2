@@ -49,7 +49,7 @@
 					<button class="btn btn-warning delegateAuthorityBtn ml-2">권한 위임</button>
 				</th:block>
 				<th:block th:unless="${member.isAdmin() || member.authorities[0].authority.equals('ROLE_SUPER_ADMIN')}"> <br />
-					<button class="btn btn-warning exaltationToAdminBtn ml-2">관리자 승격</button>
+					<button class="btn btn-warning exaltationToAdminBtn ml-2">직원계정으로 변경</button>
 				</th:block>
 				<th:block th:if="${member.isAdmin()}"> <br />
 					<button class="btn btn-danger adminRemoveBtn ml-2">관리자 삭제</button>
