@@ -10,7 +10,7 @@ JAVA : jdk-17.0.12
 
 SERVER : apache-tomcat-9.0.96
 
-GRADLE : lastest version
+IDE : Spring-tool-suite-4.26.0
 
 **Functions**
 
